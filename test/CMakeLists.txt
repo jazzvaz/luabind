@@ -50,6 +50,7 @@ set(TESTS
 	lua_stack
 	simple_class
 	smart_ptr_attributes
+	static_member
 	super_leak
 	table
 	tag_function
