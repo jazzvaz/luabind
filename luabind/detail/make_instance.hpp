@@ -69,7 +69,7 @@ namespace luabind {
 
 			if(!cls)
 			{
-				throw std::runtime_error("Trying to use unregistered class: " + std::string(typeid(P).name()));
+				throw unresolved_name("Trying to use unregistered class", typeid(P).name());
 			}
 
 			object_rep* instance = push_new_instance(L, cls);
@@ -104,7 +104,7 @@ namespace luabind {
 				using pointee_type = decltype(*get_pointer(val));
 
 				if(!cls) {
-					throw std::runtime_error("Trying to use unregistered class: " + std::string(typeid(pointee_type).name()));
+					throw unresolved_name("Trying to use unregistered class", typeid(pointee_type).name());
 				}
 
 				object_rep* instance = push_new_instance(L, cls);
@@ -136,7 +136,7 @@ namespace luabind {
 			class_rep* cls = get_pointee_class(L, &val, value_type_id);
 
 			if(!cls) {
-				throw std::runtime_error("Trying to use unregistered class: " + std::string(typeid(ValueType).name()));
+				throw unresolved_name("Trying to use unregistered class: ", typeid(ValueType).name());
 			}
 
 			object_rep* instance = push_new_instance(L, cls);

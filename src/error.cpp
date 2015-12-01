@@ -93,5 +93,9 @@ namespace luabind {
 		return pcall_callback;
 	}
 
+	unresolved_name::unresolved_name(const char* desc, const char* name) :
+		std::runtime_error(std::string(desc) + ": " + name)
+	{}
+
 }
 
