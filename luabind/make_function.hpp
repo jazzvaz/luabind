@@ -60,7 +60,9 @@ namespace luabind {
 				}
 				catch(...) {
 					exception_caught = true;
+#ifndef LUABIND_NO_EXCEPTIONS
 					handle_exception_aux(L);
+#endif
 				}
 
 				return exception_caught;
