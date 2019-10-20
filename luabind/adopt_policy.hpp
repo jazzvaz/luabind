@@ -130,9 +130,11 @@ namespace luabind {
 
 namespace luabind
 {
-	// Caution: if we use the aliased type "policy_list" here, MSVC crashes.
-	template<unsigned int N, typename Pointer = void>
-	using adopt_policy = meta::type_list<converter_policy_injector<N, detail::adopt_policy_impl<Pointer>>>;
+	namespace policy
+	{
+		template<unsigned int N, typename Pointer = void>
+		using adopt = converter_policy_injector<N, detail::adopt_policy_impl<Pointer>>;
+	}
 }
 
 #endif // LUABIND_ADOPT_POLICY_HPP_INCLUDE

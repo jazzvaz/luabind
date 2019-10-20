@@ -394,6 +394,12 @@ namespace luabind {
 			Set set;
 		};
 
+		template <typename Default>
+		struct is_func
+		{
+			static constexpr bool value = std::is_function<typename std::remove_pointer<Default>::type>::value |
+				std::is_member_function_pointer<Default>::value;
+		};
 	} // namespace detail
 
 	// registers a class in the lua environment
@@ -436,7 +442,8 @@ namespace luabind {
 		}
 
 		template<class F, class Default, typename... Injectors>
-		class_& def(char const* name, F fn, Default default_, policy_list< Injectors... > policies = no_policies())
+		class_& def(char const* name, F fn, Default default_, policy_list< Injectors... > policies = no_policies(),
+			typename std::enable_if<detail::is_func<Default>::value, Default>::type = nullptr)
 		{
 			return this->virtual_def(name, fn, policies, default_);
 		}

@@ -261,11 +261,14 @@ namespace luabind {
 
 namespace luabind
 {
-	template<unsigned int N, class Policies = no_policies >
-	using out_value = meta::type_list<converter_policy_injector<N, detail::out_value_policy<Policies>>>;
+	namespace policy
+	{
+		template <unsigned int N>
+		using out_value = converter_policy_injector<N, detail::out_value_policy<>>;
 
-	template<unsigned int N, class Policies = no_policies >
-	using pure_out_value = meta::type_list<converter_policy_injector<N, detail::pure_out_value_policy<Policies>>>;
+		template <unsigned int N>
+		using pure_out_value = converter_policy_injector<N, detail::pure_out_value_policy<>>;
+	}
 }
 
 #endif // LUABIND_OUT_VALUE_POLICY_HPP_INCLUDED
