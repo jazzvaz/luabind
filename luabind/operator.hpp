@@ -318,13 +318,13 @@ namespace luabind {
     }
 
 		template<class T>
-	std::string tostring_operator(T const& x)
+	luabind::string tostring_operator(T const& x)
 	{
 #ifdef LUABIND_NO_STRINGSTREAM
 		std::strstream s;
 		s << x << std::ends;
 #else
-		std::stringstream s;
+		luabind::stringstream s;
 		s << x;
 #endif
 		return s.str();

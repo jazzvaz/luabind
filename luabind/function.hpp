@@ -39,8 +39,8 @@ namespace luabind {
 	template <class F, typename... PolicyInjectors>
 	scope def(char const* name, F f, policy_list<PolicyInjectors...> const&)
 	{
-		return scope(std::unique_ptr<detail::registration>(
-			new detail::function_registration<F, policy_list<PolicyInjectors...>>(name, f)));
+		return scope(luabind::unique_ptr<detail::registration>(
+			luabind_new<detail::function_registration<F, policy_list<PolicyInjectors...>>>(name, f)));
 	}
 
 	template <class F>

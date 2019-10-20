@@ -43,7 +43,7 @@ namespace luabind {
 
 		registration::~registration()
 		{
-			delete m_next;
+			luabind_delete(m_next);
 		}
 
 	} // namespace detail
@@ -53,7 +53,7 @@ namespace luabind {
 	{
 	}
 
-	scope::scope(std::unique_ptr<detail::registration> reg)
+	scope::scope(luabind::unique_ptr<detail::registration> reg)
 		: m_chain(reg.release())
 	{
 	}
@@ -66,7 +66,7 @@ namespace luabind {
 
 	scope& scope::operator=(scope const& other_)
 	{
-		delete m_chain;
+		luabind_delete(m_chain);
 		m_chain = other_.m_chain;
 		const_cast<scope&>(other_).m_chain = 0;
 		return *this;
@@ -74,7 +74,7 @@ namespace luabind {
 
 	scope::~scope()
 	{
-		delete m_chain;
+		luabind_delete(m_chain);
 	}
 
 	scope& scope::operator,(scope s)
@@ -193,8 +193,8 @@ namespace luabind {
 	};
 
 	namespace_::namespace_(char const* name)
-		: scope(std::unique_ptr<detail::registration>(
-			m_registration = new registration_(name)))
+		: scope(luabind::unique_ptr<detail::registration>(
+			m_registration = luabind_new<registration_>(name)))
 	{
 	}
 

@@ -109,5 +109,7 @@ namespace luabind {
 
 } // namespace luabind
 
+#include <luabind/types.hpp>
+
 #endif // LUABIND_CONFIG_HPP_INCLUDED
 

@@ -176,38 +176,38 @@ namespace luabind {
 	{};
 
 	template <>
-	struct default_converter<std::string>
-		: native_converter_base<std::string>
+	struct default_converter<luabind::string>
+		: native_converter_base<luabind::string>
 	{
 		static int compute_score(lua_State* L, int index)
 		{
 			return lua_type(L, index) == LUA_TSTRING ? 0 : no_match;
 		}
 
-		static std::string to_cpp_deferred(lua_State* L, int index)
+		static luabind::string to_cpp_deferred(lua_State* L, int index)
 		{
-			return std::string(lua_tostring(L, index), lua_rawlen(L, index));
+			return luabind::string(lua_tostring(L, index), lua_rawlen(L, index));
 		}
 
-		static void to_lua_deferred(lua_State* L, std::string const& value)
+		static void to_lua_deferred(lua_State* L, luabind::string const& value)
 		{
 			lua_pushlstring(L, value.data(), value.size());
 		}
 	};
 
 	template <>
-	struct default_converter<std::string&>
-		: default_converter<std::string>
+	struct default_converter<luabind::string&>
+		: default_converter<luabind::string>
 	{};
 
 	template <>
-	struct default_converter<std::string const>
-		: default_converter<std::string>
+	struct default_converter<luabind::string const>
+		: default_converter<luabind::string>
 	{};
 
 	template <>
-	struct default_converter<std::string const&>
-		: default_converter<std::string>
+	struct default_converter<luabind::string const&>
+		: default_converter<luabind::string>
 	{};
 
 	template <>

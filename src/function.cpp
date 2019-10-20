@@ -17,7 +17,7 @@ namespace luabind {
 			int function_destroy(lua_State* L)
 			{
 				function_object* fn = *(function_object**)lua_touserdata(L, 1);
-				delete fn;
+				luabind_delete(fn);
 				return 0;
 			}
 

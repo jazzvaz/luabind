@@ -42,7 +42,7 @@ namespace luabind
 	// this exception usually means that the lua function you called
 	// from C++ failed with an error code. You will have to
 	// read the error code from the top of the lua stack
-	// note that std::string's copy constructor
+	// note that luabind::string's copy constructor
 	// may throw, if the copy constructor of an exception that is
 	// being thrown throws another exception, terminate will be called
 	// and the entire application is killed.
@@ -54,7 +54,7 @@ namespace luabind
 		virtual const char* what() const throw();
 
 	private:
-		std::string m_message;
+		luabind::string m_message;
 	};
 
 	// if an object_cast<>() fails, this is thrown

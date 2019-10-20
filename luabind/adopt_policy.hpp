@@ -85,7 +85,7 @@ namespace luabind {
 		template <class T>
 		struct pointer_or_default<void, T>
 		{
-			using type = std::unique_ptr<T>;
+			using type = luabind::unique_ptr<T>;
 		};
 
 		template <class Pointer>

@@ -108,7 +108,7 @@ namespace luabind {
 	template <class F, typename... SignatureElements, typename... PolicyInjectors >
 	object make_function(lua_State* L, F f, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors... >)
 	{
-		return detail::make_function_aux(L, new detail::function_object_impl<F, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors...> >(f));
+		return detail::make_function_aux(L, luabind_new<detail::function_object_impl<F, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors...>>>(f));
 	}
 
 	template <class F, typename... PolicyInjectors >

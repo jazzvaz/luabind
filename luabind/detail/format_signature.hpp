@@ -26,7 +26,7 @@ namespace luabind {
 
 	namespace detail {
 
-		LUABIND_API std::string get_class_name(lua_State* L, type_id const& i);
+		LUABIND_API luabind::string get_class_name(lua_State* L, type_id const& i);
 
 		template <class T, class Enable = void>
 		struct type_to_string
@@ -91,7 +91,7 @@ namespace luabind {
 
 			LUABIND_TYPE_TO_STRING(void)
 			LUABIND_TYPE_TO_STRING(bool)
-			LUABIND_TYPE_TO_STRING(std::string)
+			LUABIND_TYPE_TO_STRING(luabind::string)
 			LUABIND_TYPE_TO_STRING(lua_State)
 
 			LUABIND_TYPE_TO_STRING(luabind::object)

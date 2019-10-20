@@ -36,7 +36,7 @@ namespace luabind {
 			virtual void format_signature(lua_State* L, char const* function) const = 0;
 
 			lua_CFunction entry;
-			std::string name;
+			luabind::string name;
 			function_object* next;
 			object keepalive;
 		};

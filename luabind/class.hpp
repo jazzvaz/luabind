@@ -190,7 +190,7 @@ namespace luabind {
 		// prints the types of the values on the stack, in the
 		// range [start_index, lua_gettop()]
 
-		LUABIND_API std::string stack_content_by_name(lua_State* L, int start_index);
+		LUABIND_API luabind::string stack_content_by_name(lua_State* L, int start_index);
 
 		struct LUABIND_API create_class
 		{
@@ -293,7 +293,7 @@ namespace luabind {
 		template <class T>
 		struct default_pointer<null_type, T>
 		{
-			using type = std::unique_ptr<T>;
+			using type = luabind::unique_ptr<T>;
 		};
 
 		template <class Class, class Pointer, class Signature, class Policies>
@@ -461,7 +461,7 @@ namespace luabind {
 		class_& property(const char* name, Getter g, Setter s, policy_list<GetInjectors...> = no_policies(), policy_list<SetInjectors...> = no_policies())
 		{
 			using registration_type = detail::property_registration<T, Getter, policy_list<GetInjectors...>, Setter, policy_list<SetInjectors...>>;
-			this->add_member(new registration_type(name, g, s));
+			this->add_member(luabind_new<registration_type>(name, g, s));
 			return *this;
 		}
 
@@ -555,8 +555,8 @@ namespace luabind {
 		class_& virtual_def(char const* name, F const& fn, policy_list< Injectors... >, Default default_)
 		{
 			using policy_list_type = policy_list< Injectors... >;
-			this->add_member(new detail::memfun_registration<T, F, policy_list_type      >(name, fn));
-			this->add_default_member(new detail::memfun_registration<T, Default, policy_list_type>(name, default_));
+			this->add_member(luabind_new<detail::memfun_registration<T, F, policy_list_type>>(name, fn));
+			this->add_default_member(luabind_new<detail::memfun_registration<T, Default, policy_list_type>>(name, default_));
 			return *this;
 		}
 
@@ -564,7 +564,7 @@ namespace luabind {
 		class_& virtual_def(char const* name, F const& fn, policy_list< Injectors... >, null_type)
 		{
 			using policy_list_type = policy_list< Injectors... >;
-			this->add_member(new detail::memfun_registration<T, F, policy_list_type>(name, fn));
+			this->add_member(luabind_new<detail::memfun_registration<T, F, policy_list_type>>(name, fn));
 			return *this;
 		}
 
@@ -581,8 +581,8 @@ namespace luabind {
 			>::type;
 
 			using registration_type = detail::constructor_registration<construct_type, HolderType, signature_type, policy_list_type>;
-			this->add_member(new registration_type());
-			this->add_default_member(new registration_type());
+			this->add_member(luabind_new<registration_type>());
+			this->add_default_member(luabind_new<registration_type>());
 
 			return *this;
 		}

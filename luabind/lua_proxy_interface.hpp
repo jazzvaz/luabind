@@ -184,7 +184,7 @@ namespace luabind {
 	}
 
 	template<class ValueWrapper>
-	std::string to_string(adl::lua_proxy_interface<ValueWrapper> const& v)
+	luabind::string to_string(adl::lua_proxy_interface<ValueWrapper> const& v)
 	{
 		using namespace luabind;
 		lua_State* interpreter = lua_proxy_traits<ValueWrapper>::interpreter(static_cast<ValueWrapper const&>(v));
@@ -192,7 +192,7 @@ namespace luabind {
 		lua_proxy_traits<ValueWrapper>::unwrap(interpreter, static_cast<ValueWrapper const&>(v));
 		char const* p = lua_tostring(interpreter, -1);
 		std::size_t len = lua_rawlen(interpreter, -1);
-		return std::string(p, len);
+		return luabind::string(p, len);
 	}
 
 	namespace detail

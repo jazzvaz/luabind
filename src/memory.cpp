@@ -1,4 +1,4 @@
-// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
+// Copyright (c) 2003 Daniel Wallin, Arvid Norberg, and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,30 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef LUABIND_CLASS_INFO_HPP_INCLUDED
-#define LUABIND_CLASS_INFO_HPP_INCLUDED
+#define LUABIND_BUILDING
 
-#include <luabind/prefix.hpp>
-#include <luabind/lua_include.hpp>
-#include <luabind/luabind.hpp>
-#include <luabind/object.hpp>
+#include <luabind/config.hpp>
+#include <luabind/memory.hpp>
 
 namespace luabind
 {
-	struct LUABIND_API class_info
-	{
-		luabind::string name;
-		object methods;
-		object attributes;
-	};
-
-	LUABIND_API class_info get_class_info(argument const&);
-
-	// returns a table of bound class names
-	LUABIND_API object get_class_names(lua_State* L);
-
-	LUABIND_API void bind_class_info(lua_State*);
+	LUABIND_API allocator_func allocator = nullptr;
+	LUABIND_API void* allocator_context = nullptr;
 }
-
-#endif
-
