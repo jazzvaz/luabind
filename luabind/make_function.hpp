@@ -42,9 +42,9 @@ namespace luabind {
 #endif
 			}
 
-			void format_signature(lua_State* L, char const* function) const
+			int format_signature(lua_State* L, char const* function, bool concat = true) const
 			{
-				detail::format_signature(L, function, Signature());
+				return detail::format_signature(L, function, Signature(), concat);
 			}
 
 			static bool invoke_defer(lua_State* L, function_object_impl* impl, invoke_context& ctx, int& results)

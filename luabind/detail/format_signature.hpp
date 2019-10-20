@@ -122,7 +122,7 @@ namespace luabind {
 		}
 
 		template <class Signature>
-		void format_signature(lua_State* L, char const* function, Signature)
+		int format_signature(lua_State* L, char const* function, Signature, bool concat = true)
 		{
 			using first = typename meta::front<Signature>::type;
 
@@ -138,8 +138,13 @@ namespace luabind {
 				, typename meta::pop_front<Signature>::type()
 			);
 			lua_pushstring(L, ")");
-			constexpr size_t ncat = meta::size<Signature>::value * 2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
-			lua_concat(L, static_cast<int>(ncat));
+			size_t ncat = meta::size<Signature>::value * 2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
+			if (concat)
+			{
+				lua_concat(L, static_cast<int>(ncat));
+				ncat = 1;
+			}
+			return ncat;
 		}
 
 	} // namespace detail

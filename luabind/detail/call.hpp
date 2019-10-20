@@ -33,7 +33,7 @@ namespace luabind {
 			{}
 
 			virtual int call(lua_State* L, invoke_context& ctx) /* const */ = 0;
-			virtual void format_signature(lua_State* L, char const* function) const = 0;
+			virtual int format_signature(lua_State* L, char const* function, bool concat = true) const = 0;
 
 			lua_CFunction entry;
 			luabind::string name;
