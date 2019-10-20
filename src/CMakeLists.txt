@@ -15,6 +15,8 @@ set(LUABIND_SRCS
 	function_introspection.cpp
 	inheritance.cpp
 	link_compatibility.cpp
+	lua_extensions.cpp
+	memory.cpp
 	object_rep.cpp
 	open.cpp
 	operator.cpp
@@ -37,47 +39,48 @@ set(LUABIND_API
 	../luabind/from_stack.hpp
 	../luabind/function.hpp
 	../luabind/function_introspection.hpp
-	../luabind/get_main_thread.hpp
-	../luabind/pointer_traits.hpp
+	../luabind/get_main_thread.hpp	
 	../luabind/handle.hpp
-	../luabind/luabind.hpp
 	../luabind/lua_argument_proxy.hpp
+	../luabind/lua_extensions.hpp
 	../luabind/lua_include.hpp
 	../luabind/lua_index_proxy.hpp
 	../luabind/lua_iterator_proxy.hpp
+	../luabind/lua_proxy.hpp
 	../luabind/lua_proxy_interface.hpp
 	../luabind/lua_state_fwd.hpp
+	../luabind/luabind.hpp
 	../luabind/make_function.hpp
+	../luabind/memory.hpp
+	../luabind/memory_allocator.hpp
 	../luabind/nil.hpp
 	../luabind/object.hpp
 	../luabind/open.hpp
 	../luabind/operator.hpp
+	../luabind/pointer_traits.hpp
 	../luabind/prefix.hpp
 	../luabind/scope.hpp
 	../luabind/set_package_preload.hpp
 	../luabind/shared_ptr_converter.hpp
-	../luabind/tag_function.hpp
 	../luabind/typeid.hpp
-	../luabind/lua_proxy.hpp
+	../luabind/types.hpp	
 	../luabind/version.hpp
 	../luabind/weak_ref.hpp
 	../luabind/wrapper_base.hpp
 )
 source_group(API FILES ${LUABIND_API})
 
-set(LUABIND_DETAIL_API
-	../luabind/detail/meta.hpp
-	../luabind/detail/call_traits.hpp
-	../luabind/detail/call_shared.hpp
-	../luabind/detail/crtp_iterator.hpp
-	../luabind/detail/call_function.hpp
+set(LUABIND_DETAIL_API    
 	../luabind/detail/call.hpp
+	../luabind/detail/call_function.hpp
 	../luabind/detail/call_member.hpp
+	../luabind/detail/call_shared.hpp
+	../luabind/detail/call_traits.hpp
 	../luabind/detail/class_registry.hpp
 	../luabind/detail/class_rep.hpp
 	../luabind/detail/constructor.hpp
 	../luabind/detail/conversion_storage.hpp
-	../luabind/detail/push_to_lua.hpp
+	../luabind/detail/crtp_iterator.hpp
 	../luabind/detail/debug.hpp
 	../luabind/detail/decorate_type.hpp
 	../luabind/detail/deduce_signature.hpp
@@ -88,6 +91,7 @@ set(LUABIND_DETAIL_API
 	../luabind/detail/instance_holder.hpp
 	../luabind/detail/link_compatibility.hpp
 	../luabind/detail/make_instance.hpp
+	../luabind/detail/meta.hpp
 	../luabind/detail/object.hpp
 	../luabind/detail/object_rep.hpp
 	../luabind/detail/open.hpp
@@ -97,6 +101,7 @@ set(LUABIND_DETAIL_API
 	../luabind/detail/policy.hpp
 	../luabind/detail/primitives.hpp
 	../luabind/detail/property.hpp
+	../luabind/detail/push_to_lua.hpp
 	../luabind/detail/ref.hpp
 	../luabind/detail/signature_match.hpp
 	../luabind/detail/stack_utils.hpp
@@ -105,16 +110,16 @@ set(LUABIND_DETAIL_API
 source_group(Internal FILES ${LUABIND_DETAIL_API})
 
 set(LUABIND_DEFAULT_POLICIES
+	../luabind/detail/conversion_policies/conversion_base.hpp
+	../luabind/detail/conversion_policies/conversion_policies.hpp
+	../luabind/detail/conversion_policies/enum_converter.hpp
+	../luabind/detail/conversion_policies/function_converter.hpp
+	../luabind/detail/conversion_policies/lua_proxy_converter.hpp
+	../luabind/detail/conversion_policies/native_converter.hpp
 	../luabind/detail/conversion_policies/pointer_converter.hpp
 	../luabind/detail/conversion_policies/reference_converter.hpp
 	../luabind/detail/conversion_policies/value_converter.hpp
-	../luabind/detail/conversion_policies/enum_converter.hpp
-	../luabind/detail/conversion_policies/function_converter.hpp
-	../luabind/detail/conversion_policies/conversion_base.hpp
-	../luabind/detail/conversion_policies/conversion_policies.hpp
-	../luabind/detail/conversion_policies/lua_proxy_converter.hpp
-	../luabind/detail/conversion_policies/native_converter.hpp
-	)
+)
 source_group("Default Policies" FILES ${LUABIND_DEFAULT_POLICIES} )
 
 set(LUABIND_USER_POLICIES
@@ -179,4 +184,3 @@ if(LUABIND_INSTALL)
 		LIBRARY DESTINATION ${LIB_DIR} COMPONENT runtime
 		ARCHIVE DESTINATION ${ARCH_DIR} COMPONENT sdk)
 endif()
-
