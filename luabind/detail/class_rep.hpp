@@ -145,6 +145,11 @@ namespace luabind {
 				return *m_classes;
 			}
 
+			std::map<const char*, int, ltstr> const& static_constants() const
+			{
+				return m_static_constants;
+			}
+
 		private:
 
 			// Code common to both constructors
