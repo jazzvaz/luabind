@@ -73,6 +73,10 @@ static_assert(false, "Do not define NDEBUG macros in DEBUG configuration");
 // by luabind throws an exception (throwing exceptions through
 // C code has undefined behavior, lua is written in C).
 
+// LUABIND_PERMISSIVE_MODE
+// this define will enable the following features:
+// - native converter from number to <luabind::string> and <const char*>
+
 #ifdef LUABIND_DYNAMIC_LINK
 # if defined (_WIN32)
 #  ifdef LUABIND_BUILDING
@@ -104,6 +108,8 @@ namespace luabind {
 
 	LUABIND_API void disable_super_deprecation();
 	LUABIND_API void set_custom_type_marking(bool enable);
+	LUABIND_API bool is_nil_conversion_allowed();
+	LUABIND_API void allow_nil_conversion(bool allow);
 
 	namespace detail {
 		const int max_argument_count = 100;

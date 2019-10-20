@@ -181,7 +181,18 @@ namespace luabind {
 	{
 		static int compute_score(lua_State* L, int index)
 		{
-			return lua_type(L, index) == LUA_TSTRING ? 0 : no_match;
+			int type = lua_type(L, index);
+			switch (type)
+			{
+			case LUA_TSTRING:
+				return 0;
+#ifdef LUABIND_PERMISSIVE_MODE
+			case LUA_TNUMBER:
+				return 1;
+#endif
+			default:
+				return no_match;
+			}
 		}
 
 		static luabind::string to_cpp_deferred(lua_State* L, int index)
@@ -221,7 +232,19 @@ namespace luabind {
 		static int match(lua_State* L, U, int index)
 		{
 			int type = lua_type(L, index);
-			return (type == LUA_TSTRING || type == LUA_TNIL) ? 0 : no_match;
+			switch (type)
+			{
+			case LUA_TSTRING:
+				return 0;
+			case LUA_TNIL:
+				if (is_nil_conversion_allowed())
+					return 0;
+#ifdef LUABIND_PERMISSIVE_MODE
+			case LUA_TNUMBER:
+				return 1;
+#endif
+			}
+			return no_match;
 		}
 
 		template <class U>
