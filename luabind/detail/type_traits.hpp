@@ -152,6 +152,12 @@ namespace luabind {
 		using type = Signature;
 	};
 
+	template< typename R, typename... Args, typename WrappedType >
+	struct deduce_signature <std::function< R(Args...) >, WrappedType >
+	{
+		using type = meta::type_list< R, Args... >;
+	};
+
 	template< typename T, typename WrappedType = null_type >
 	using deduce_signature_t = typename deduce_signature<T, WrappedType>::type;
 
