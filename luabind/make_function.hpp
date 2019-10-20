@@ -100,27 +100,27 @@ namespace luabind {
 #  pragma pack(pop)
 # endif
 
-		LUABIND_API object make_function_aux(lua_State* L, function_object* impl);
+		LUABIND_API object make_function_aux(lua_State* L, function_object* impl, bool default_scope = false);
 		LUABIND_API void add_overload(object const&, char const*, object const&);
 
 	} // namespace detail
 
 	template <class F, typename... SignatureElements, typename... PolicyInjectors >
-	object make_function(lua_State* L, F f, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors... >)
+	object make_function(lua_State* L, F f, bool default_scope, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors... >)
 	{
-		return detail::make_function_aux(L, luabind_new<detail::function_object_impl<F, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors...>>>(f));
+		return detail::make_function_aux(L, luabind_new<detail::function_object_impl<F, meta::type_list< SignatureElements... >, meta::type_list< PolicyInjectors...>>>(f), default_scope);
 	}
 
 	template <class F, typename... PolicyInjectors >
-	object make_function(lua_State* L, F f, meta::type_list< PolicyInjectors... >)
+	object make_function(lua_State* L, F f, bool default_scope, meta::type_list< PolicyInjectors... >)
 	{
-		return make_function(L, f, deduce_signature_t<F>(), meta::type_list< PolicyInjectors... >());
+		return make_function(L, f, default_scope, deduce_signature_t<F>(), meta::type_list< PolicyInjectors... >());
 	}
 
 	template <class F>
-	object make_function(lua_State* L, F f)
+	object make_function(lua_State* L, F f, bool default_scope)
 	{
-		return make_function(L, f, deduce_signature_t<F>(), no_policies());
+		return make_function(L, f, default_scope, deduce_signature_t<F>(), no_policies());
 	}
 
 } // namespace luabind

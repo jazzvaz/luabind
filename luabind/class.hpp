@@ -269,10 +269,10 @@ namespace luabind {
 				: name(name), f(f)
 			{}
 
-			void register_(lua_State* L) const
+			void register_(lua_State* L, bool default_scope = false) const
 			{
 				// Need to check if the class type of the signature is a base of this class
-				object fn = make_function(L, f, deduce_signature_t<F, Class>(), Policies());
+				object fn = make_function(L, f, default_scope, deduce_signature_t<F, Class>(), Policies());
 				add_overload(object(from_stack(L, -1)), name, fn);
 			}
 
@@ -302,10 +302,10 @@ namespace luabind {
 			constructor_registration()
 			{}
 
-			void register_(lua_State* L) const
+			void register_(lua_State* L, bool default_scope = false) const
 			{
 				using pointer = typename default_pointer<Pointer, Class>::type;
-				object fn = make_function(L, construct<Class, pointer, Signature>(), Signature(), Policies());
+				object fn = make_function(L, construct<Class, pointer, Signature>(), default_scope, Signature(), Policies());
 				add_overload(object(from_stack(L, -1)), "__init", fn);
 			}
 		};
@@ -338,54 +338,55 @@ namespace luabind {
 			{}
 
 			template <class F>
-			object make_get(lua_State* L, F const& f, std::false_type /*member_ptr*/) const
+			object make_get(lua_State* L, F const& f, bool default_scope, std::false_type /*member_ptr*/) const
 			{
-				return make_function(L, f, GetPolicies());
+				return make_function(L, f, default_scope, GetPolicies());
 			}
 
 			template <class T, class D>
-			object make_get(lua_State* L, D T::* mem_ptr, std::true_type /*member_ptr*/) const
+			object make_get(lua_State* L, D T::* mem_ptr, bool default_scope, std::true_type /*member_ptr*/) const
 			{
 				using result_type = typename reference_result<D>::type;
 				using get_signature = meta::type_list<result_type, Class const&>;
 				using injected_list = typename inject_dependency_policy< D, GetPolicies >::type;
 
-				return make_function(L, access_member_ptr<T, D, result_type>(mem_ptr), get_signature(), injected_list());
+				return make_function(L, access_member_ptr<T, D, result_type>(mem_ptr), default_scope, get_signature(), injected_list());
 			}
 
 			template <class F>
-			object make_set(lua_State* L, F const& f, std::false_type /*member_ptr*/) const
+			object make_set(lua_State* L, F const& f, bool default_scope, std::false_type /*member_ptr*/) const
 			{
-				return make_function(L, f, deduce_signature_t<F>(), SetPolicies());
+				return make_function(L, f, default_scope, deduce_signature_t<F>(), SetPolicies());
 			}
 
 			template <class T, class D>
-			object make_set(lua_State* L, D T::* mem_ptr, std::true_type /*member_ptr*/) const
+			object make_set(lua_State* L, D T::* mem_ptr, bool default_scope, std::true_type /*member_ptr*/) const
 			{
 				using argument_type = typename reference_argument<D>::type;
 				using signature_type = meta::type_list<void, Class&, argument_type>;
 
-				return make_function(L, access_member_ptr<T, D>(mem_ptr), signature_type(), SetPolicies());
+				return make_function(L, access_member_ptr<T, D>(mem_ptr), default_scope, signature_type(), SetPolicies());
 			}
 
 			// if a setter was given
 			template <class SetterType>
-			void register_aux(lua_State* L, object const& context, object const& get_, SetterType const&) const
+			void register_aux(lua_State* L, object const& context, object const& get_, SetterType const&, bool default_scope) const
 			{
-				context[name] = property(get_, make_set(L, set, std::is_member_object_pointer<Set>()));
+				context[name] = property(get_, make_set(L, set, default_scope, std::is_member_object_pointer<Set>()));
 			}
 
 			// if no setter was given
-			void register_aux(lua_State*, object const& context, object const& get_, null_type) const
+			void register_aux(lua_State*, object const& context, object const& get_, null_type, bool) const
 			{
 				context[name] = property(get_);
 			}
 
 			// register entry
-			void register_(lua_State* L) const
+			void register_(lua_State* L, bool default_scope = false) const
 			{
 				object context(from_stack(L, -1));
-				register_aux(L, context, make_get(L, get, std::is_member_object_pointer<Get>()), set);
+				register_aux(L, context, make_get(L, get, default_scope, std::is_member_object_pointer<Get>()),
+					set, default_scope);
 			}
 
 

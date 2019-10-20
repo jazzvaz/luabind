@@ -43,7 +43,7 @@ namespace luabind {
 			virtual ~registration();
 
 		protected:
-			virtual void register_(lua_State*) const = 0;
+			virtual void register_(lua_State*, bool default_scope = false) const = 0;
 
 		private:
 			friend struct ::luabind::scope;
@@ -66,7 +66,7 @@ namespace luabind {
 
 		scope& operator,(scope s);
 
-		void register_(lua_State* L) const;
+		void register_(lua_State* L, bool default_scope = false) const;
 
 	private:
 		detail::registration* m_chain;

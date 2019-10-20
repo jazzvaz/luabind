@@ -57,7 +57,7 @@ namespace luabind {
 		{
 			class_registration(char const* name);
 
-			void register_(lua_State* L) const;
+			void register_(lua_State* L, bool default_scope = false) const;
 
 			const char* m_name;
 
@@ -82,7 +82,7 @@ namespace luabind {
 			m_name = name;
 		}
 
-		void class_registration::register_(lua_State* L) const
+		void class_registration::register_(lua_State* L, bool /*default_scope = false*/) const
 		{
 			LUABIND_CHECK_STACK(L);
 
@@ -131,7 +131,7 @@ namespace luabind {
 
 			crep->get_default_table(L);
 			m_scope.register_(L);
-			m_default_members.register_(L);
+			m_default_members.register_(L, true);
 			lua_pop(L, 1);
 
 			crep->get_table(L);

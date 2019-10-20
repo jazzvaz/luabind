@@ -4,6 +4,7 @@
 
 #define LUABIND_BUILDING
 
+#include <luabind/function.hpp>
 #include <luabind/detail/object.hpp>
 #include <luabind/make_function.hpp>
 #include <luabind/detail/conversion_policies/conversion_policies.hpp>
@@ -45,14 +46,17 @@ namespace luabind {
 			// A pointer to this is used as a tag value to identify functions exported
 			// by luabind.
 			int function_tag = 0;
+			// same, but for non-default functions (not from m_default_members)
+			int function_tag_ndef = 0;
 
 		} // namespace unnamed
 
-		LUABIND_API bool is_luabind_function(lua_State* L, int index)
+		LUABIND_API bool is_luabind_function(lua_State* L, int index, bool allow_default /*= true*/)
 		{
 			if(!lua_getupvalue(L, index, 2))
 				return false;
-			bool result = lua_touserdata(L, -1) == &function_tag;
+			void* tag = lua_touserdata(L, -1);
+			bool result = tag == &function_tag && allow_default || tag == &function_tag_ndef;
 			lua_pop(L, 1);
 			return result;
 		}
@@ -88,14 +92,15 @@ namespace luabind {
 			context[name] = fn;
 		}
 
-		LUABIND_API object make_function_aux(lua_State* L, function_object* impl)
+		LUABIND_API object make_function_aux(lua_State* L, function_object* impl, bool default_scope /*= false*/)
 		{
 			void* storage = lua_newuserdata(L, sizeof(function_object*));
 			push_function_metatable(L);
 			*(function_object**)storage = impl;
 			lua_setmetatable(L, -2);
 
-			lua_pushlightuserdata(L, &function_tag);
+			void* tag = default_scope ? &function_tag : &function_tag_ndef;
+			lua_pushlightuserdata(L, tag);
 			lua_pushcclosure(L, impl->entry, 2);
 			stack_pop pop(L, 1);
 
