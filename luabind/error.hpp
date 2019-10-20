@@ -73,6 +73,10 @@ namespace luabind
 	};
 
 #else
+	LUABIND_API void set_call_error_break(bool enable);
+	LUABIND_API bool get_call_error_break();
+	LUABIND_API void set_cast_error_break(bool enable);
+	LUABIND_API bool get_cast_error_break();
 
 	LUABIND_API void set_error_callback(error_callback_fun e);
 	LUABIND_API void set_cast_failed_callback(cast_failed_callback_fun c);
