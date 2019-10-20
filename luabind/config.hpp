@@ -103,6 +103,7 @@ static_assert(false, "Do not define NDEBUG macros in DEBUG configuration");
 namespace luabind {
 
 	LUABIND_API void disable_super_deprecation();
+	LUABIND_API void set_custom_type_marking(bool enable);
 
 	namespace detail {
 		const int max_argument_count = 100;
