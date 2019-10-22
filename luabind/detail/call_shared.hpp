@@ -23,6 +23,8 @@
 #ifndef LUABIND_CALL_SHARED_HPP_INCLUDED
 #define LUABIND_CALL_SHARED_HPP_INCLUDED
 
+#include <luabind/typeid.hpp>
+
 namespace luabind {
 	namespace detail {
 
