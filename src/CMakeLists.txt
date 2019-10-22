@@ -25,7 +25,8 @@ set(LUABIND_SRCS
 	set_package_preload.cpp
 	stack_content_by_name.cpp
 	weak_ref.cpp
-	wrapper_base.cpp)
+	wrapper_base.cpp
+)
 
 set(LUABIND_API
 	../luabind/back_reference_fwd.hpp
@@ -144,43 +145,12 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
 	list(APPEND LUABIND_EXTRA_LIBS m)
 endif()
 
-add_library(luabind ${LUABIND_SRCS} ${LUABIND_API} ${LUABIND_DETAIL_API} ${LUABIND_DEFAULT_POLICIES} ${LUABIND_USER_POLICIES})
-target_link_libraries(luabind ${LUA_LIBRARIES} ${LUABIND_EXTRA_LIBS})
-
-set_property(TARGET luabind PROPERTY COMPILE_FLAGS ${CMAKE_SHARED_LIBRARY_C_FLAGS})
-set_property(TARGET luabind PROPERTY PROJECT_LABEL "LuaBind Library")
-
-set(ALLHEADERS ${LUABIND_API} ${LUABIND_DETAIL_API} PARENT_SCOPE)
-set(APIHEADERS ${LUABIND_API} PARENT_SCOPE)
-
-if(LUABIND_INSTALL)
-	if(NOT INCLUDE_DIR)
-		set(INCLUDE_DIR include)
-	endif()
-	if(NOT LIB_DIR)
-		set(LIB_DIR lib)
-	endif()
-	if(NOT ARCH_DIR)
-		set(ARCH_DIR lib)
-	endif()
-	if(NOT BIN_DIR)
-		set(BIN_DIR bin)
-	endif()
-	install(FILES ${LUABIND_API}
-		DESTINATION ${INCLUDE_DIR}/luabind
-		COMPONENT sdk)
-	install(FILES ${LUABIND_USER_POLICIES}
-		DESTINATION ${INCLUDE_DIR}/luabind
-		COMPONENT sdk)	
-	install(FILES ${LUABIND_DETAIL_API}
-		DESTINATION ${INCLUDE_DIR}/luabind/detail
-		COMPONENT sdk)
-	install(FILES ${LUABIND_DEFAULT_POLICIES}
-		DESTINATION ${INCLUDE_DIR}/luabind/detail/conversion_policies
-		COMPONENT sdk)
-	install(TARGETS luabind
-		EXPORT luabind
-		RUNTIME DESTINATION ${BIN_DIR} COMPONENT runtime
-		LIBRARY DESTINATION ${LIB_DIR} COMPONENT runtime
-		ARCHIVE DESTINATION ${ARCH_DIR} COMPONENT sdk)
+if(LUABIND_BUILD_SHARED)
+	message("Building shared library")
+	add_library(luabind SHARED ${LUABIND_SOURCES} ${LUABIND_API_HEADERS} ${LUABIND_DETAIL_API_HEADERS} ${LUABIND_DEFAULT_POLICIES_HEADERS} ${LUABIND_USER_POLICIES_HEADERS})
+	set_target_properties(luabind PROPERTIES PREFIX "")
+else()
+	message("Building static library")
+	add_library(luabind STATIC ${LUABIND_SRCS} ${LUABIND_API} ${LUABIND_DETAIL_API} ${LUABIND_DEFAULT_POLICIES} ${LUABIND_USER_POLICIES})
 endif()
+target_link_libraries(luabind ${LUA_LIBRARIES} ${LUABIND_EXTRA_LIBS})
