@@ -35,11 +35,7 @@ namespace luabind {
 
 			int call(lua_State* L, invoke_context& ctx) /*const*/
 			{
-#ifndef LUABIND_NO_INTERNAL_TAG_ARGUMENTS
-				return invoke(L, *this, ctx, f, Signature(), InjectorList());
-#else
 				return invoke<InjectorList, Signature>(L, *this, ctx, f);
-#endif
 			}
 
 			int format_signature(lua_State* L, char const* function, bool concat = true) const
@@ -52,11 +48,7 @@ namespace luabind {
 				bool exception_caught = false;
 
 				try {
-#ifndef LUABIND_NO_INTERNAL_TAG_ARGUMENTS
-					results = invoke(L, *impl, ctx, impl->f, Signature(), InjectorList());
-#else
 					results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
-#endif
 				}
 				catch(...) {
 					exception_caught = true;
@@ -81,11 +73,7 @@ namespace luabind {
 				bool exception_caught = invoke_defer(L, impl, ctx, results);
 				if(exception_caught) lua_error(L);
 # else
-#ifndef LUABIND_NO_INTERNAL_TAG_ARGUMENTS
-				results = invoke(L, *impl, ctx, impl->f, Signature(), InjectorList());
-#else
 				results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
-#endif
 # endif
 				if(!ctx) {
 					ctx.format_error(L, impl);

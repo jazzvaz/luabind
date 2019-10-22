@@ -106,9 +106,6 @@ static_assert(false, "Do not define NDEBUG macros in DEBUG configuration");
 # define __cdecl
 #endif
 
-// This switches between using tag arguments / structure specialization for code size tests
-#define LUABIND_NO_INTERNAL_TAG_ARGUMENTS
-
 namespace luabind {
 
 	LUABIND_API void disable_super_deprecation();
