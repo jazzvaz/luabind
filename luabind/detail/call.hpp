@@ -29,7 +29,7 @@ namespace luabind {
 			virtual ~function_object()
 			{}
 
-			virtual int call(lua_State* L, invoke_context& ctx) /* const */ = 0;
+			virtual int call(lua_State* L, invoke_context& ctx, int args) /* const */ = 0;
 			virtual int format_signature(lua_State* L, char const* function, bool concat = true) const = 0;
 
 			lua_CFunction entry;
@@ -307,12 +307,48 @@ namespace luabind {
 
 			static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f) {
 				int const arguments = lua_gettop(L);
+#ifdef LUABIND_PERMISSIVE_MODE
+				if (!self.next)
+				{
+					typename traits::argument_converter_tuple_type converter_tuple;
+					using struct_type = match_struct< typename traits::stack_index_list, typename traits::signature_list >;
+					ctx.best_score = struct_type::match(L, converter_tuple);
+					ctx.candidates[0] = &self;
+					ctx.candidate_index = 1;
+					return invoke(L, ctx, f, arguments, converter_tuple);
+				}
+#endif
+				return invoke_best_match(L, self, ctx, f, arguments);
+			}
+
+			template< typename TupleType >
+			static int invoke(lua_State* L, invoke_context& ctx, F& f, int args, TupleType& tuple)
+			{
+				int results = 0;
+
+				call_struct<
+					std::is_member_function_pointer<F>::value,
+					std::is_void<typename traits::result_type>::value,
+					typename traits::argument_index_list
+				>::call(L, f, tuple);
+
+				results = lua_gettop(L) - args;
+				if (has_call_policy<PolicyList, yield_policy>::value) {
+					results = lua_yield(L, results);
+				}
+				call_detail_new::policy_list_postcall < PolicyList, typename meta::push_front< typename traits::stack_index_list, meta::index<traits::arity> >::type >::postcall(L, results);
+
+				return results;
+			}
+
+			static int invoke_best_match(lua_State* L, function_object const& self, invoke_context& ctx, F& f, int args)
+			{
 				int score = no_match;
 
 				// Even match needs the tuple, since pointer_converters buffer the cast result
 				typename traits::argument_converter_tuple_type converter_tuple;
 
-				if(traits::arity == arguments) {
+				if(traits::arity == args) {
 					// Things to remember:
 					// 0 is the perfect match. match > 0 means that objects had to be casted, where the value
 					// is the total distance of all arguments to their given types (graph distance).
@@ -334,29 +370,24 @@ namespace luabind {
 
 				if(self.next)
 				{
-					results = self.next->call(L, ctx);
+					results = self.next->call(L, ctx, args);
 				}
 
 				if(score == ctx.best_score && ctx.candidate_index == 1)
 				{
-					call_struct<
-						std::is_member_function_pointer<F>::value,
-						std::is_void<typename traits::result_type>::value,
-						typename traits::argument_index_list
-					>::call(L, f, converter_tuple);
-
-					results = lua_gettop(L) - traits::arity;
-					if(has_call_policy<PolicyList, yield_policy>::value) {
-						results = lua_yield(L, results);
-					}
-
-					call_detail_new::policy_list_postcall < PolicyList, typename meta::push_front< typename traits::stack_index_list, meta::index<traits::arity> >::type >::postcall(L, results);
+					results = invoke(L, ctx, f, args, converter_tuple);
 				}
 
 				return results;
 			}
 
 		};
+
+		template< typename PolicyList, typename Signature, typename F>
+		inline int invoke_best_match(lua_State* L, function_object const& self, invoke_context& ctx, F& f, int args)
+		{
+			return invoke_struct<PolicyList, Signature, F>::invoke_best_match(L, self, ctx, f, args);
+		}
 
 		template< typename PolicyList, typename Signature, typename F>
 		inline int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f)

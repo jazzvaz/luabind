@@ -33,9 +33,9 @@ namespace luabind {
 				: function_object(&entry_point), f(f)
 			{}
 
-			int call(lua_State* L, invoke_context& ctx) /*const*/
+			int call(lua_State* L, invoke_context& ctx, int args) /*const*/
 			{
-				return invoke<InjectorList, Signature>(L, *this, ctx, f);
+				return invoke_best_match<InjectorList, Signature>(L, *this, ctx, f, args);
 			}
 
 			int format_signature(lua_State* L, char const* function, bool concat = true) const
@@ -75,10 +75,12 @@ namespace luabind {
 # else
 				results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
 # endif
+#ifndef LUABIND_PERMISSIVE_MODE
 				if(!ctx) {
 					ctx.format_error(L, impl);
 					lua_error(L);
 				}
+#endif
 
 				return results;
 			}

@@ -76,6 +76,8 @@ static_assert(false, "Do not define NDEBUG macros in DEBUG configuration");
 // LUABIND_PERMISSIVE_MODE
 // this define will enable the following features:
 // - native converter from number to <luabind::string> and <const char*>
+// - function calls with missing arguments are not treated as errors
+// - return value of lua function is converted to cpp without converter match check
 
 #ifdef LUABIND_DYNAMIC_LINK
 # if defined (_WIN32)
