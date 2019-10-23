@@ -111,6 +111,12 @@ namespace luabind
 				using type = ConverterPolicy;
 			};
 
+			template< unsigned int Index, typename ConverterPolicy, unsigned int Index2>
+			struct get_converter_policy< Index, converter_policy_injector< Index2, ConverterPolicy > >
+			{
+				using type = default_policy;
+			};
+
 			template< unsigned int Index >
 			struct get_converter_policy< Index, meta::type_list< > >
 			{
