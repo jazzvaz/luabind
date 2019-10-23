@@ -108,14 +108,9 @@ namespace luabind {
 
 			no_overload_tag operator, (no_overload_tag, int);
 
-			template<class T>
-			T* get_pointer(T const volatile*);
-
-			template<class T>
-			T* get_pointer(luabind::unique_ptr<T> const&);
-
-			template<class T>
-			T* get_pointer(std::shared_ptr<T> const&);
+			// required for unqualified name lookup inside impl for shared_ptr<T>
+			// (otherwise we would need to put it either in global or std namespace)
+			using luabind::get_pointer;
 
 			detail::has_get_pointer_::no_overload_tag
 				get_pointer(detail::has_get_pointer_::any);
