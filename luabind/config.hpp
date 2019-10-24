@@ -79,6 +79,12 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 // - function calls with missing arguments are not treated as errors
 // - return value of lua function is converted to cpp without converter match check
 
+// LUABIND_CUSTOM_ALLOCATOR
+// this define will make luabind use user provided luabind::allocator
+// instead of global new/delete operators. Keep in mind that Lua garbage collector
+// will use this custom allocator to deallocate adopted C++ objects, unless
+// they are referenced by a smart pointer with a custom deleter.
+
 #ifdef LUABIND_DYNAMIC_LINK
 # if defined (_WIN32)
 #  ifdef LUABIND_BUILDING

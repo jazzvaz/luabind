@@ -28,6 +28,7 @@
 
 namespace luabind
 {
+#ifdef LUABIND_CUSTOM_ALLOCATOR
 	using allocator_func = void* (__cdecl*)(void* context, void const* ptr, size_t size);
 	extern LUABIND_API allocator_func allocator;
 	extern LUABIND_API void* allocator_context;
@@ -39,14 +40,20 @@ namespace luabind
 			return allocator(allocator_context, ptr, size);
 		}
 	}
+#endif
 
 	template <typename T, typename... Args>
 	T* luabind_new(Args&&... args)
 	{
+#ifdef LUABIND_CUSTOM_ALLOCATOR
 		auto result = reinterpret_cast<T*>(detail::call_allocator(nullptr, sizeof(T)));
 		return new (result) T(std::forward<Args>(args)...);
+#else
+		return new T(std::forward<Args>(args)...);
+#endif
 	}
 
+#ifdef LUABIND_CUSTOM_ALLOCATOR
 	namespace detail
 	{
 		template <typename T>
@@ -75,15 +82,21 @@ namespace luabind
 			}
 		};
 	}
+#endif
 
 	template <typename T>
 	void luabind_delete(T*& pointer)
 	{
+#ifdef LUABIND_CUSTOM_ALLOCATOR
 		if (!pointer)
 			return;
 		detail::delete_helper<T, std::is_polymorphic<T>::value>::apply(pointer);
+#else
+		delete pointer;
+#endif
 	}
 
+#ifdef LUABIND_CUSTOM_ALLOCATOR
 	template <typename T>
 	struct luabind_deleter
 	{
@@ -92,6 +105,10 @@ namespace luabind
 			luabind_delete(ptr);
 		}
 	};
+#else
+	template <typename T>
+	using luabind_deleter = std::default_delete<T>;
+#endif
 }
 
 #endif // LUABIND_MEMORY_HPP_INCLUDED

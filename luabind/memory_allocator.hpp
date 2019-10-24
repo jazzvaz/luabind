@@ -23,10 +23,15 @@
 #ifndef LUABIND_MEMORY_ALLOCATOR_HPP_INCLUDED
 #define LUABIND_MEMORY_ALLOCATOR_HPP_INCLUDED
 
+#include <luabind/config.hpp>
 #include <luabind/memory.hpp>
 
 namespace luabind
 {
+#ifndef LUABIND_CUSTOM_ALLOCATOR
+	template <class T>
+	using memory_allocator = std::allocator<T>;
+#else
 	template <class T>
 	class memory_allocator
 	{
@@ -111,6 +116,7 @@ namespace luabind
 	{
 		return false;
 	}
+#endif
 }
 
 #endif // LUABIND_MEMORY_ALLOCATOR_HPP_INCLUDED
