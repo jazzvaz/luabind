@@ -24,7 +24,7 @@
 #define LUABIND_CONFIG_HPP_INCLUDED
 
 #if defined(DEBUG) && defined(NDEBUG)
-static_assert(false, "Do not define NDEBUG macros in DEBUG configuration");
+static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 #endif
 
 // the maximum number of arguments of functions that's
