@@ -47,7 +47,7 @@ struct policies_test_class
 	~policies_test_class()
 	{ --count; }
 
-	std::string name_;
+	luabind::string name_;
 
 	policies_test_class* make(const char* name) const
 	{
@@ -143,33 +143,33 @@ void test_main(lua_State* L)
 	module(L)
 	[
 		class_<test_t>("test_t")
-		.def("make", &test_t::make, adopt_policy<0>())
-		.def("take", &test_t::take, adopt_policy<2>())
+		.def("make", &test_t::make, policy::adopt<0>())
+		.def("take", &test_t::take, policy::adopt<2>())
 	];
 	
 	module(L)
 	[
 		class_<policies_test_class>("test")
 			.def(constructor<>())
-			.def("member_pure_out_val", &policies_test_class::member_pure_out_val, pure_out_value<3>())
-			.def("member_out_val", &policies_test_class::member_out_val, out_value<3>())
-			.def("member_secret", &policies_test_class::member_secret, discard_result())
-			.def("f", &policies_test_class::f, adopt_policy<2>())
-			.def("make", &policies_test_class::make, adopt_policy<0>())
-			.def("internal_ref", &policies_test_class::internal_ref, dependency_policy<0,1>())
-			.def("self_ref", &policies_test_class::self_ref, return_reference_to<1>()),
+			.def("member_pure_out_val", &policies_test_class::member_pure_out_val, policy::pure_out_value<3>())
+			.def("member_out_val", &policies_test_class::member_out_val, policy::out_value<3>())
+			.def("member_secret", &policies_test_class::member_secret, policy::discard_result())
+			.def("f", &policies_test_class::f, policy::adopt<2>())
+			.def("make", &policies_test_class::make, policy::adopt<0>())
+			.def("internal_ref", &policies_test_class::internal_ref, policy::dependency<0,1>())
+			.def("self_ref", &policies_test_class::self_ref, policy::return_reference_to<1>()),
 
-		def("out_val", &out_val, pure_out_value<1>()),
-		def("copy_val", &copy_val, copy_policy<0>()),
-		def("copy_val_const", &copy_val_const, copy_policy<0>()),
-		def("secret", &secret, discard_result()),
+		def("out_val", &out_val, policy::pure_out_value<1>()),
+		def("copy_val", &copy_val, policy::copy<0>()),
+		def("copy_val_const", &copy_val_const, policy::copy<0>()),
+		def("secret", &secret, policy::discard_result()),
 
 		def("function_test1", &function_test1),
 		def("function_test2", &function_test2),
 
 		class_<MI1>("mi1")
 			.def(constructor<>())
-			.def("add",&MI1::add,adopt_policy<2>()),
+			.def("add",&MI1::add, policy::adopt<2>()),
 
 		class_<MI2,MI1,default_holder,MI2W>("mi2")
 			.def(constructor<>())

@@ -29,7 +29,7 @@ struct Base_wrap : Base, luabind::wrap_base
 
 void destroy(Base* p)
 {
-    delete p;
+	luabind::luabind_delete(p);
 }
 
 Base* adopted = 0;
@@ -54,7 +54,7 @@ void test_main(lua_State* L)
 		class_<Base, no_bases, default_holder, Base_wrap>("Base")
 			.def(constructor<>()),
 
-		def("take_ownership", &take_ownership, adopt_policy<1>()),
+		def("take_ownership", &take_ownership, policy::adopt<1>()),
         def("not_null", &not_null)
     ];
 
@@ -136,7 +136,7 @@ void test_main(lua_State* L)
 
     TEST_CHECK(Base::count == 2);
 
-    delete adopted;
+	luabind_delete(adopted);
 
     DOSTRING(L,
         "collectgarbage('collect')\n"
@@ -160,7 +160,7 @@ void test_main(lua_State* L)
 
     TEST_CHECK(Base::count == 2);
 
-    delete adopted;
+	luabind_delete(adopted);
 
     DOSTRING(L,
         "collectgarbage('collect')\n"
@@ -175,7 +175,7 @@ void test_main(lua_State* L)
         "not_null(x)\n"
     );
 
-    delete adopted;
+	luabind_delete(adopted);
 
     DOSTRING(L,
         "x = nil\n"

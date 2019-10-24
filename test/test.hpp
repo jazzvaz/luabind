@@ -54,7 +54,7 @@ void report_failure(char const* str, char const* file, int line);
         TEST_REPORT_AUX("TEST_CHECK failed: \"" #x "\"", __FILE__, __LINE__)
 
 #define TEST_ERROR(x) \
-	TEST_REPORT_AUX((std::string("ERROR: \"") + x + "\"").c_str(), __FILE__, __LINE__)
+	TEST_REPORT_AUX((luabind::string("ERROR: \"") + x + "\"").c_str(), __FILE__, __LINE__)
 
 #define TEST_NOTHROW(x) \
 	try \
@@ -107,7 +107,7 @@ int counted_type<T>::count = 0;
             TEST_ERROR(e.what());				\
         }                                       \
     }                                           \
-    catch (std::string const& s)                \
+    catch (luabind::string const& s)            \
     {                                           \
         if (s != expected)                      \
             TEST_ERROR(s.c_str());              \
@@ -124,7 +124,7 @@ int counted_type<T>::count = 0;
     {                                           \
         TEST_ERROR(e.what());					\
     }                                           \
-    catch (std::string const& s)                \
+    catch (luabind::string const& s)            \
     {                                           \
         TEST_ERROR(s.c_str());                  \
     }                                           \

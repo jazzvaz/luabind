@@ -305,7 +305,7 @@ void test_main(lua_State* L)
 	// test the registry
 	object reg = registry(L);
 	reg["__a"] = "foobar";
-	TEST_CHECK(object_cast<std::string>(registry(L)["__a"]) == "foobar");
+	TEST_CHECK(object_cast<luabind::string>(registry(L)["__a"]) == "foobar");
 	
 	DOSTRING(L,
 		"t = 2\n"
@@ -331,7 +331,7 @@ void test_main(lua_State* L)
 	obj = luabind::object();
 
 	// call the function and tell lua to adopt the pointer passed as first argument
-	test_param_policies.call<adopt_policy<2>>(5, new test_param());
+	test_param_policies.call<policy::adopt<2>>(5, luabind_new<test_param>());
 
 	DOSTRING(L, "assert(test_match(7) == 1)");
 	DOSTRING(L, "assert(test_match('oo') == 0)");
@@ -361,9 +361,9 @@ void test_main(lua_State* L)
 	g["temp"] = 6;
 	TEST_CHECK(to_string(g["temp"]) == "6");
 
-	TEST_CHECK(object_cast<std::string>(g["glob"]) == "teststring");
-	TEST_CHECK(object_cast<std::string>(gettable(g, "glob")) == "teststring");
-	TEST_CHECK(object_cast<std::string>(rawget(g, "glob")) == "teststring");
+	TEST_CHECK(object_cast<luabind::string>(g["glob"]) == "teststring");
+	TEST_CHECK(object_cast<luabind::string>(gettable(g, "glob")) == "teststring");
+	TEST_CHECK(object_cast<luabind::string>(rawget(g, "glob")) == "teststring");
 
 	object t = newtable(L);
 	TEST_CHECK(iterator(t) == iterator());
@@ -371,9 +371,9 @@ void test_main(lua_State* L)
 
 	t["foo"] = "bar";
 
-	TEST_CHECK(object_cast<std::string>(t["foo"]) == "bar");
-	TEST_CHECK(object_cast<std::string>(*iterator(t)) == "bar");
-	TEST_CHECK(object_cast<std::string>(*raw_iterator(t)) == "bar");
+	TEST_CHECK(object_cast<luabind::string>(t["foo"]) == "bar");
+	TEST_CHECK(object_cast<luabind::string>(*iterator(t)) == "bar");
+	TEST_CHECK(object_cast<luabind::string>(*raw_iterator(t)) == "bar");
 
 	t["foo"] = nil; // luabind::nil_type
 

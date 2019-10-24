@@ -99,7 +99,7 @@ void g4(ptr<X> const*)
 
 ptr<X> get()
 {
-    return ptr<X>(new X);
+    return ptr<X>(luabind::luabind_new<X>());
 }
 
 void test_main(lua_State* L)

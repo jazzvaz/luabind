@@ -33,17 +33,17 @@ struct simple_class : counted_type<simple_class>
 	}
 
 	void f(int, int) {}
-	void f(std::string a)
+	void f(luabind::string a)
 	{
 		const char str[] = "foo\0bar";
-		if (a == std::string(str, sizeof(str)-1))
+		if (a == luabind::string(str, sizeof(str)-1))
 			feedback = 2;
 	}
 
-	std::string g()
+	luabind::string g()
 	{
 		const char str[] = "foo\0bar";
-		return std::string(str, sizeof(str)-1);
+		return luabind::string(str, sizeof(str)-1);
 	}
 
 };
@@ -58,7 +58,7 @@ void test_main(lua_State* L)
 
 	using f_overload1 = void(simple_class::*)();
 	using f_overload2 = void(simple_class::*)(int, int);
-	using f_overload3 = void(simple_class::*)(std::string);
+	using f_overload3 = void(simple_class::*)(luabind::string);
 
     module(L)
     [
@@ -94,9 +94,10 @@ void test_main(lua_State* L)
 
     DOSTRING_EXPECTED(L, "a:f('incorrect', 'parameters')",
         "No matching overload found, candidates:\n"
-		"void f(simple&,std::string)\n"
+		"void f(simple&,luabind::string)\n"
 		"void f(simple&,int,int)\n"
-		"void f(simple&)");
+		"void f(simple&)\n"
+		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
     DOSTRING(L, "if a:g() == \"foo\\0bar\" then a:f() end");
     TEST_CHECK(simple_class::feedback == 1);

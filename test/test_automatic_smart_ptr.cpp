@@ -44,7 +44,7 @@ struct ptr
 
     ~ptr()
     {
-        delete p;
+		luabind::luabind_delete(p);
     }
 
     X* p;
@@ -55,24 +55,31 @@ X* get_pointer(ptr const& p)
     return p.p;
 }
 
-std::unique_ptr<X> make1()
+luabind::unique_ptr<X> make1()
 {
-    return std::unique_ptr<X>(new X(1));
+	return luabind::unique_ptr<X>(luabind::luabind_new<X>(1));
 }
 
 std::shared_ptr<X> make2()
 {
-    return std::shared_ptr<X>(new X(2));
+	return std::shared_ptr<X>(luabind::luabind_new<X>(2), luabind::luabind_delete<X>);
 }
 
 ptr make3()
 {
-    return ptr(new X(3));
+	return ptr(luabind::luabind_new<X>(3));
 }
 
 void test_main(lua_State* L)
 {
     using namespace luabind;
+
+	static_assert(detail::has_get_pointer<luabind::unique_ptr<X>>::value,
+		"missing get_pointer function for luabind::unique_ptr<X>");
+	static_assert(detail::has_get_pointer<std::shared_ptr<X>>::value,
+		"missing get_pointer function for std::shared_ptr<X>");
+	static_assert(detail::has_get_pointer<ptr>::value,
+		"missing get_pointer function for ptr");
 
     module(L) [
         class_<X>("X")

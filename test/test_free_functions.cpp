@@ -44,17 +44,17 @@ int f(int x, int y)
     return x + y;
 }
 
-int string_length(std::string v)
+int string_length(luabind::string v)
 {
 	return v.length();
 }
 
 base* create_base()
 {
-    return new base();
+    return luabind::luabind_new<base>();
 }
 
-void test_value_converter(const std::string str)
+void test_value_converter(const luabind::string str)
 {
     TEST_CHECK(str == "converted string");
 }
@@ -100,7 +100,7 @@ void test_main(lua_State* L)
 
         def("f", (int(*)(int)) &f),
         def("f", (int(*)(int, int)) &f),
-        def("create", &create_base, adopt_policy<0>()),
+        def("create", &create_base, policy::adopt<0>()),
 		def("string_length", &string_length),
         def("test_value_converter", &test_value_converter),
         def("test_pointer_converter", &test_pointer_converter)
@@ -122,13 +122,13 @@ void test_main(lua_State* L)
 //    DOSTRING(L, "set_functor(nil)");
 
     DOSTRING(L, "function lua_create() return create() end");
-    base* ptr = call_function<base*,adopt_policy<0>>(L, "lua_create");
-    delete ptr;
+    base* ptr = call_function<base*, policy::adopt<0>>(L, "lua_create");
+    luabind_delete(ptr);
 
 	int Arg0=1;
 	TEST_CHECK(call_function<int>(L, "f", Arg0)==2);
 
-	std::string Arg1="lua means moon";
+	luabind::string Arg1="lua means moon";
 	TEST_CHECK(call_function<int>(L, "string_length", Arg1)==14);
 
 	double Arg2=2;
@@ -140,7 +140,8 @@ void test_main(lua_State* L)
     DOSTRING_EXPECTED(L, "f('incorrect', 'parameters')",
         "No matching overload found, candidates:\n"
         "int f(int,int)\n"
-        "int f(int)");
+        "int f(int)\n"
+		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
 
 	DOSTRING(L, "function failing_fun() error('expected error message') end");
@@ -152,8 +153,8 @@ void test_main(lua_State* L)
     }
     catch(luabind::error const& e)
     {
-        if (std::string("[string \"function failing_fun() error('expected error ...\"]:1: expected error message") != e.what())
-        if (std::string("[string \"function failing_fun() error('expected "
+        if (luabind::string("[string \"function failing_fun() error('expected error ...\"]:1: expected error message") != e.what())
+        if (luabind::string("[string \"function failing_fun() error('expected "
 #if LUA_VERSION_NUM >= 502
             "error ..."
 #else

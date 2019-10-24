@@ -29,14 +29,14 @@ using namespace luabind;
 struct abstract
 {
     virtual ~abstract() {}
-    virtual std::string hello() = 0;
+    virtual luabind::string hello() = 0;
 }; 
 
 COUNTER_GUARD(abstract);
 
 struct concrete : abstract
 {
-    std::string hello()
+	luabind::string hello()
     {
         return "test string";
     }
@@ -44,9 +44,9 @@ struct concrete : abstract
 
 struct abstract_wrap : abstract, wrap_base
 {
-    std::string hello()
+	luabind::string hello()
     {
-        return call_member<std::string>(this, "hello");
+        return call_member<luabind::string>(this, "hello");
     }
 
     static void default_hello(abstract const&)
@@ -55,7 +55,7 @@ struct abstract_wrap : abstract, wrap_base
     }
 };
 
-std::string call_hello(abstract& a)
+luabind::string call_hello(abstract& a)
 {
     return a.hello();
 }
@@ -89,11 +89,11 @@ void test_main(lua_State* L)
     DOSTRING_EXPECTED(L,
         "x = abstract()\n"
         "x:hello()\n"
-      , "std::runtime_error: 'Attempt to call nonexistent function'");
+      , "std::runtime_error: 'Attempt to call nonexistent function: hello'");
 
     DOSTRING_EXPECTED(L, 
         "call_hello(x)\n"
-      , "std::runtime_error: 'Attempt to call nonexistent function'");
+      , "std::runtime_error: 'Attempt to call nonexistent function: hello'");
     
     DOSTRING(L,
         "class 'concrete' (abstract)\n"
@@ -114,7 +114,7 @@ void test_main(lua_State* L)
     DOSTRING(L,
         "x = abstract()\n"
         "x.hello = function(self) return 'hello from instance' end\n"
-        "print(x.hello)\n"
+		"assert(type(x.hello) == 'function')\n"
         "assert(x:hello() == 'hello from instance')\n"
         "assert(call_hello(x) == 'hello from instance')\n"
     );

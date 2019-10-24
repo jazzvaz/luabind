@@ -43,50 +43,50 @@ struct A : counted_type<A>
 {
     virtual ~A() {}
 
-    virtual std::string f()
+    virtual luabind::string f()
     { return "A:f()"; }
 
-    virtual std::string g() const
+    virtual luabind::string g() const
     { return "A:g()"; }
 };
 
 struct A_wrap : A, wrap_base
 {
-    std::string f()
+    luabind::string f()
     { 
-        return call_member<std::string>(this, "f"); 
+        return call_member<luabind::string>(this, "f"); 
     }
 
-    static std::string default_f(A* p)
+    static luabind::string default_f(A* p)
     { return p->A::f(); }
 
-    std::string g() const
+    luabind::string g() const
     {
-        return call_member<std::string>(this, "g");
+        return call_member<luabind::string>(this, "g");
     }
 
-    static std::string default_g(A const* p)
+    static luabind::string default_g(A const* p)
     { return p->A::g(); }
 };
 
 struct B : A
 {
-    virtual std::string f()
+    virtual luabind::string f()
     { return "B:f()"; }
 };
 
 struct B_wrap : B, wrap_base
 {
-    virtual std::string f()
-    { return call_member<std::string>(this, "f"); }
+    virtual luabind::string f()
+    { return call_member<luabind::string>(this, "f"); }
 
-    static std::string default_f(B* p)
+    static luabind::string default_f(B* p)
     { return p->B::f(); }
 
-    virtual std::string g() const
-    { return call_member<std::string>(this, "g"); }
+    virtual luabind::string g() const
+    { return call_member<luabind::string>(this, "g"); }
 
-    static std::string default_g(B const* p)
+    static luabind::string default_g(B const* p)
     { return p->B::g(); }
 };
 
@@ -95,31 +95,31 @@ struct base : counted_type<base>
 {
     virtual ~base() {}
 
-    virtual std::string f()
+    virtual luabind::string f()
     {
         return "base:f()";
     }
 
-    virtual std::string g() const { return ""; }
+    virtual luabind::string g() const { return ""; }
 };
 
 base* filter(base* p) { return p; }
 
 struct base_wrap : base, wrap_base
 {
-    virtual std::string f()
+    virtual luabind::string f()
     {
-		return call_member<std::string>(this, "f");
+		return call_member<luabind::string>(this, "f");
     }
 
-    static std::string default_f(base* p)
+    static luabind::string default_f(base* p)
     {
         return p->base::f();
     }
 
-	virtual std::string g() const
+	virtual luabind::string g() const
 	{
-		return call_member<std::string>(this, "g");
+		return call_member<luabind::string>(this, "g");
 	}
 };
 
@@ -238,7 +238,7 @@ void test_main(lua_State* L)
 		try { call_function<int>(L, "gen_error"); }
 		catch (luabind::error const& e)
 		{
-            bool result(e.what() == std::string("[string \"function "
+            bool result(e.what() == luabind::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
 			TEST_CHECK(result);
 		}
@@ -258,7 +258,7 @@ void test_main(lua_State* L)
 		catch (luabind::error const& e)
 		{
             bool result(
-                e.what() == std::string("[string \"function "
+                e.what() == luabind::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
 			TEST_CHECK(result);
 		}
@@ -267,11 +267,11 @@ void test_main(lua_State* L)
 	{
 		LUABIND_CHECK_STACK(L);
 
-		try { call_function<void, adopt_policy<0>>(L, "gen_error"); }
+		try { call_function<void, policy::adopt<0>>(L, "gen_error"); }
 		catch (luabind::error const& e)
 		{
             bool result(
-                e.what() == std::string("[string \"function "
+                e.what() == luabind::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
 			TEST_CHECK(result);
 		}
@@ -279,7 +279,7 @@ void test_main(lua_State* L)
 
 #endif
 	
-	base* ptr;
+	base* ptr = nullptr;
 	{
 		LUABIND_CHECK_STACK(L);
 
@@ -298,13 +298,13 @@ void test_main(lua_State* L)
 			);
 	}
 
-	std::unique_ptr<base> own_ptr;
+	luabind::unique_ptr<base> own_ptr;
 	{
 		LUABIND_CHECK_STACK(L);
 
 		TEST_NOTHROW(
-		    own_ptr = std::unique_ptr<base>(
-                call_function<base*,adopt_policy<0>>(L, "make_derived"))
+		    own_ptr = luabind::unique_ptr<base>(
+                call_function<base*, policy::adopt<0>>(L, "make_derived"))
 			);
 	}
 
@@ -320,18 +320,18 @@ void test_main(lua_State* L)
     TEST_NOTHROW(
         TEST_CHECK(own_ptr->f() == "derived:f() : base:f()")
     );
-	own_ptr = std::unique_ptr<base>();
+	own_ptr = luabind::unique_ptr<base>();
 
 	// test virtual functions that are not overridden by lua
     TEST_NOTHROW(
-        own_ptr = std::unique_ptr<base>(
-            call_function<base*,adopt_policy<0>>(L, "make_empty_derived"))
+        own_ptr = luabind::unique_ptr<base>(
+            call_function<base*, policy::adopt<0>>(L, "make_empty_derived"))
         );
     TEST_NOTHROW(
         TEST_CHECK(own_ptr->f() == "base:f()")
 	);
     TEST_NOTHROW(
-        (call_function<void,adopt_policy<1>>(L, "adopt_ptr", own_ptr.get()))
+        (call_function<void, policy::adopt<1>>(L, "adopt_ptr", own_ptr.get()))
     );
 	own_ptr.release();
 

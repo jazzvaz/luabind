@@ -107,7 +107,7 @@ void test_main(lua_State* L)
 
     DOSTRING(L, "function lua_create() return create() end");
     base* ptr = call_function<base*>(L, "lua_create") [ adopt(result) ];
-    delete ptr;
+    luabind_delete(ptr);
 
 #if !(BOOST_MSVC < 1300)
     DOSTRING(L, "test_value_converter('converted string')");
@@ -117,7 +117,8 @@ void test_main(lua_State* L)
     DOSTRING_EXPECTED(L, "f('incorrect', 'parameters')",
         "No matching overload found, candidates:\n"
         "int f(int,int)\n"
-        "int f(int)");
+        "int f(int)\n"
+		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
 
     DOSTRING(L, "function failing_fun() error('expected error message') end");
@@ -128,7 +129,7 @@ void test_main(lua_State* L)
     }
     catch(luabind::error const& e)
     {
-        if (std::string("[string \"function failing_fun() error('expected "
+        if (luabind::string("[string \"function failing_fun() error('expected "
             "erro...\"]:1: expected error message") != lua_tostring(L, -1))
         {
             TEST_ERROR("function failed with unexpected error message");

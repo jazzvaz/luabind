@@ -41,14 +41,14 @@ struct Unregistered : Base
     {}
 };
 
-std::unique_ptr<Base> make_derived()
+luabind::unique_ptr<Base> make_derived()
 {
-    return std::unique_ptr<Base>(new Derived);
+    return luabind::unique_ptr<Base>(luabind::luabind_new<Derived>());
 }
 
-std::unique_ptr<Base> make_unregistered()
+luabind::unique_ptr<Base> make_unregistered()
 {
-    return std::unique_ptr<Base>(new Unregistered);
+    return luabind::unique_ptr<Base>(luabind::luabind_new<Unregistered>());
 }
 
 void test_main(lua_State* L)

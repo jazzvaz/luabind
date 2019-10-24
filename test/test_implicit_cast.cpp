@@ -56,9 +56,8 @@ void func(const char_pointer_convertable& /*f*/)
 {
 }
 
-void not_convertable(std::shared_ptr<A>)
+void convert(std::shared_ptr<A>)
 {
-	TEST_CHECK(false);
 }
 
 int f(int a)
@@ -104,7 +103,7 @@ void test_main(lua_State* L)
 		def("enum_by_const_ref", &enum_by_const_ref),
 
 		def("func", &func),
-		def("no_convert", &not_convertable),
+		def("convert", &convert),
 		def("f", &f)
 		];
 
@@ -126,20 +125,15 @@ void test_main(lua_State* L)
 	DOSTRING(L, "assert(enum_by_const_ref(LBENUM.VAL1) == LBENUM.VAL1)");
 	DOSTRING(L, "assert(enum_by_const_ref(LBENUM.VAL2) == LBENUM.VAL2)");
 
-	// Why exactly would a not be convertible to a shared_ptr? It's a reference type and the shared_ptr extends its lifetime
-/*
-	DOSTRING_EXPECTED(L,
+	DOSTRING(L,
 		"a = A()\n"
-		"no_convert(a)",
-		("No matching overload found, candidates:\n"
-		"void no_convert(custom ["
-		+ std::string(typeid(std::shared_ptr<A>).name()) + "])").c_str());
-*/
+		"convert(a)");
 
 	DOSTRING_EXPECTED(L,
 		"a = nil\n"
 		"f(a)",
 		"No matching overload found, candidates:\n"
-		"int f(int)");
+		"int f(int)\n"
+		"Passed arguments [1]: nil (nil)\n");
 }
 

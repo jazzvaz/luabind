@@ -63,7 +63,7 @@ float operator%(operator_tester const& /*lhs*/, operator_tester const& /*rhs*/)
 	return 15.f;
 }
 
-std::string operator*(operator_tester const&, int /*v*/)
+luabind::string operator*(operator_tester const&, int /*v*/)
 {
 	return "(operator_tester, int) overload";
 }

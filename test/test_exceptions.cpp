@@ -78,7 +78,8 @@ void test_main(lua_State* L)
         "void __init(luabind::argument const&,int,int,int)\n"
         "void __init(luabind::argument const&,int,int)\n"
         "void __init(luabind::argument const&,int)\n"
-        "void __init(luabind::argument const&)");
+        "void __init(luabind::argument const&)\n"
+		"Passed arguments [3]: string ('incorrect'), string ('parameters'), string ('constructor')\n");
 
     const int end_count = ex::count;
     TEST_CHECK( start_count == end_count );

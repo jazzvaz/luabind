@@ -56,9 +56,31 @@ private:
 	int m_top;
 };
 
+#ifdef LUABIND_CUSTOM_ALLOCATOR
+static void* __cdecl luabind_allocator(void* context, const void* pointer, size_t const size)
+{
+	if (!size)
+	{
+		void* nc_ptr = const_cast<void*>(pointer);
+		free(nc_ptr);
+		return nullptr;
+	}
+	if (!pointer)
+	{
+		return malloc(size);
+	}
+	void* nc_ptr = const_cast<void*>(pointer);
+	return realloc(nc_ptr, size);
+}
+#endif
+
 lua_state::lua_state()
 	: m_state(luaL_newstate())
 {
+#ifdef LUABIND_CUSTOM_ALLOCATOR
+	luabind::allocator = &luabind_allocator;
+	luabind::allocator_context = nullptr;
+#endif
 	luaopen_base(m_state);
 #if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM >= 501
 	// lua 5.1 or newer
@@ -97,14 +119,14 @@ void dostring(lua_State* state, char const* str)
 
 	if(luaL_loadbuffer(state, str, std::strlen(str), str))
 	{
-		std::string err(lua_tostring(state, -1));
+		luabind::string err(lua_tostring(state, -1));
 		lua_pop(state, 2);
 		throw err;
 	}
 
 	if(lua_pcall(state, 0, 0, -2))
 	{
-		std::string err(lua_tostring(state, -1));
+		luabind::string err(lua_tostring(state, -1));
 		lua_pop(state, 2);
 		throw err;
 	}

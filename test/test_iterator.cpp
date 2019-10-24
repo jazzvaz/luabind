@@ -83,7 +83,7 @@ void test_main(lua_State* L)
     [
         class_<cls>("cls")
           .def(constructor<>())
-          .def_readonly("iterable", &cls::iterable, return_stl_iterator())
+          .def_readonly("iterable", &cls::iterable, policy::return_stl_iterator())
     ];
 
     DOSTRING(L,

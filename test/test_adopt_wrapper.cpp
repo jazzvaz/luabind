@@ -17,12 +17,12 @@ struct X_wrap : X, luabind::wrap_base
 
 X* make()
 {
-    return new X;
+    return luabind::luabind_new<X>();
 }
 
 void take(X* p)
 {
-    delete p;
+	luabind::luabind_delete(p);
 }
 
 void test_main(lua_State* L)
@@ -31,8 +31,8 @@ void test_main(lua_State* L)
 
     module(L) [
         class_<X, no_bases, X_wrap>("X"),
-        def("make", &make, adopt_policy<0>()),
-        def("take", &take, adopt_policy<1>())
+        def("make", &make, policy::adopt<0>()),
+        def("take", &take, policy::adopt<1>())
     ];
 
     DOSTRING(L,

@@ -32,13 +32,15 @@ void test_main(lua_State* L)
     DOSTRING_EXPECTED(L,
         "f(1)\n",
         "No matching overload found, candidates:\n"
-        "void f(table const&)"
+        "void f(table const&)\n"
+		"Passed arguments [1]: number (1)\n"
     );
 
     DOSTRING_EXPECTED(L,
         "g(1)\n",
         "No matching overload found, candidates:\n"
-        "void g(table const&)"
+        "void g(table const&)\n"
+		"Passed arguments [1]: number (1)\n"
     );
 }
 

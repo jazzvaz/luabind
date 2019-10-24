@@ -45,7 +45,7 @@ struct property_test : counted_type<property_test>
     property_test(): o(6), c_ref(&c) {}
 	 ~property_test() { c.a = 0; }
 
-    std::string str_;
+    luabind::string str_;
     int a_;
     float o;
     signed char b;

@@ -55,7 +55,7 @@ void test_main(lua_State* L)
 	[
 		class_<test_class>("test")
 			.def(constructor<>())
-			.def("f", &test_class::f, yield())
+			.def("f", &test_class::f, policy::yield())
 	];
 
 	DOSTRING(L,
