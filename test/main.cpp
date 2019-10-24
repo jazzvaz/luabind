@@ -57,20 +57,49 @@ private:
 };
 
 #ifdef LUABIND_CUSTOM_ALLOCATOR
+#include <algorithm>
+#include <iterator>
+
+struct la_tag
+{
+	static const char ref_data[16];
+	char data[16];
+
+	void init()
+	{
+		std::copy(std::begin(ref_data), std::end(ref_data), std::begin(data));
+	}
+
+	bool verify()
+	{
+		return std::equal(std::begin(ref_data), std::end(ref_data), std::begin(data));
+	}
+};
+
+const char la_tag::ref_data[16] = " [luabind_mem] ";
+
 static void* __cdecl luabind_allocator(void* context, const void* pointer, size_t const size)
 {
 	if (!size)
 	{
 		void* nc_ptr = const_cast<void*>(pointer);
-		free(nc_ptr);
+		la_tag* tag = reinterpret_cast<la_tag*>(reinterpret_cast<char*>(nc_ptr) - sizeof(la_tag));
+		if (!tag->verify())
+			TEST_ERROR("luabind::allocator: trying to deallocate unrecognized memory block");
+		free(tag);
 		return nullptr;
 	}
 	if (!pointer)
 	{
-		return malloc(size);
+		la_tag* tag = reinterpret_cast<la_tag*>(malloc(size + sizeof(la_tag)));
+		tag->init();
+		return reinterpret_cast<char*>(tag) + sizeof(la_tag);
 	}
 	void* nc_ptr = const_cast<void*>(pointer);
-	return realloc(nc_ptr, size);
+	la_tag* tag = reinterpret_cast<la_tag*>(reinterpret_cast<char*>(nc_ptr) - sizeof(la_tag));
+	if (!tag->verify())
+		TEST_ERROR("luabind::allocator: trying to reallocate unrecognized memory block");
+	return realloc(tag, size + sizeof(la_tag));
 }
 #endif
 
