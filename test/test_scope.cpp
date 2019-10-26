@@ -142,6 +142,7 @@ void test_main(lua_State* L)
 	DOSTRING(L, "assert(test.inner.h() == 6)");
 
 	globals(L)["test_object"] = test_obj;
+	DOSTRING(L, "assert(not inner)");
 	DOSTRING(L, "assert(test_object.inner.h() == 6)");
 
 	DOSTRING(L, "assert(not test_class_unnamed)");
