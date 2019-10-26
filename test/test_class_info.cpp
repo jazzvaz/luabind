@@ -6,6 +6,9 @@
 #include <luabind/luabind.hpp>
 #include <luabind/class_info.hpp>
 
+struct private_struct
+{};
+
 struct X
 {
     void f()
@@ -13,6 +16,9 @@ struct X
 
     int x;
     int y;
+
+	void take_private(private_struct)
+	{}
 };
 
 struct unnamed
@@ -34,7 +40,8 @@ void test_main(lua_State* L)
             .def(constructor<>())
             .def("f", &X::f)
             .def_readonly("x", &X::x)
-            .def_readonly("y", &X::y),
+            .def_readonly("y", &X::y)
+			.def("take_private", &X::take_private),
 
 		class_<unnamed>()
 			.def(constructor<>()),
@@ -73,6 +80,12 @@ void test_main(lua_State* L)
         "assert(info.attributes[1] == 'y')\n"
         "assert(info.attributes[2] == 'x')\n"
     );
+
+	DOSTRING_EXPECTED(L,
+		"x:take_private(nil)\n",
+		"No matching overload found, candidates:\n"
+		"void take_private(X&,custom [struct private_struct])\n"
+		"Passed arguments [2]: userdata (X&), nil (nil)\n");
 
 	DOSTRING(L,
 		"u = make_unnamed()\n"
