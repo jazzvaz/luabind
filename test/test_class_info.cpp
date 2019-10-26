@@ -15,6 +15,14 @@ struct X
     int y;
 };
 
+struct unnamed
+{};
+
+unnamed make_unnamed()
+{
+	return unnamed();
+}
+
 void test_main(lua_State* L)
 {
     using namespace luabind;
@@ -26,7 +34,12 @@ void test_main(lua_State* L)
             .def(constructor<>())
             .def("f", &X::f)
             .def_readonly("x", &X::x)
-            .def_readonly("y", &X::y)
+            .def_readonly("y", &X::y),
+
+		class_<unnamed>()
+			.def(constructor<>()),
+		
+		def("make_unnamed", &make_unnamed)
     ];
 
     DOSTRING(L,
@@ -60,5 +73,10 @@ void test_main(lua_State* L)
         "assert(info.attributes[1] == 'y')\n"
         "assert(info.attributes[2] == 'x')\n"
     );
+
+	DOSTRING(L,
+		"u = make_unnamed()\n"
+		"info = class_info(u)\n"
+		"assert(info.name == 'unnamed [struct unnamed]')");
 }
 
