@@ -106,6 +106,12 @@ namespace luabind {
 	}
 
 	LUABIND_API int bind_function_introspection(lua_State * L) {
+		lua_getglobal(L, "function_info");
+		detail::stack_pop pop(L, 1);
+		if (lua_istable(L, -1))
+		{
+			return 0; // already registered
+		}
 		module(L, "function_info")[
 			def("get_function_overloads", &get_function_overloads),
 				def("get_function_name", &get_function_name)
