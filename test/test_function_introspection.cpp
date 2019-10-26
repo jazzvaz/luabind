@@ -51,10 +51,8 @@ int f(int x, int y)
 void test_main(lua_State* L)
 {
     using namespace luabind;
-    set_package_preload(L, "luabind.function_introspection", &bind_function_introspection);
+    bind_function_introspection(L);
     
-    DOSTRING(L,
-        "require('luabind.function_introspection')");
     DOSTRING(L,
         "assert(function_info.get_function_name)");
     DOSTRING(L,
