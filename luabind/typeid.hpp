@@ -6,7 +6,14 @@
 # define LUABIND_TYPEID_081227_HPP
 
 # include <typeinfo>
+# include <cstdlib>
+# include <luabind/types.hpp>
 # include <luabind/detail/type_traits.hpp>
+
+# if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+#  define LUABIND_DEMANGLE_TYPENAMES
+#  include <cxxabi.h>
+# endif
 
 namespace luabind {
 
@@ -41,8 +48,18 @@ namespace luabind {
 			return id->hash_code();
 		}
 
-		char const* name() const
+		luabind::string name() const
 		{
+#ifdef LUABIND_DEMANGLE_TYPENAMES
+			int status;
+			char* buf = abi::__cxa_demangle(id->name(), 0, 0, &status);
+			if (buf)
+			{
+				luabind::string name(buf);
+				std::free(buf);
+				return name;
+			}
+#endif
 			return id->name();
 		}
 
