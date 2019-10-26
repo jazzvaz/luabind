@@ -46,8 +46,20 @@ struct test_class2 : counted_type<test_class2>
 	{ return 1; }
 };
 
+struct test_class_unnamed : counted_type<test_class_unnamed>
+{
+	test_class_unnamed() {}
+	int f() { return 42; }
+};
+
+test_class_unnamed create_unnamed()
+{
+	return test_class_unnamed();
+}
+
 COUNTER_GUARD(test_class);
 COUNTER_GUARD(test_class2);
+COUNTER_GUARD(test_class_unnamed);
 
 void test_main(lua_State* L)
 {
@@ -88,8 +100,13 @@ void test_main(lua_State* L)
 		namespace_("inner")
 		[
 			def("g", &g_)
-		]
+		],
 
+		class_<test_class_unnamed>()
+			.def(constructor<>())
+			.def("f", &test_class_unnamed::f),
+
+		def("create_unnamed", &create_unnamed)
 	];
 
 	module(L, "test")
@@ -126,5 +143,10 @@ void test_main(lua_State* L)
 
 	globals(L)["test_object"] = test_obj;
 	DOSTRING(L, "assert(test_object.inner.h() == 6)");
+
+	DOSTRING(L, "assert(not test_class_unnamed)");
+	DOSTRING(L,
+		"u = test.create_unnamed()\n"
+		"assert(u:f() == 42)");
 }
 
