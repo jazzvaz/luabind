@@ -501,6 +501,46 @@ namespace luabind {
 			return detail::enum_maker<self_t>(*this);
 		}
 
+		template<class F, typename... Injectors>
+		class_& index(F f, policy_list< Injectors... > policies = no_policies())
+		{
+			return this->virtual_def("__index", f, policies, null_type());
+		}
+		
+		// virtual functions
+		template<class F, class Default, typename... Injectors>
+		class_& index(F fn, Default default_, policy_list< Injectors... > policies = no_policies(),
+			typename std::enable_if<detail::is_func<Default>::value, Default>::type = nullptr)
+		{
+			return this->virtual_def("__index", fn, policies, default_);
+		}
+
+		template<class F, class Default, typename... Injectors>
+		class_& index(F fn, Default default_, policy_list< Injectors... > policies = no_policies())
+		{
+			return this->virtual_def("__index", fn, policies, default_);
+		}
+
+		template<class F, typename... Injectors>
+		class_& newindex(F f, policy_list< Injectors... > policies = no_policies())
+		{
+			return this->virtual_def("__newindex", f, policies, null_type());
+		}
+
+		// virtual functions
+		template<class F, class Default, typename... Injectors>
+		class_& newindex(F fn, Default default_, policy_list< Injectors... > policies = no_policies(),
+			typename std::enable_if<detail::is_func<Default>::value, Default>::type = nullptr)
+		{
+			return this->virtual_def("__newindex", fn, policies, default_);
+		}
+
+		template<class F, class Default, typename... Injectors>
+		class_& newindex(F fn, Default default_, policy_list< Injectors... > policies = no_policies())
+		{
+			return this->virtual_def("__newindex", fn, policies, default_);
+		}
+
 		detail::static_scope<self_t> scope;
 
 	private:
