@@ -72,7 +72,7 @@ namespace luabind {
 
 			void* allocate(std::size_t size)
 			{
-				if(size <= 32) {
+				if(size <= instance_buffer_size) {
 					return &m_instance_buffer;
 				}
 				else {
@@ -96,7 +96,8 @@ namespace luabind {
 			void operator=(object_rep const&) = delete;
 
 			instance_holder* m_instance;
-			std::aligned_storage<32>::type m_instance_buffer;
+			static const size_t instance_buffer_size = 32;
+			std::aligned_storage<instance_buffer_size>::type m_instance_buffer;
 			class_rep* m_classrep; // the class information about this object's type
 			detail::lua_reference m_dependency_ref; // reference to lua table holding dependency references
 		};
