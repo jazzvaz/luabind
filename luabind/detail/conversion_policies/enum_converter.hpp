@@ -37,15 +37,18 @@ namespace luabind {
 
 			enum { consumed_args = 1 };
 
-			void to_lua(lua_State* L, int val)
+			template<class T>
+			void to_lua(lua_State* L, T val)
 			{
-				lua_pushnumber(L, val);
+				using integral_t = typename std::underlying_type<T>::type;
+				lua_pushnumber(L, static_cast<integral_t>(val));
 			}
 
 			template<class T>
 			T to_cpp(lua_State* L, by_value<T>, int index)
 			{
-				return static_cast<T>(static_cast<int>(lua_tonumber(L, index)));
+				using integral_t = typename std::underlying_type<T>::type;
+				return static_cast<T>(static_cast<integral_t>(lua_tonumber(L, index)));
 			}
 
 			template<class T>

@@ -46,8 +46,10 @@ namespace luabind {
 		template<class T>
 		value(const char* name, T v)
 			: name_(name)
-			, val_(v)
-		{}
+			, val_(static_cast<int>(v))
+		{
+			assert(static_cast<T>(val_) == v);
+		}
 
 		const char* name_;
 		int val_;
