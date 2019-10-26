@@ -52,6 +52,8 @@ void test_main(lua_State* L)
 {
     using namespace luabind;
     bind_function_introspection(L);
+	// second call must succeed too
+	bind_function_introspection(L);
     
     DOSTRING(L,
         "assert(function_info.get_function_name)");
