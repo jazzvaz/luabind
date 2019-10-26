@@ -413,7 +413,7 @@ namespace luabind {
 
 
 	public:
-		class_(const char* name) : class_base(name), scope(*this)
+		class_(const char* name = nullptr) : class_base(name), scope(*this)
 		{
 #ifndef NDEBUG
 			detail::check_link_compatibility();
