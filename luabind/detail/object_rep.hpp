@@ -76,7 +76,11 @@ namespace luabind {
 					return &m_instance_buffer;
 				}
 				else {
+#ifdef LUABIND_CUSTOM_ALLOCATOR
+					return call_allocator(nullptr, size);
+#else
 					return std::malloc(size);
+#endif
 				}
 
 			}
@@ -87,7 +91,11 @@ namespace luabind {
 					return;
 				}
 				else {
+#ifdef LUABIND_CUSTOM_ALLOCATOR
+					call_allocator(storage, 0);
+#else
 					std::free(storage);
+#endif
 				}
 			}
 
