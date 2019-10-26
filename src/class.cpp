@@ -290,18 +290,6 @@ namespace luabind {
 			m_registration->m_casts.push_back(cast_entry(src, target, cast));
 		}
 
-		void add_custom_name(type_id const& i, luabind::string& s)
-		{
-			if (mark_custom_types)
-			{
-				s = "custom [";
-				s += i.name();
-				s += "]";
-			}
-			else
-				s = i.name();
-		}
-
 		luabind::string get_class_name(lua_State* L, type_id const& i)
 		{
 			luabind::string ret;
@@ -313,7 +301,14 @@ namespace luabind {
 
 			if(crep == 0 || crep->name() == 0)
 			{
-				add_custom_name(i, ret);
+				if (mark_custom_types)
+				{
+					ret = crep ? "unnamed [" : "custom [";
+					ret += i.name();
+					ret += "]";
+				}
+				else
+					ret = i.name();
 			} else
 			{
 				/* TODO reimplement this?
