@@ -25,6 +25,7 @@
 
 #include <luabind/prefix.hpp>
 #include <luabind/config.hpp>
+#include <luabind/object.hpp>
 #include <luabind/lua_state_fwd.hpp>
 #include <memory>
 
@@ -87,12 +88,17 @@ namespace luabind {
 	{
 	public:
 		module_(lua_State* L_, char const* name);
+		module_(object const& table);
 		void operator[](scope s);
 
 	private:
-		lua_State* m_state;
-		char const* m_name;
+		object m_table;
 	};
+
+	inline module_ module(object const& table)
+	{
+		return module_(table);
+	}
 
 	inline module_ module(lua_State* L, char const* name = 0)
 	{

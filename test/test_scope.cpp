@@ -100,6 +100,14 @@ void test_main(lua_State* L)
 		]
 	];
 
+	object test_obj = newtable(L);
+	module(test_obj)
+	[
+		namespace_("inner")
+		[
+			def("h", &h)
+		]
+	];
 
 	DOSTRING(L, "assert(test.f() == 1)");
 	DOSTRING(L, "assert(test.f(3) == 2)");
@@ -115,5 +123,8 @@ void test_main(lua_State* L)
 	DOSTRING(L, "assert(test.inner.g(7) == 5)");
 	DOSTRING(L, "assert(test.inner.f(4) == 3)");
 	DOSTRING(L, "assert(test.inner.h() == 6)");
+
+	globals(L)["test_object"] = test_obj;
+	DOSTRING(L, "assert(test_object.inner.h() == 6)");
 }
 
