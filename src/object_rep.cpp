@@ -104,7 +104,7 @@ namespace luabind {
 					lua_pop(L, 1);
 				}
 
-				if(lua_tocfunction(L, -1) == &property_tag)
+				if(lua_tocfunction(L, -1) == &property_tag && lua_tocfunction(L, 3) != &property_tag)
 				{
 					// this member is a property, extract the "set" function and call it.
 					lua_getupvalue(L, -1, 2);
