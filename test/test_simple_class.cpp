@@ -97,7 +97,7 @@ void test_main(lua_State* L)
 		"void f(simple&,luabind::string)\n"
 		"void f(simple&,int,int)\n"
 		"void f(simple&)\n"
-		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
+		"Passed arguments [3]: userdata (simple&), string ('incorrect'), string ('parameters')\n");
 
     DOSTRING(L, "if a:g() == \"foo\\0bar\" then a:f() end");
     TEST_CHECK(simple_class::feedback == 1);
