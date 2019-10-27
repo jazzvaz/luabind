@@ -34,11 +34,11 @@ namespace luabind {
 
 	namespace detail {
 
-		template< typename T >
+		template< typename T, typename = void >
 		struct is_function : public std::false_type {};
 
 		template< typename T >
-		struct is_function< std::function< T > > : public std::true_type {};
+		struct is_function< T, std::void_t< decltype(&T::operator()) > > : public std::true_type {};
 	}
 
 

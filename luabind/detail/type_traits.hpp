@@ -107,7 +107,7 @@ namespace luabind {
 
 	template< typename, typename > struct tagged_function;
 
-	template< typename T, typename WrappedType = null_type >
+	template< typename T, typename WrappedType = null_type, typename = void >
 	struct deduce_signature;
 
 	template< typename R, typename... Args, typename WrappedType >
@@ -152,11 +152,25 @@ namespace luabind {
 		using type = Signature;
 	};
 
-	template< typename R, typename... Args, typename WrappedType >
-	struct deduce_signature <std::function< R(Args...) >, WrappedType >
+	template< typename F >
+	struct deduce_member_signature;
+
+	template< typename R, typename Class, typename... Args >
+	struct deduce_member_signature< R(Class::*)(Args...) >
 	{
 		using type = meta::type_list< R, Args... >;
 	};
+
+	template< typename R, typename Class, typename... Args >
+	struct deduce_member_signature< R(Class::*)(Args...) const >
+	{
+		using type = meta::type_list< R, Args... >;
+	};
+
+	template< typename F, typename WrappedType >
+	struct deduce_signature< F, WrappedType, std::void_t< decltype(&F::operator()) > >
+		: deduce_member_signature< decltype(&F::operator()) >
+	{};
 
 	template< typename T, typename WrappedType = null_type >
 	using deduce_signature_t = typename deduce_signature<T, WrappedType>::type;
