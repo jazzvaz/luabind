@@ -233,7 +233,7 @@ namespace luabind {
 				type_id const& type, class_id id
 				, type_id const& wrapped_type, class_id wrapper_id);
 
-			void add_base(type_id const& base, cast_function cast);
+			void add_base(type_id const& base);
 
 			void add_member(registration* member);
 			void add_default_member(registration* member);
@@ -565,7 +565,7 @@ namespace luabind {
 		template<typename Class0, typename... Classes>
 		void gen_base_info(bases<Class0, Classes...>)
 		{
-			add_base(typeid(Class0), detail::static_cast_<T, Class0>::execute);
+			add_base(typeid(Class0));
 			add_cast(detail::registered_class<T>::id, detail::registered_class<Class0>::id, detail::static_cast_<T, Class0>::execute);
 			add_downcast((Class0*)0, (T*)0, std::is_polymorphic<Class0>());
 			gen_base_info(bases<Classes...>());
