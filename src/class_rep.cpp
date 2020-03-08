@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
+// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
 
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -164,16 +164,14 @@ int luabind::detail::class_rep::constructor_dispatcher(lua_State* L)
 	return 1;
 }
 
-void luabind::detail::class_rep::add_base_class(const luabind::detail::class_rep::base_info& binfo)
+void luabind::detail::class_rep::add_base_class(luabind::detail::class_rep* bcrep)
 {
 	// If you hit this assert you are deriving from a type that is not registered
 	// in lua. That is, in the class_<> you are giving a baseclass that isn't registered.
 	// Please note that if you don't need to have access to the base class or the
 	// conversion from the derived class to the base class, you don't need
 	// to tell luabind that it derives.
-	assert(binfo.base && "You cannot derive from an unregistered type");
-
-	class_rep* bcrep = binfo.base;
+	assert(bcrep && "You cannot derive from an unregistered type");
 
 	// import all static constants
 	for(const auto& scon : bcrep->m_static_constants) {
@@ -182,7 +180,7 @@ void luabind::detail::class_rep::add_base_class(const luabind::detail::class_rep
 	}
 
 	// also, save the baseclass info to be used for typecasts
-	m_bases.push_back(binfo);
+	m_bases.push_back(bcrep);
 }
 
 LUABIND_API void luabind::disable_super_deprecation()
@@ -195,7 +193,7 @@ int luabind::detail::class_rep::super_callback(lua_State* L)
 	int args = lua_gettop(L);
 
 	class_rep* crep = static_cast<class_rep*>(lua_touserdata(L, lua_upvalueindex(1)));
-	class_rep* base = crep->bases()[0].base;
+	class_rep* base = crep->bases()[0];
 
 	if(base->bases().empty())
 	{
@@ -336,8 +334,8 @@ void luabind::detail::finalize(lua_State* L, class_rep* crep)
 		lua_call(L, 1, 0);
 	}
 
-	for(const auto& baseinfo : crep->bases()) {
-		if(baseinfo.base) finalize(L, baseinfo.base);
+	for(const auto& bcrep : crep->bases()) {
+		if(bcrep) finalize(L, bcrep);
 	}
 }
 

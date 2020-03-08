@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
+// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
 
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -99,16 +99,10 @@ namespace luabind {
 
 			// this is called as metamethod __call on the class_rep.
 			static int constructor_dispatcher(lua_State* L);
+			
+			void add_base_class(class_rep* bcrep);
 
-			struct base_info
-			{
-				int pointer_offset; // the offset added to the pointer to obtain a basepointer (due to multiple-inheritance)
-				class_rep* base;
-			};
-
-			void add_base_class(const base_info& binfo);
-
-			const luabind::vector<base_info>& bases() const throw() { return m_bases; }
+			const luabind::vector<class_rep*>& bases() const throw() { return m_bases; }
 
 			void set_type(type_id const& t) { m_type = t; }
 			type_id const& type() const throw() { return m_type; }
@@ -167,7 +161,7 @@ namespace luabind {
 			// a list of info for every class this class derives from
 			// the information stored here is sufficient to do
 			// type casts to the base classes
-			luabind::vector<base_info> m_bases;
+			luabind::vector<class_rep*> m_bases;
 
 			// the class' name (as given when registered to lua with class_)
 			const char* m_name;
