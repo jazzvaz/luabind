@@ -32,6 +32,7 @@ set(TESTS
 	implicit_raw
 	index
 	iterator
+	lambda
 	lua_classes
 	null_pointer
 	object
