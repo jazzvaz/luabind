@@ -47,7 +47,7 @@ namespace luabind {
 			/// @todo is this redundant with the following function? All that differs is the __gc closure
 			int create_cpp_class_metatable(lua_State* L)
 			{
-				lua_newtable(L);
+				lua_createtable(L, 0, 5);
 
 				// mark the table with our unique tag
 				// that says that the user data that has this

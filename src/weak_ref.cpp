@@ -42,8 +42,7 @@ namespace luabind {
 
 	LUABIND_API void get_weak_table(lua_State* L)
 	{
-		lua_pushlightuserdata(L, &weak_table_tag);
-		lua_rawget(L, LUA_REGISTRYINDEX);
+		lua_rawgetp(L, LUA_REGISTRYINDEX, &weak_table_tag);
 
 		if(lua_isnil(L, -1))
 		{
@@ -57,10 +56,8 @@ namespace luabind {
 			// set metatable
 			lua_setmetatable(L, -2);
 
-			lua_pushlightuserdata(L, &weak_table_tag);
-			lua_pushvalue(L, -2);
-			lua_rawset(L, LUA_REGISTRYINDEX);
-
+			lua_pushvalue(L, -1);
+			lua_rawsetp(L, LUA_REGISTRYINDEX, &weak_table_tag);
 		}
 
 	}
@@ -76,10 +73,8 @@ namespace luabind {
 			lua_pop(L, 1);
 
 			lua_newtable(L);
-			lua_pushlightuserdata(L, &impl_table_tag);
-			lua_pushvalue(L, -2);
-			lua_rawset(L, LUA_REGISTRYINDEX);
-
+			lua_pushvalue(L, -1);
+			lua_rawsetp(L, LUA_REGISTRYINDEX, &impl_table_tag);
 		}
 
 	}
