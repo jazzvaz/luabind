@@ -66,11 +66,6 @@ namespace luabind {
 		class LUABIND_API class_rep
 		{
 			friend struct class_registration;
-			friend int super_callback(lua_State*);
-			//TODO: avoid the lua-prefix
-			friend int lua_class_gettable(lua_State*);
-			friend int lua_class_settable(lua_State*);
-			friend int static_class_gettable(lua_State*);
 		public:
 
 			enum class_type
