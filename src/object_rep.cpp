@@ -243,8 +243,8 @@ namespace luabind {
 						if(is_unary) // remove trailing nil
 							lua_remove(L, 3);
 
-						lua_call(L, nargs, 1);
-						return 1;
+						lua_call(L, nargs, LUA_MULTRET);
+						return lua_gettop(L);
 					}
 				}
 				object_rep* inst = get_instance(L, 1);
@@ -260,9 +260,7 @@ namespace luabind {
 				}
 				lua_pushfstring(L, "%sclass %s: no %s operator defined.",
 					const_s, cls_name, op_name);
-				lua_error(L);
-
-				return 0;
+				return lua_error(L);
 			}
 
 		} // namespace unnamed
