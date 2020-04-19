@@ -116,43 +116,43 @@ namespace luabind {
 			int stacksize = lua_gettop(L);
 			if(candidate_index == 0)
 			{
-				lua_pushstring(L, "No matching overload found, candidates:\n");
+				lua_pushliteral(L, "No matching overload found, candidates:\n");
 				int count = 0;
 				for(function_object const* f = overloads; f != 0; f = f->next)
 				{
 					if(count != 0)
-						lua_pushstring(L, "\n");
+						lua_pushliteral(L, "\n");
 					f->format_signature(L, function_name);
 					++count;
 				}
 			}
 			else
 			{
-				lua_pushstring(L, "Ambiguous, candidates:\n");
+				lua_pushliteral(L, "Ambiguous, candidates:\n");
 				for(int i = 0; i < candidate_index; ++i)
 				{
 					if(i != 0)
-						lua_pushstring(L, "\n");
+						lua_pushliteral(L, "\n");
 					candidates[i]->format_signature(L, function_name);
 				}
 			}
 			lua_pushfstring(L, "\nPassed arguments [%d]: ", stacksize);
 			if (stacksize == 0)
-				lua_pushstring(L, "<no arguments>\n");
+				lua_pushliteral(L, "<no arguments>\n");
 			else
 			{
 				for (int _index = 1; _index <= stacksize; _index++)
 				{
 					if (_index > 1)
-						lua_pushstring(L, ", ");
+						lua_pushliteral(L, ", ");
 					// Arg Type
 					lua_pushstring(L, lua_typename(L, lua_type(L, _index)));
 					// Arg Value
-					lua_pushstring(L, " (");
+					lua_pushliteral(L, " (");
 					const char* text = lua52L_tolstring(L, _index, NULL); // automatically pushed to stack
-					lua_pushstring(L, ")");
+					lua_pushliteral(L, ")");
 				}
-				lua_pushstring(L, "\n");
+				lua_pushliteral(L, "\n");
 			}
 			lua_concat(L, lua_gettop(L) - stacksize);
 		}

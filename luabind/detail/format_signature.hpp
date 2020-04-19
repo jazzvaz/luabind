@@ -33,7 +33,8 @@ namespace luabind {
 		{
 			static void get(lua_State* L)
 			{
-				lua_pushstring(L, get_class_name(L, typeid(T)).c_str());
+				std::string const name = get_class_name(L, typeid(T));
+				lua_pushlstring(L, name.c_str(), name.size());
 			}
 		};
 
@@ -43,7 +44,7 @@ namespace luabind {
 			static void get(lua_State* L)
 			{
 				type_to_string<T>::get(L);
-				lua_pushstring(L, "*");
+				lua_pushliteral(L, "*");
 				lua_concat(L, 2);
 			}
 		};
@@ -54,7 +55,7 @@ namespace luabind {
 			static void get(lua_State* L)
 			{
 				type_to_string<T>::get(L);
-				lua_pushstring(L, "&");
+				lua_pushliteral(L, "&");
 				lua_concat(L, 2);
 			}
 		};
@@ -65,7 +66,7 @@ namespace luabind {
 			static void get(lua_State* L)
 			{
 				type_to_string<T>::get(L);
-				lua_pushstring(L, " const");
+				lua_pushliteral(L, " const");
 				lua_concat(L, 2);
 			}
 		};
@@ -76,7 +77,7 @@ namespace luabind {
     { \
         static void get(lua_State* L) \
         { \
-            lua_pushstring(L, #x); \
+            lua_pushliteral(L, #x); \
         } \
     };
 
@@ -105,7 +106,7 @@ namespace luabind {
 		{
 			static void get(lua_State* L)
 			{
-				lua_pushstring(L, "table");
+				lua_pushliteral(L, "table");
 			}
 		};
 
@@ -116,7 +117,7 @@ namespace luabind {
 		void format_signature_aux(lua_State* L, bool first, Signature)
 		{
 			if(!first)
-				lua_pushstring(L, ",");
+				lua_pushliteral(L, ",");
 			type_to_string<typename meta::front<Signature>::type>::get(L);
 			format_signature_aux(L, false, typename meta::pop_front<Signature>::type());
 		}
@@ -128,16 +129,16 @@ namespace luabind {
 
 			type_to_string<first>::get(L);
 
-			lua_pushstring(L, " ");
+			lua_pushliteral(L, " ");
 			lua_pushstring(L, function);
 
-			lua_pushstring(L, "(");
+			lua_pushliteral(L, "(");
 			format_signature_aux(
 				L
 				, true
 				, typename meta::pop_front<Signature>::type()
 			);
-			lua_pushstring(L, ")");
+			lua_pushliteral(L, ")");
 			size_t ncat = meta::size<Signature>::value * 2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
 			if (concat)
 			{

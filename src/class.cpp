@@ -119,7 +119,7 @@ namespace luabind {
 			// register this new type in the class registry
 			r->add_class(m_type, crep);
 
-			lua_pushstring(L, "__luabind_class_map");
+			lua_pushliteral(L, "__luabind_class_map");
 			lua_rawget(L, LUA_REGISTRYINDEX);
 			class_map& classes = *static_cast<class_map*>(
 				lua_touserdata(L, -1));
@@ -145,12 +145,12 @@ namespace luabind {
 			m_members.register_(L);
 			lua_pop(L, 1);
 
-			lua_pushstring(L, "__luabind_cast_graph");
+			lua_pushliteral(L, "__luabind_cast_graph");
 			lua_gettable(L, LUA_REGISTRYINDEX);
 			cast_graph* const casts = static_cast<cast_graph*>(lua_touserdata(L, -1));
 			lua_pop(L, 1);
 
-			lua_pushstring(L, "__luabind_class_id_map");
+			lua_pushliteral(L, "__luabind_class_id_map");
 			lua_gettable(L, LUA_REGISTRYINDEX);
 			class_id_map* const class_ids = static_cast<class_id_map*>(lua_touserdata(L, -1));
 			lua_pop(L, 1);
