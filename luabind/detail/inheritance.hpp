@@ -16,6 +16,10 @@ namespace luabind {
 
 	namespace detail {
 
+		LUABIND_API extern char class_id_map_tag;
+		LUABIND_API extern char class_map_tag;
+		extern char cast_graph_tag;
+
 		using cast_function = void*(*)(void*);
 		using class_id      = std::size_t;
 

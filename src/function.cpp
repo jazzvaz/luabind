@@ -16,6 +16,12 @@ namespace luabind {
 
 		namespace {
 
+			// A pointer to this is used as a tag value to identify functions exported
+			// by luabind.
+			char function_tag = 0;
+			// same, but for non-default functions (not from m_default_members)
+			char function_tag_ndef = 0;
+
 			int function_destroy(lua_State* L)
 			{
 				function_object* fn = *(function_object**)lua_touserdata(L, 1);
@@ -25,30 +31,22 @@ namespace luabind {
 
 			void push_function_metatable(lua_State* L)
 			{
-				lua_pushstring(L, "luabind.function");
-				lua_rawget(L, LUA_REGISTRYINDEX);
+				lua_rawgetp(L, LUA_REGISTRYINDEX, &function_tag);
 
 				if(lua_istable(L, -1))
 					return;
 
 				lua_pop(L, 1);
 
-				lua_newtable(L);
+				lua_createtable(L, 0, 1); // One non-sequence entry for __gc.
 
 				lua_pushstring(L, "__gc");
-				lua_pushcclosure(L, &function_destroy, 0);
+				lua_pushcfunction(L, &function_destroy);
 				lua_rawset(L, -3);
 
-				lua_pushstring(L, "luabind.function");
-				lua_pushvalue(L, -2);
-				lua_rawset(L, LUA_REGISTRYINDEX);
+				lua_pushvalue(L, -1);
+				lua_rawsetp(L, LUA_REGISTRYINDEX, &function_tag);
 			}
-
-			// A pointer to this is used as a tag value to identify functions exported
-			// by luabind.
-			int function_tag = 0;
-			// same, but for non-default functions (not from m_default_members)
-			int function_tag_ndef = 0;
 
 		} // namespace unnamed
 

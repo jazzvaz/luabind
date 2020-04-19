@@ -38,6 +38,8 @@
 namespace luabind {
 	namespace detail {
 
+		char class_registry_tag = 0;
+
 		LUABIND_API void push_instance_metatable(lua_State* L);
 
 		namespace {
@@ -47,12 +49,11 @@ namespace luabind {
 			{
 				lua_newtable(L);
 
-				// mark the table with our (hopefully) unique tag
+				// mark the table with our unique tag
 				// that says that the user data that has this
 				// metatable is a class_rep
-				lua_pushliteral(L, "__luabind_classrep");
-				lua_pushboolean(L, 1);
-				lua_rawset(L, -3);
+				lua_pushboolean(L, true);
+				lua_rawsetp(L, -2, &classrep_tag);
 
 				lua_pushliteral(L, "__gc");
 				lua_pushcclosure(L, &garbage_collector<class_rep>, 0);
@@ -105,8 +106,7 @@ namespace luabind {
 
 #endif
 
-			lua_pushliteral(L, "__luabind_classes");
-			lua_gettable(L, LUA_REGISTRYINDEX);
+			lua_rawgetp(L, LUA_REGISTRYINDEX, &class_registry_tag);
 			class_registry* p = static_cast<class_registry*>(lua_touserdata(L, -1));
 			lua_pop(L, 1);
 

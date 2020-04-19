@@ -35,6 +35,8 @@ namespace luabind {
 
 		class class_rep;
 
+		extern char class_registry_tag;
+
 		struct LUABIND_API class_registry
 		{
 			class_registry(lua_State* L);
