@@ -25,7 +25,7 @@
 
 #include <luabind/config.hpp>
 #include <luabind/weak_ref.hpp>
-#include <luabind/detail/ref.hpp>
+#include <luabind/handle.hpp>
 #include <luabind/detail/meta.hpp>
 #include <luabind/error.hpp>
 #include <type_traits>
@@ -53,7 +53,7 @@ namespace luabind
 
 	struct wrapped_self_t : weak_ref
 	{
-		detail::lua_reference m_strong_ref;
+		handle m_strong_ref;
 	};
 
 	struct wrap_base

@@ -48,9 +48,9 @@ namespace luabind {
 			if(!m_dependency_ref.is_valid())
 			{
 				lua_newtable(L);
-				m_dependency_ref.set(L);
+				m_dependency_ref.pop(L);
 			}
-			m_dependency_ref.get(L);
+			m_dependency_ref.push(L);
 
 			lua_pushvalue(L, index);
 			lua_pushnumber(L, 0);

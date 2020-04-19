@@ -27,7 +27,6 @@
 #include <luabind/config.hpp>
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/instance_holder.hpp>
-#include <luabind/detail/ref.hpp>
 #include <type_traits>	// std::aligned_storage
 #include <cstdlib>
 
@@ -107,7 +106,7 @@ namespace luabind {
 			static const size_t instance_buffer_size = 32;
 			std::aligned_storage<instance_buffer_size>::type m_instance_buffer;
 			class_rep* m_classrep; // the class information about this object's type
-			detail::lua_reference m_dependency_ref; // reference to lua table holding dependency references
+			handle m_dependency_ref; // reference to lua table holding dependency references
 		};
 
 		template<class T>

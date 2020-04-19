@@ -103,7 +103,6 @@ set(LUABIND_DETAIL_API
 	../luabind/detail/primitives.hpp
 	../luabind/detail/property.hpp
 	../luabind/detail/push_to_lua.hpp
-	../luabind/detail/ref.hpp
 	../luabind/detail/signature_match.hpp
 	../luabind/detail/stack_utils.hpp
 	../luabind/detail/type_traits.hpp
