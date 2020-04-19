@@ -43,6 +43,8 @@ extern "C"
 # define lua_pushglobaltable(L) lua_pushvalue(L, LUA_GLOBALSINDEX)
 # define lua_getuservalue lua_getfenv
 # define lua_setuservalue lua_setfenv
+# define luaL_tolstring lua_tolstring
+# define LUA_OK 0
 
 inline int lua_absindex(lua_State* L, int i)
 {
