@@ -8,11 +8,6 @@
 #include <luabind/lua_include.hpp>
 #include <luabind/detail/crtp_iterator.hpp>
 
-#if LUA_VERSION_NUM < 502
-# define lua_compare(L, index1, index2, fn) fn(L, index1, index2)
-# define LUA_OPEQ lua_equal
-#endif
-
 namespace luabind {
 
 	namespace adl {
@@ -218,11 +213,6 @@ namespace luabind {
 	using raw_iterator = detail::basic_iterator<detail::raw_access>;
 
 }
-
-#if LUA_VERSION_NUM < 502
-#undef LUA_OPEQ
-#undef lua_compare
-#endif
 
 #endif
 

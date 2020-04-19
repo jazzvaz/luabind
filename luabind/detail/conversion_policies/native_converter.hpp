@@ -31,10 +31,6 @@
 #include <luabind/detail/call_traits.hpp>
 #include <luabind/lua_include.hpp>
 
-#if LUA_VERSION_NUM < 502
-# define lua_rawlen lua_objlen
-#endif
-
 namespace luabind {
 
 	template <class T, class Derived = default_converter<T> >
@@ -316,10 +312,6 @@ namespace luabind {
 	};
 
 }
-
-#if LUA_VERSION_NUM < 502
-# undef lua_rawlen
-#endif
 
 #endif
 

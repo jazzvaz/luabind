@@ -30,10 +30,6 @@
 #include <luabind/get_main_thread.hpp>
 #include <utility>
 
-#if LUA_VERSION_NUM < 502
-# define lua_rawlen lua_objlen
-#endif
-
 using namespace luabind::detail;
 
 namespace luabind {

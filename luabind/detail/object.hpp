@@ -37,10 +37,6 @@
 #include <luabind/lua_iterator_proxy.hpp>
 #include <luabind/detail/class_rep.hpp>
 
-#if LUA_VERSION_NUM < 502
-# define lua_pushglobaltable(L) lua_pushvalue(L, LUA_GLOBALSINDEX)
-#endif
-
 namespace luabind {
 	namespace adl {
 
@@ -375,10 +371,6 @@ namespace luabind {
 	}
 
 } // namespace luabind
-
-#if LUA_VERSION_NUM < 502
-#undef lua_pushglobaltable
-#endif
 
 #include <luabind/detail/conversion_policies/conversion_policies.hpp>
 
