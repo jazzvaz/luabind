@@ -75,8 +75,7 @@ namespace luabind {
 				return m_interpreter;
 			}
 
-			// TODO: Why is it non-const?
-			void push(lua_State* interpreter)
+			void push(lua_State* interpreter) const
 			{
 				assert(interpreter == m_interpreter);
 				lua_pushvalue(m_interpreter, m_key_index);
@@ -105,8 +104,7 @@ namespace luabind {
 		template<class Proxy>
 		static void unwrap(lua_State* interpreter, Proxy const& p)
 		{
-			// TODO: Why const_cast?
-			const_cast<Proxy&>(p).push(interpreter);
+			p.push(interpreter);
 		}
 	};
 
