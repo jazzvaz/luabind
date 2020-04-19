@@ -1517,8 +1517,7 @@ inherits from ``wrap_base``, object identity is preserved.
     > assert(x == f(x)) -- object identity is preserved when object is
                         -- passed through C++
 
-This functionality relies on RTTI being enabled (that ``LUABIND_NO_RTTI`` is
-not defined).
+This functionality relies on RTTI being enabled.
 
 Overloading operators
 ---------------------
@@ -2450,10 +2449,6 @@ LUA_API
 LUABIND_DYNAMIC_LINK
     Must be defined if you intend to link against the luabind shared
     library.
-
-LUABIND_NO_RTTI
-    You can define this if you don't want luabind to use ``dynamic_cast<>``.
-    It will disable `Object identity`_.
 
 NDEBUG
     This define will disable all asserts and should be defined in a release 

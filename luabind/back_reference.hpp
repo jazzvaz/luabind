@@ -26,11 +26,7 @@
 #include <luabind/config.hpp>
 #include <luabind/lua_state_fwd.hpp>
 #include <type_traits>
-
-#if !defined(LUABIND_NO_RTTI) && !defined(LUABIND_WRAPPER_BASE_HPP_INCLUDED)
 #include <luabind/wrapper_base.hpp>
-#endif
-
 #include <luabind/pointer_traits.hpp>
 
 namespace luabind {
@@ -79,20 +75,17 @@ namespace luabind {
 	template<class T>
 	bool get_back_reference(lua_State* L, T const& x)
 	{
-#ifndef LUABIND_NO_RTTI
 		if(wrap_base const* w = detail::get_back_reference(x))
 		{
 			detail::wrap_access::ref(*w).get(L);
 			return true;
 		}
-#endif
 		return false;
 	}
 
 	template<class T>
 	bool move_back_reference(lua_State* L, T const& x)
 	{
-#ifndef LUABIND_NO_RTTI
 		if(wrap_base* w = const_cast<wrap_base*>(detail::get_back_reference(x)))
 		{
 			assert(detail::wrap_access::ref(*w).m_strong_ref.is_valid());
@@ -100,7 +93,6 @@ namespace luabind {
 			detail::wrap_access::ref(*w).m_strong_ref.reset();
 			return true;
 		}
-#endif
 		return false;
 	}
 
