@@ -37,7 +37,7 @@ namespace luabind {
 
 		void to_lua_deferred(lua_State* L, X const& x)
 		{
-			lua_pushnumber(L, x.value);
+			lua_pushinteger(L, x.value);
 		}
 
 		static default_converter<int> cv;
