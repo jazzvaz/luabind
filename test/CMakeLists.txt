@@ -51,6 +51,7 @@ set(TESTS
 	super_leak
 	table
 	tag_function
+	unchecked
 	unsigned_int
 	user_defined_converter
 	vector_of_object
