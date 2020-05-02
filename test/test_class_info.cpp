@@ -91,5 +91,11 @@ void test_main(lua_State* L)
 		"u = make_unnamed()\n"
 		"info = class_info(u)\n"
 		"assert(info.name == 'unnamed [struct unnamed]')");
+
+	DOSTRING(L,
+		"s = tostring(X)\n"
+		"assert(s:match('^class X (.+)$'))"
+	);
+	DOSTRING(L, "print(X)");
 }
 

@@ -120,6 +120,8 @@ namespace luabind {
 			// obj is the object pointer
 			static int static_class_gettable(lua_State* L);
 
+			static int tostring(lua_State* L);
+
 			bool has_operator_in_lua(lua_State*, int id);
 
 			cast_graph const& casts() const
