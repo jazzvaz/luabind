@@ -59,7 +59,8 @@ namespace luabind {
 				T* ptr = pointer_converter::to_cpp(L, decorate_type_t<T*>(), index);
 
 				object_rep* obj = static_cast<object_rep*>(lua_touserdata(L, index));
-				obj->release();
+				if (obj)
+					obj->release();
 
 				adjust_backref_ownership(ptr, std::is_polymorphic<T>());
 
