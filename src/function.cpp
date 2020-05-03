@@ -147,7 +147,7 @@ namespace luabind {
 					lua_pushstring(L, lua_typename(L, lua_type(L, _index)));
 					// Arg Value
 					lua_pushliteral(L, " (");
-					const char* text = lua52L_tolstring(L, _index, NULL); // automatically pushed to stack
+					luaL_tolstring_diag(L, _index, nullptr);
 					lua_pushliteral(L, ")");
 				}
 				lua_pushliteral(L, "\n");
