@@ -272,6 +272,14 @@ void test_bool_convertible(lua_State* L)
     assert(G["x4"]);
 }
 
+template <typename T>
+std::string lexical_cast(const T& val)
+{	
+	std::ostringstream os;
+	os << val;
+	return os.str();
+}
+
 void test_main(lua_State* L)
 {
 	using namespace luabind;
@@ -447,6 +455,12 @@ void test_main(lua_State* L)
 
     TEST_CHECK(inner_sum == 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8);
     TEST_CHECK(object_cast<int>(globals(L)["t"][2][2]) == 4);
+
+	DOSTRING(L,
+		"obj = setmetatable({}, {\n"
+		"    __tostring = function() return 'custom __tostring' end})");
+	obj = globals(L)["obj"];
+	TEST_CHECK(lexical_cast(obj) == "custom __tostring");
 
     test_call(L);
     test_metatable(L);
