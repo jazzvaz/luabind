@@ -36,6 +36,11 @@ namespace luabind {
 
 		template< typename T, typename = void >
 		struct is_function : public std::false_type {};
+	
+		template< typename T >
+		struct is_function< T, std::enable_if_t<
+			std::is_pointer_v<T> && std::is_function_v< typename std::remove_pointer_t<T> >>>
+			: public std::true_type {};
 
 		template< typename T >
 		struct is_function< T, std::void_t< decltype(&T::operator()) > > : public std::true_type {};
