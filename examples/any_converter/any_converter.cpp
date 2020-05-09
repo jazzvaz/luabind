@@ -20,7 +20,7 @@ bool dostring(lua_State* L, const char* str)
 }
 
 #include <luabind/luabind.hpp>
-#include <luabind/detail/push_to_lua.hpp>
+#include <luabind/lua_stack.hpp>
 #include <boost/any.hpp>
 
 template<class T>

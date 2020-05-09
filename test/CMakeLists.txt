@@ -47,6 +47,7 @@ set(TESTS
 	set_instance_value
 	shadow
 	shared_ptr
+	lua_stack
 	simple_class
 	smart_ptr_attributes
 	super_leak

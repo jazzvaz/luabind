@@ -48,7 +48,7 @@ namespace luabind {
 			iterator_proxy& operator=(T&& value)
 			{
 				lua_pushvalue(m_interpreter, m_key_index);
-				detail::push_to_lua(m_interpreter, std::forward<T>(value));
+				lua_stack::push(m_interpreter, std::forward<T>(value));
 				AccessPolicy::set(m_interpreter, m_table_index);
 				return *this;
 			}

@@ -6,7 +6,7 @@
 # define LUABIND_ITERATOR_POLICY__071111_HPP
 
 # include <luabind/config.hpp>           // for LUABIND_ANONYMOUS_FIX
-# include <luabind/detail/push_to_lua.hpp>  // for convert_to_lua
+# include <luabind/lua_stack.hpp>  // for lua_stack::push
 # include <luabind/detail/policy.hpp>    // for index_map, etc
 
 # include <new>                          // for operator new
@@ -24,7 +24,7 @@ namespace luabind {
 
 				if(self->first != self->last)
 				{
-					push_to_lua(L, *self->first);
+					lua_stack::push(L, *self->first);
 					++self->first;
 				} else
 				{
@@ -106,8 +106,8 @@ namespace luabind {
 
 				if (self->first != self->last)
 				{
-					push_to_lua(L, (*self->first).first);
-					push_to_lua(L, (*self->first).second);
+					lua_stack::push(L, (*self->first).first);
+					lua_stack::push(L, (*self->first).second);
 					++self->first;
 					return 2;
 				}

@@ -101,7 +101,7 @@ set(LUABIND_DETAIL_API
 	../luabind/detail/policy.hpp
 	../luabind/detail/primitives.hpp
 	../luabind/detail/property.hpp
-	../luabind/detail/push_to_lua.hpp
+	../luabind/lua_stack.hpp
 	../luabind/detail/signature_match.hpp
 	../luabind/detail/stack_utils.hpp
 	../luabind/detail/type_traits.hpp

@@ -3,7 +3,7 @@
 
 #include <luabind/lua_proxy.hpp>
 #include <luabind/detail/call_function.hpp>
-#include <luabind/detail/push_to_lua.hpp>
+#include <luabind/lua_stack.hpp>
 #include <ostream>
 
 namespace luabind {
@@ -78,9 +78,9 @@ namespace luabind {
 			}
 			assert(L);
 			detail::stack_pop pop1(L, 1);
-			detail::push_to_lua(L, std::forward<LHS>(lhs));
+			lua_stack::push(L, std::forward<LHS>(lhs));
 			detail::stack_pop pop2(L, 1);
-			detail::push_to_lua(L, std::forward<RHS>(rhs));
+			lua_stack::push(L, std::forward<RHS>(rhs));
 			return lua_compare(L, -1, -2, LUA_OPEQ) != 0;
 		}
 
@@ -95,9 +95,9 @@ namespace luabind {
 			}
 			assert(L);
 			detail::stack_pop pop1(L, 1);
-			detail::push_to_lua(L, std::forward<LHS>(lhs));
+			lua_stack::push(L, std::forward<LHS>(lhs));
 			detail::stack_pop pop2(L, 1);
-			detail::push_to_lua(L, std::forward<RHS>(rhs));
+			lua_stack::push(L, std::forward<RHS>(rhs));
 			return lua_compare(L, -1, -2, LUA_OPLT) != 0;
 		}
 

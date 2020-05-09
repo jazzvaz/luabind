@@ -27,7 +27,7 @@
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>
 #include <luabind/detail/implicit_cast.hpp>
-#include <luabind/detail/push_to_lua.hpp>
+#include <luabind/lua_stack.hpp>
 
 namespace luabind {
 	namespace detail

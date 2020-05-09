@@ -27,6 +27,9 @@
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>
 #include <luabind/detail/type_traits.hpp>
+#include <luabind/detail/stack_utils.hpp>
+#include <luabind/error.hpp> // call_shared
+#include <luabind/detail/call_shared.hpp> // cast_error
 
 namespace luabind {
 
@@ -56,19 +59,43 @@ namespace luabind {
 
 		template<typename T>
 		using unwrapped_t = typename unwrapped< T >::type;
-
-		template<unsigned int PolicyIndex = 1, typename Policies = no_policies, typename T>
-		void push_to_lua(lua_State* L, T&& v)
-		{
-			using value_type = unwrapped_t<remove_const_reference_t<T>>;
-
-			specialized_converter_policy_n<PolicyIndex, Policies, value_type, cpp_to_lua>()
-				.to_lua(L, unwrapped<T>::get(v));
-		}
-
 	}
 
+	namespace lua_stack
+	{
+		template<typename Policies = no_policies, int PolicyIndex = 1, typename T>
+		void push(lua_State* L, T&& v)
+		{
+			using namespace detail;
+			using value_type = unwrapped_t<remove_const_reference_t<T>>;
+			specialized_converter_policy_n<PolicyIndex, Policies, value_type, cpp_to_lua> cv;
+			cv.to_lua(L, unwrapped<T>::get(v));
+		}
+
+		template<typename T, typename Policies = no_policies, int PolicyIndex = 1>
+		T pop(lua_State* L)
+		{
+			using namespace detail;
+			using value_type = unwrapped_t<T>;
+			stack_pop pop(L, 1);
+			specialized_converter_policy_n<PolicyIndex, Policies, value_type, lua_to_cpp> cv;
+			if (cv.match(L, decorate_type_t<T>(), -1) < 0)
+			{
+#ifndef LUABIND_PERMISSIVE_MODE
+				cast_error<T>(L);
+#endif
+			}
+			return cv.to_cpp(L, decorate_type_t<T>(), -1);
+		}
+
+		template<>
+		inline void pop<void, no_policies, 1>(lua_State* L)
+		{ detail::stack_pop pop(L, 1); }
+
+		inline void pop(lua_State* L, int n = 1)
+		{ detail::stack_pop pop(L, n); }
+
+	} // namespace lua_stack
 }
 
 #endif
-

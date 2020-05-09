@@ -23,7 +23,7 @@ namespace luabind {
 			index_proxy(Next const& next, lua_State* interpreter, Key const& key)
 				: m_interpreter(interpreter), m_key_index(lua_gettop(interpreter) + 1), m_next(next)
 			{
-				detail::push_to_lua(m_interpreter, key);
+				lua_stack::push(m_interpreter, key);
 			}
 
 			index_proxy(index_proxy const& other)
@@ -61,7 +61,7 @@ namespace luabind {
 				detail::stack_pop pop(m_interpreter, 1);
 
 				lua_pushvalue(m_interpreter, m_key_index);
-				detail::push_to_lua(m_interpreter, std::forward<T>(value));
+				lua_stack::push(m_interpreter, std::forward<T>(value));
 				lua_settable(m_interpreter, -3);
 				return *this;
 			}
@@ -72,7 +72,7 @@ namespace luabind {
 				detail::stack_pop pop(m_interpreter, 1);
 
 				lua_pushvalue(m_interpreter, m_key_index);
-				detail::push_to_lua(m_interpreter, value);
+				lua_stack::push(m_interpreter, value);
 				lua_settable(m_interpreter, -3);
 				return *this;
 			}
