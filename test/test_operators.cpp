@@ -117,6 +117,9 @@ struct len_tester
 	int len_;
 };
 
+struct B {};
+struct D : B {};
+
 void test_main(lua_State* L)
 {
 	using namespace luabind;
@@ -157,7 +160,13 @@ void test_main(lua_State* L)
 
 		class_<len_tester>("len_tester")
 			.def(constructor<int>())
-			.def("__len", &len_tester::len)
+			.def("__len", &len_tester::len),
+
+		class_<B>("B")
+			.def(constructor<>()),
+
+		class_<D, B>("D")
+			.def(constructor<>())
 	];
 	
 	DOSTRING(L, "test = operator_tester()");
@@ -229,5 +238,13 @@ void test_main(lua_State* L)
 	DOSTRING(L,
 		"x = len_tester(3)\n"
 		"assert(#x == 3)");
+
+	D d;
+	globals(L)["d"] = &d;
+	globals(L)["b"] = static_cast<B*>(&d);
+	DOSTRING(L,
+		"assert(d == b)\n"
+		"assert(b == d)\n"
+		"assert(d ~= x)\n");
 }
 
