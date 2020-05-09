@@ -334,7 +334,7 @@ namespace luabind {
 
 				results = lua_gettop(L) - args;
 				if (has_call_policy<PolicyList, yield_policy>::value) {
-					results = lua_yield(L, results);
+					return -results - 1;
 				}
 				call_detail_new::policy_list_postcall < PolicyList, typename meta::push_front< typename traits::stack_index_list, meta::index<traits::arity> >::type >::postcall(L, results);
 

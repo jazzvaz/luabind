@@ -10,6 +10,7 @@
 #include <luabind/detail/call.hpp>
 #include <luabind/detail/deduce_signature.hpp>
 #include <luabind/detail/format_signature.hpp>
+#include <tuple>
 
 namespace luabind {
 
@@ -43,45 +44,46 @@ namespace luabind {
 				return detail::format_signature(L, function, Signature(), concat);
 			}
 
-			static bool invoke_defer(lua_State* L, function_object_impl* impl, invoke_context& ctx, int& results)
+			static std::tuple<bool, int> safe_entry_point(lua_State* L)
 			{
-				bool exception_caught = false;
-
-				try {
-					results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
-				}
-				catch(...) {
-					exception_caught = true;
+				function_object_impl const* impl_const = *(function_object_impl const**)lua_touserdata(L, lua_upvalueindex(1));
+				// TODO: Can this be done differently?
+				function_object_impl* impl = const_cast<function_object_impl*>(impl_const);
+				int results = 0;
+				bool error = false;
 #ifndef LUABIND_NO_EXCEPTIONS
-					handle_exception_aux(L);
+				try
+#endif
+				{
+					invoke_context ctx;
+					results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
+#ifndef LUABIND_PERMISSIVE_MODE
+					if (!ctx)
+					{
+						error = true;
+						ctx.format_error(L, impl);
+					}
 #endif
 				}
-
-				return exception_caught;
+#ifndef LUABIND_NO_EXCEPTIONS
+				catch (...)
+				{
+					error = true;
+					handle_exception_aux(L);
+				}
+#endif
+				if (error)
+					assert(results >= 0);
+				return {error, results};
 			}
 
 			static int entry_point(lua_State* L)
 			{
-				function_object_impl const* impl_const = *(function_object_impl const**)lua_touserdata(L, lua_upvalueindex(1));
-
-				// TODO: Can this be done differently?
-				function_object_impl* impl = const_cast<function_object_impl*>(impl_const);
-				invoke_context ctx;
-				int results = 0;
-
-# ifndef LUABIND_NO_EXCEPTIONS
-				bool exception_caught = invoke_defer(L, impl, ctx, results);
-				if(exception_caught) lua_error(L);
-# else
-				results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
-# endif
-#ifndef LUABIND_PERMISSIVE_MODE
-				if(!ctx) {
-					ctx.format_error(L, impl);
-					lua_error(L);
-				}
-#endif
-
+				auto [error, results] = safe_entry_point(L);
+				if (error)
+					return lua_error(L);
+				if (results < 0)
+					return lua_yield(L, -results - 1);
 				return results;
 			}
 
