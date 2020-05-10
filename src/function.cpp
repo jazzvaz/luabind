@@ -112,6 +112,7 @@ namespace luabind {
 			char const* function_name =
 				overloads->name.empty() ? "<unknown>" : overloads->name.c_str();
 			int stacksize = lua_gettop(L);
+			int cs = lua_gettop(L);
 			if(candidate_index == 0)
 			{
 				lua_pushliteral(L, "No matching overload found, candidates:\n");
@@ -133,6 +134,12 @@ namespace luabind {
 						lua_pushliteral(L, "\n");
 					candidates[i]->format_signature(L, function_name);
 				}
+			}
+			if (extra_candidates)
+			{
+				assert(candidate_index == max_candidates);
+				lua_pushfstring(L, "\nand %d additional overload(s) not shown", extra_candidates);
+				lua_concat(L, 2);
 			}
 			lua_pushfstring(L, "\nPassed arguments [%d]: ", stacksize);
 			if (stacksize == 0)

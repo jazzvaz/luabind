@@ -28,6 +28,7 @@ set(TESTS
 	free_functions
 	function_converter
 	function_introspection
+	function_overload_overflow
 	held_type
 	implicit_cast
 	implicit_raw

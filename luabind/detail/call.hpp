@@ -42,9 +42,8 @@ namespace luabind {
 		{
 			invoke_context()
 				: best_score((std::numeric_limits<int>::max)())
-				//This need to avoid static analyzer's treats
-				, candidates{ nullptr,nullptr,nullptr,nullptr,nullptr,
-							 nullptr,nullptr,nullptr,nullptr,nullptr }
+				, candidates{}
+				, extra_candidates(0)
 				, candidate_index(0)
 			{}
 
@@ -56,7 +55,9 @@ namespace luabind {
 			void format_error(lua_State* L, function_object const* overloads) const;
 
 			int best_score;
-			function_object const* candidates[10];	// This looks like it could crash if you provide too many overloads?
+			static constexpr size_t max_candidates = 10;
+			function_object const* candidates[max_candidates];
+			int extra_candidates;
 			int candidate_index;
 		};
 
@@ -315,6 +316,7 @@ namespace luabind {
 					ctx.best_score = struct_type::match(L, converter_tuple);
 					ctx.candidates[0] = &self;
 					ctx.candidate_index = 1;
+					ctx.extra_candidates = 0;
 					return invoke(L, ctx, f, arguments, converter_tuple);
 				}
 #endif
@@ -362,8 +364,12 @@ namespace luabind {
 					ctx.best_score = score;
 					ctx.candidates[0] = &self;
 					ctx.candidate_index = 1;
+					ctx.extra_candidates = 0;
 				} else if(score == ctx.best_score) {
-					ctx.candidates[ctx.candidate_index++] = &self;
+					if (ctx.candidate_index < invoke_context::max_candidates)
+						ctx.candidates[ctx.candidate_index++] = &self;
+					else
+						ctx.extra_candidates++;
 				}
 
 				int results = 0;
