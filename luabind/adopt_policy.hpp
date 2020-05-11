@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_ADOPT_POLICY_HPP_INCLUDED
-#define LUABIND_ADOPT_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/wrapper_base.hpp>
@@ -117,6 +116,3 @@ namespace luabind
 		using adopt = converter_policy_injector<N, detail::adopt_policy_impl<Pointer>>;
 	}
 }
-
-#endif // LUABIND_ADOPT_POLICY_HPP_INCLUDE
-

@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2004 The Luabind Authors
 
-#ifndef OPERATOR_040729_HPP
-#define OPERATOR_040729_HPP
+#pragma once
 
 #if defined(__GNUC__) && __GNUC__ < 3
 # define LUABIND_NO_STRINGSTREAM
@@ -324,6 +323,3 @@ namespace luabind {
 
 
 } // namespace luabind
-
-#endif // OPERATOR_040729_HPP
-

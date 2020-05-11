@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
-#ifndef LUABIND_EXCEPTION_HANDLER_050601_HPP
-#define LUABIND_EXCEPTION_HANDLER_050601_HPP
+#pragma once
 
 #include <luabind/config.hpp>           // for LUABIND_API
 #include <type_traits>
@@ -71,6 +70,3 @@ namespace luabind {
 	}
 
 } // namespace luabind
-
-#endif // LUABIND_EXCEPTION_HANDLER_050601_HPP
-

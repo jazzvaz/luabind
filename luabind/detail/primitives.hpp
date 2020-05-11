@@ -1,10 +1,9 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_PRIMITIVES_HPP_INCLUDED
-#define LUABIND_PRIMITIVES_HPP_INCLUDED
+#pragma once
 
-	// std::reference_wrapper...
+// std::reference_wrapper...
 #include <type_traits>  // std::true_type...
 #include <cstring>
 
@@ -38,6 +37,3 @@ namespace luabind {
 
 	}
 }
-
-#endif // LUABIND_PRIMITIVES_HPP_INCLUDED
-

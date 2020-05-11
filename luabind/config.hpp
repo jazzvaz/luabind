@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_CONFIG_HPP_INCLUDED
-#define LUABIND_CONFIG_HPP_INCLUDED
+#pragma once
 
 #if defined(DEBUG) && defined(NDEBUG)
 static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
@@ -112,6 +111,3 @@ namespace luabind {
 } // namespace luabind
 
 #include <luabind/types.hpp>
-
-#endif // LUABIND_CONFIG_HPP_INCLUDED
-

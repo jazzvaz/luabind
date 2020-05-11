@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_CLASS_HPP_INCLUDED
-#define LUABIND_CLASS_HPP_INCLUDED
+#pragma once
 
 /*
 	ISSUES:
@@ -615,6 +614,3 @@ namespace luabind {
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-
-#endif // LUABIND_CLASS_HPP_INCLUDED
-

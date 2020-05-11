@@ -1,13 +1,12 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2008 The Luabind Authors
 
-#ifndef LUABIND_INSTANCE_HOLDER_081024_HPP
-# define LUABIND_INSTANCE_HOLDER_081024_HPP
+#pragma once
 
-# include <luabind/detail/inheritance.hpp>
-# include <luabind/pointer_traits.hpp>
-# include <luabind/typeid.hpp>
-# include <stdexcept>
+#include <luabind/detail/inheritance.hpp>
+#include <luabind/pointer_traits.hpp>
+#include <luabind/typeid.hpp>
+#include <stdexcept>
 
 namespace luabind {
 	namespace detail {
@@ -159,6 +158,3 @@ namespace luabind {
 	}
 
 } // namespace luabind::detail
-
-#endif // LUABIND_INSTANCE_HOLDER_081024_HPP
-

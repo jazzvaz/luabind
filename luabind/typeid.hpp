@@ -1,18 +1,17 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2008 The Luabind Authors
 
-#ifndef LUABIND_TYPEID_081227_HPP
-# define LUABIND_TYPEID_081227_HPP
+#pragma once
 
-# include <typeinfo>
-# include <cstdlib>
-# include <luabind/types.hpp>
-# include <luabind/detail/type_traits.hpp>
+#include <typeinfo>
+#include <cstdlib>
+#include <luabind/types.hpp>
+#include <luabind/detail/type_traits.hpp>
 
-# if defined(__GLIBCXX__) || defined(__GLIBCPP__)
-#  define LUABIND_DEMANGLE_TYPENAMES
-#  include <cxxabi.h>
-# endif
+#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+# define LUABIND_DEMANGLE_TYPENAMES
+# include <cxxabi.h>
+#endif
 
 namespace luabind {
 
@@ -67,6 +66,3 @@ namespace luabind {
 	};
 
 } // namespace luabind
-
-#endif // LUABIND_TYPEID_081227_HPP
-

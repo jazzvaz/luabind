@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_ERROR_HPP_INCLUDED
-#define LUABIND_ERROR_HPP_INCLUDED
+#pragma once
 
 #include <luabind/prefix.hpp>
 #include <stdexcept>
@@ -76,6 +75,3 @@ namespace luabind
 		unresolved_name(const char* desc, const char* name);
 	};
 }
-
-#endif // LUABIND_ERROR_HPP_INCLUDED
-

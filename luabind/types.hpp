@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2019 The Luabind Authors
 
-#ifndef LUABIND_TYPES_HPP_INCLUDED
-#define LUABIND_TYPES_HPP_INCLUDED
+#pragma once
 
 #include <memory>
 #include <string>
@@ -37,5 +36,3 @@ namespace luabind
 	template <typename T>
 	using queue = std::queue<T, dequeue<T>>;
 }
-
-#endif // LUABIND_TYPES_HPP_INCLUDED

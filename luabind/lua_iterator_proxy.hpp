@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2013 The Luabind Authors
 
-#ifndef LUA_ITERATOR_PROXY_HPP_INCLUDED
-#define LUA_ITERATOR_PROXY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/lua_proxy_interface.hpp>
 #include <luabind/lua_index_proxy.hpp>
@@ -216,6 +215,3 @@ namespace luabind {
 	using raw_iterator = detail::basic_iterator<detail::raw_access>;
 
 }
-
-#endif
-

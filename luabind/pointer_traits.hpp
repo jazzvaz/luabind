@@ -1,8 +1,8 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
-#ifndef LUABIND_GET_POINTER_051023_HPP
-# define LUABIND_GET_POINTER_051023_HPP
+#pragma once
+
 #include <luabind/types.hpp>
 #include <stdexcept>
 
@@ -119,6 +119,3 @@ namespace luabind {
 	} // namespace detail
 
 } // namespace luabind
-
-#endif // LUABIND_GET_POINTER_051023_HPP
-

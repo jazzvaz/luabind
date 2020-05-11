@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_TYPETRAITS_HPP_INCLUDED
-#define LUABIND_TYPETRAITS_HPP_INCLUDED
+#pragma once
 
 #include <type_traits>
 #include <functional>				// reference_wrapper
@@ -184,6 +183,3 @@ namespace luabind {
 	template< typename Dst > Dst implicit_cast(typename identity<Dst>::type t) { return t; }
 
 } // namespace luabind
-
-#endif // LUABIND_TYPETRAITS_HPP_INCLUDED
-

@@ -1,11 +1,10 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2009 The Luabind Authors
 
-#ifndef LUABIND_DETAIL_MAKE_INSTANCE_090310_HPP
-# define LUABIND_DETAIL_MAKE_INSTANCE_090310_HPP
+#pragma once
 
-# include <luabind/detail/inheritance.hpp>
-# include <luabind/detail/object_rep.hpp>
+#include <luabind/detail/inheritance.hpp>
+#include <luabind/detail/object_rep.hpp>
 
 namespace luabind {
 	namespace detail {
@@ -163,6 +162,3 @@ namespace luabind {
 
 	} // namespace detail
 } // namespace luabind
-
-#endif // LUABIND_DETAIL_MAKE_INSTANCE_090310_HPP
-

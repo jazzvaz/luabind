@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_POLICY_HPP_INCLUDED
-#define LUABIND_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/primitives.hpp>
@@ -138,6 +137,3 @@ namespace luabind {
 	constexpr meta::index<8> _8;
 	constexpr meta::index<9> _9;
 }
-
-#endif // LUABIND_POLICY_HPP_INCLUDED
-

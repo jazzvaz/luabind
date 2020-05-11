@@ -16,8 +16,7 @@ Added Borland specific fixes for reference types
 (issue raised by Steve Cleary).
 */
 
-#ifndef LUABIND_CALL_TRAITS_HPP_INCLUDED
-#define LUABIND_CALL_TRAITS_HPP_INCLUDED
+#pragma once
 
 namespace luabind {
 	namespace detail {
@@ -108,6 +107,3 @@ namespace luabind {
 		};
 	}
 }
-
-#endif
-

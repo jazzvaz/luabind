@@ -1,11 +1,9 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2004 The Luabind Authors
 
-#ifndef WEAK_REF_040402_HPP
-#define WEAK_REF_040402_HPP
+#pragma once
 
 #include <luabind/config.hpp>
-
 #include <luabind/lua_state_fwd.hpp>
 
 namespace luabind {
@@ -35,6 +33,3 @@ namespace luabind {
 	};
 
 } // namespace luabind
-
-#endif // WEAK_REF_040402_HPP
-

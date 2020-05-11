@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2013 The Luabind Authors
 
-#ifndef LUABIND_CRTP_ITERATOR_HPP_INCLUDED
-#define LUABIND_CRTP_ITERATOR_HPP_INCLUDED
+#pragma once
 
 #include <iterator>
 
@@ -59,5 +58,3 @@ namespace luabind {
 
 	}
 }
-
-#endif

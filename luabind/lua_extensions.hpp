@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUA_EXTENSIONS_HPP_INCLUDED
-#define LUA_EXTENSIONS_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 
@@ -23,5 +22,3 @@ namespace luabind
 		LUABIND_API const char* luaL_tolstring_diag(lua_State* L, int idx, size_t* len);
 	} // namespace detail
 } // namespace luabind
-
-#endif

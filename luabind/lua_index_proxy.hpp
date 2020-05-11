@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2013 The Luabind Authors
 
-#ifndef LUA_INDEX_PROXY_HPP_INCLUDED
-#define LUA_INDEX_PROXY_HPP_INCLUDED
+#pragma once
 
 #include <cassert>
 #include <luabind/lua_proxy_interface.hpp>
@@ -135,6 +134,3 @@ namespace luabind {
 
 
 }	// namespace luabind
-
-#endif
-

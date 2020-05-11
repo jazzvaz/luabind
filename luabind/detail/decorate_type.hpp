@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_DECORATE_TYPE_HPP_INCLUDED
-#define LUABIND_DECORATE_TYPE_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 
@@ -61,6 +60,3 @@ namespace luabind {
 	using decorate_type_t = typename decorate_type<T>::type;
 
 }
-
-#endif // LUABIND_DECORATE_TYPE_HPP_INCLUDED
-

@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2008 The Luabind Authors
 
-#ifndef LUABIND_MAKE_FUNCTION_081014_HPP
-#define LUABIND_MAKE_FUNCTION_081014_HPP
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/object.hpp>
@@ -116,6 +115,3 @@ namespace luabind {
 	}
 
 } // namespace luabind
-
-#endif // LUABIND_MAKE_FUNCTION_081014_HPP
-

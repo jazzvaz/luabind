@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
-#ifndef LUABIND_OBJECT_050419_HPP
-#define LUABIND_OBJECT_050419_HPP
+#pragma once
 
 #include <tuple>
 
@@ -346,6 +345,3 @@ namespace luabind {
 } // namespace luabind
 
 #include <luabind/detail/conversion_policies/conversion_policies.hpp>
-
-#endif // LUABIND_OBJECT_050419_HPP
-

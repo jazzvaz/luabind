@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_OUT_VALUE_POLICY_HPP_INCLUDED
-#define LUABIND_OUT_VALUE_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>        // for find_conversion_policy, etc
@@ -250,6 +249,3 @@ namespace luabind
 		using pure_out_value = converter_policy_injector<N, detail::pure_out_value_policy<>>;
 	}
 }
-
-#endif // LUABIND_OUT_VALUE_POLICY_HPP_INCLUDED
-

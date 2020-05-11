@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
-#ifndef LUABIND_VALUE_WRAPPER_050419_HPP
-#define LUABIND_VALUE_WRAPPER_050419_HPP
+#pragma once
 
 #include <type_traits>
 #include <luabind/detail/type_traits.hpp>
@@ -30,6 +29,3 @@ namespace luabind {
 	{};
 
 } // namespace luabind
-
-#endif // LUABIND_VALUE_WRAPPER_050419_HPP
-

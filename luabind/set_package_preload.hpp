@@ -1,20 +1,11 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2012 The Luabind Authors
 
-#ifndef INCLUDED_set_package_preload_hpp_GUID_563c882e_86f7_4ea7_8603_4594ea41737e
-#define INCLUDED_set_package_preload_hpp_GUID_563c882e_86f7_4ea7_8603_4594ea41737e
+#pragma once
 
-// Internal Includes
 #include <luabind/config.hpp>
 #include <luabind/make_function.hpp>
 #include <luabind/lua_state_fwd.hpp>
-
-// Library/third-party includes
-// - none
-
-// Standard includes
-// - none
-
 
 namespace luabind {
 
@@ -30,5 +21,3 @@ namespace luabind {
 		set_package_preload(L, modulename, f);
 	}
 }
-#endif // INCLUDED_set_package_preload_hpp_GUID_563c882e_86f7_4ea7_8603_4594ea41737e
-

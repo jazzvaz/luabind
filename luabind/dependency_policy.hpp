@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_DEPENDENCY_POLICY_HPP_INCLUDED
-#define LUABIND_DEPENDENCY_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>    // for policy_cons, etc
@@ -76,6 +75,3 @@ namespace luabind
 		using return_ref = call_policy_injector<detail::dependency_policy<0, A>>;
 	}
 }
-
-#endif // LUABIND_DEPENDENCY_POLICY_HPP_INCLUDED
-

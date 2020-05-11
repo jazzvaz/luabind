@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2009 The Luabind Authors
 
-#ifndef LUABIND_SHARED_PTR_CONVERTER_090211_HPP
-# define LUABIND_SHARED_PTR_CONVERTER_090211_HPP
+#pragma once
 
 #include <luabind/detail/policy.hpp>
 #include <luabind/detail/conversion_policies/value_converter.hpp>    // for default_converter, etc
@@ -77,6 +76,3 @@ namespace luabind {
 	{};
 
 } // namespace luabind
-
-#endif // LUABIND_SHARED_PTR_CONVERTER_090211_HPP
-

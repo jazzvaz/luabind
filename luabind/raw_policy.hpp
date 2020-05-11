@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_RAW_POLICY_HPP_INCLUDED
-#define LUABIND_RAW_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>
@@ -44,6 +43,3 @@ namespace luabind {
 		using raw = converter_policy_injector<N, detail::raw_policy>;
 	}
 } // namespace luabind
-
-#endif // LUABIND_RAW_POLICY_HPP_INCLUDED
-

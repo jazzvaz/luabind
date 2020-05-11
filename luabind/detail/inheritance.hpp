@@ -1,16 +1,15 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2009 The Luabind Authors
 
-#ifndef LUABIND_INHERITANCE_090217_HPP
-# define LUABIND_INHERITANCE_090217_HPP
+#pragma once
 
-# include <luabind/config.hpp>
-# include <cassert>
-# include <limits>
-# include <map>
-# include <memory>
-# include <vector>
-# include <luabind/typeid.hpp>
+#include <luabind/config.hpp>
+#include <cassert>
+#include <limits>
+#include <map>
+#include <memory>
+#include <vector>
+#include <luabind/typeid.hpp>
 
 namespace luabind {
 
@@ -168,6 +167,3 @@ namespace luabind {
 	}	// namespace detail
 
 } // namespace luabind
-
-#endif // LUABIND_INHERITANCE_090217_HPP
-

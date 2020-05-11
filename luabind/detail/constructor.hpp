@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2008 The Luabind Authors
 
-#ifndef LUABIND_DETAIL_CONSTRUCTOR_081018_HPP
-#define LUABIND_DETAIL_CONSTRUCTOR_081018_HPP
+#pragma once
 
 #include <luabind/get_main_thread.hpp>
 #include <luabind/lua_argument_proxy.hpp>
@@ -59,6 +58,3 @@ namespace luabind {
 	}	// namespace detail
 
 }	// namespace luabind
-
-# endif // LUABIND_DETAIL_CONSTRUCTOR_081018_HPP
-

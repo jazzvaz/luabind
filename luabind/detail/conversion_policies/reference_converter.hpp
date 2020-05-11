@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2013 The Luabind Authors
 
-#ifndef LUABIND_REFERENCE_CONVERTER_HPP_INCLUDED
-#define LUABIND_REFERENCE_CONVERTER_HPP_INCLUDED
+#pragma once
 
 #include <type_traits>
 #include <luabind/detail/conversion_policies/conversion_base.hpp>
@@ -106,6 +105,3 @@ namespace luabind {
 
 	}
 }
-
-#endif
-

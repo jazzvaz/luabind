@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
-#ifndef LUABIND_FROM_STACK_050715_HPP
-#define LUABIND_FROM_STACK_050715_HPP
+#pragma once
 
 #include <luabind/lua_state_fwd.hpp>
 
@@ -20,6 +19,3 @@ namespace luabind {
 	};
 
 } // namespace luabind
-
-#endif // LUABIND_FROM_STACK_050715_HPP
-

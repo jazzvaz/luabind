@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUA_INCLUDE_HPP_INCLUDED
-#define LUA_INCLUDE_HPP_INCLUDED
+#pragma once
 
 #ifndef LUABIND_CPLUSPLUS_LUA
 extern "C"
@@ -51,6 +50,3 @@ inline void lua_rawgetp(lua_State* L, int i, void* p)
 	lua_rawget(L, abs_i);
 }
 #endif
-
-#endif
-

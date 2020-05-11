@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_DEBUG_HPP_INCLUDED
-#define LUABIND_DEBUG_HPP_INCLUDED
+#pragma once
 
 #ifndef NDEBUG
 
@@ -35,6 +34,3 @@ namespace luabind {
 #else
 #define LUABIND_CHECK_STACK(L) do {} while (0)
 #endif
-
-#endif // LUABIND_DEBUG_HPP_INCLUDED
-

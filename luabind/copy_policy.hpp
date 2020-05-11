@@ -1,10 +1,9 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2008 The Luabind Authors
 
-#ifndef LUABIND_COPY_POLICY_081021_HPP
-# define LUABIND_COPY_POLICY_081021_HPP
+#pragma once
 
-# include <luabind/detail/policy.hpp>
+#include <luabind/detail/policy.hpp>
 
 namespace luabind {
 	namespace detail {
@@ -45,6 +44,3 @@ namespace luabind {
 		using copy = converter_policy_injector< N, detail::copy_policy >;
 	}
 } // namespace luabind
-
-#endif // LUABIND_COPY_POLICY_081021_HPP
-

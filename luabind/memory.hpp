@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2019 The Luabind Authors
 
-#ifndef LUABIND_MEMORY_HPP_INCLUDED
-#define LUABIND_MEMORY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/types.hpp>
@@ -91,5 +90,3 @@ namespace luabind
 	using luabind_deleter = std::default_delete<T>;
 #endif
 }
-
-#endif // LUABIND_MEMORY_HPP_INCLUDED

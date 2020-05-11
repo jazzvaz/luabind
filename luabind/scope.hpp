@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2004 The Luabind Authors
 
-#ifndef NEW_SCOPE_040211_HPP
-#define NEW_SCOPE_040211_HPP
+#pragma once
 
 #include <luabind/prefix.hpp>
 #include <luabind/config.hpp>
@@ -87,6 +86,3 @@ namespace luabind {
 	}
 
 } // namespace luabind
-
-#endif // NEW_SCOPE_040211_HPP
-

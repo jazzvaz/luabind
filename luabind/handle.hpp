@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
-#ifndef LUABIND_HANDLE_050420_HPP
-#define LUABIND_HANDLE_050420_HPP
+#pragma once
 
 #include <luabind/lua_include.hpp>
 #include <luabind/lua_proxy.hpp>
@@ -151,6 +150,3 @@ namespace luabind {
 	};
 
 } // namespace luabind
-
-#endif // LUABIND_HANDLE_050420_HPP
-

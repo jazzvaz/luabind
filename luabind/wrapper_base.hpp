@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_WRAPPER_BASE_HPP_INCLUDED
-#define LUABIND_WRAPPER_BASE_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/weak_ref.hpp>
@@ -93,6 +92,3 @@ namespace luabind
 		};
 	}
 }
-
-#endif // LUABIND_WRAPPER_BASE_HPP_INCLUDED
-

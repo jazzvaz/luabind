@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2019 The Luabind Authors
 
-#ifndef LUABIND_MEMORY_ALLOCATOR_HPP_INCLUDED
-#define LUABIND_MEMORY_ALLOCATOR_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/memory.hpp>
@@ -99,5 +98,3 @@ namespace luabind
 	}
 #endif
 }
-
-#endif // LUABIND_MEMORY_ALLOCATOR_HPP_INCLUDED

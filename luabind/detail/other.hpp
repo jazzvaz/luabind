@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_OTHER_HPP_INCLUDED
-#define LUABIND_OTHER_HPP_INCLUDED
+#pragma once
 
 // header derived from source code found in Boost.Python
 
@@ -41,6 +40,3 @@ namespace luabind {
 		};
 	}
 } // namespace luabind::detail
-
-#endif // LUABIND_OTHER_HPP_INCLUDED
-

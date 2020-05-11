@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2008 The Luabind Authors
 
-#ifndef LUABIND_TAG_FUNCTION_081129_HPP
-#define LUABIND_TAG_FUNCTION_081129_HPP
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/type_traits.hpp>
@@ -48,6 +47,3 @@ namespace luabind {
 	}
 
 } // namespace luabind
-
-# endif // LUABIND_TAG_FUNCTION_081129_HPP
-

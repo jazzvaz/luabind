@@ -1,14 +1,12 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2007 The Luabind Authors
 
-#ifndef LUABIND_ITERATOR_POLICY__071111_HPP
-# define LUABIND_ITERATOR_POLICY__071111_HPP
+#pragma once
 
-# include <luabind/config.hpp>           // for LUABIND_ANONYMOUS_FIX
-# include <luabind/lua_stack.hpp>  // for lua_stack::push
-# include <luabind/detail/policy.hpp>    // for index_map, etc
-
-# include <new>                          // for operator new
+#include <luabind/config.hpp>           // for LUABIND_ANONYMOUS_FIX
+#include <luabind/lua_stack.hpp>  // for lua_stack::push
+#include <luabind/detail/policy.hpp>    // for index_map, etc
+#include <new>                          // for operator new
 
 namespace luabind {
 	namespace detail {
@@ -191,6 +189,3 @@ namespace luabind
 		using return_stl_pair_iterator = converter_policy_injector<0, detail::iterator_pair_policy>;
 	}
 } // namespace luabind
-
-#endif // LUABIND_ITERATOR_POLICY__071111_HPP
-

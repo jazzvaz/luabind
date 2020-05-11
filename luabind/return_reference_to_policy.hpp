@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_RETURN_REFERENCE_TO_POLICY_HPP_INCLUDED
-#define LUABIND_RETURN_REFERENCE_TO_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/detail/policy.hpp>    // for index_map, policy_cons, etc
 #include <luabind/lua_include.hpp>      // for lua_State, lua_pushnil, etc
@@ -50,6 +49,3 @@ namespace luabind {
 		using return_reference_to = converter_policy_injector<0, detail::return_reference_to_policy<N>>;
 	}
 }
-
-#endif // LUABIND_RETURN_REFERENCE_TO_POLICY_HPP_INCLUDED
-

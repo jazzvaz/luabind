@@ -1,8 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#ifndef LUABIND_DISCARD_RESULT_POLICY_HPP_INCLUDED
-#define LUABIND_DISCARD_RESULT_POLICY_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>    // for index_map, etc
@@ -40,6 +39,3 @@ namespace luabind
 		using discard_result = converter_policy_injector<0, detail::discard_result_policy>;
 	}
 }
-
-#endif // LUABIND_DISCARD_RESULT_POLICY_HPP_INCLUDED
-
