@@ -7,6 +7,7 @@
 #include <luabind/detail/call_function.hpp>
 #include <luabind/lua_stack.hpp>
 #include <ostream>
+#include <optional>
 
 namespace luabind {
 
@@ -268,16 +269,18 @@ namespace luabind {
 		return detail::object_cast_aux(value_wrapper, (T*)0, (Policies*)0, detail::throw_error_policy<T>(), (T*)0);
 	}
 
-	template<typename T, typename ValueWrapper, typename ReturnValue> inline
-		ReturnValue object_cast_nothrow(ValueWrapper const& value_wrapper, ReturnValue default_value)
+	template <typename T, typename ValueWrapper>
+	inline std::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper)
 	{
-		return detail::object_cast_aux(value_wrapper, (T*)0, (no_policies*)0, detail::nothrow_error_policy<ReturnValue>(default_value), (ReturnValue*)0);
+		return detail::object_cast_aux(
+			value_wrapper, (T*)0, (no_policies*)0, detail::nothrow_error_policy(std::nullopt), (std::optional<T>*)0);
 	}
 
-	template<typename T, typename ValueWrapper, typename Policies, typename ReturnValue> inline
-		ReturnValue object_cast_nothrow(ValueWrapper const& value_wrapper, Policies const&, ReturnValue default_value)
+	template <typename T, typename ValueWrapper, typename Policies>
+	inline std::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper, Policies const&)
 	{
-		return detail::object_cast_aux(value_wrapper, (T*)0, (Policies*)0, detail::nothrow_error_policy<ReturnValue>(default_value), (ReturnValue*)0);
+		return detail::object_cast_aux(
+			value_wrapper, (T*)0, (Policies*)0, detail::nothrow_error_policy(std::nullopt), (std::optional<T>*)0);
 	}
 
 	template <class ValueWrapper>
