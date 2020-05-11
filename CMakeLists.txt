@@ -1,3 +1,6 @@
+# Boost Software License http://www.boost.org/LICENSE_1_0.txt
+# Copyright (c) 2010 The Luabind Authors
+
 cmake_minimum_required(VERSION 3.0)
 project(luabind)
 option(LUABIND_BUILD_TESTING "Build luabind testing" OFF)

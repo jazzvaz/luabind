@@ -1,7 +1,5 @@
-# Embedded build for LuaBind
-# 2009-2011 Ryan Pavlik <rpavlik@iastate.edu>
-# http://academic.cleardefinition.com/
-# Iowa State University HCI Graduate Program/VRAC
+# Boost Software License http://www.boost.org/LICENSE_1_0.txt
+# Copyright (c) 2009 The Luabind Authors
 
 set(SOURCES
 	adopt.rst

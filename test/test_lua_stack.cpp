@@ -1,5 +1,5 @@
-// MIT License
-// Copyright (c) 2020 Pavel Kovalenko
+// Boost Software License http://www.boost.org/LICENSE_1_0.txt
+// Copyright (c) 2020 The Luabind Authors
 
 #include "test.hpp"
 #include <luabind/luabind.hpp>
