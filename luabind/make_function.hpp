@@ -46,9 +46,8 @@ namespace luabind {
 
 			static std::tuple<bool, int> safe_entry_point(lua_State* L)
 			{
-				function_object_impl const* impl_const = *(function_object_impl const**)lua_touserdata(L, lua_upvalueindex(1));
-				// TODO: Can this be done differently?
-				function_object_impl* impl = const_cast<function_object_impl*>(impl_const);
+				void* ud = lua_touserdata(L, lua_upvalueindex(1));
+				function_object_impl* impl = *static_cast<function_object_impl**>(ud);
 				int results = 0;
 				bool error = false;
 #ifndef LUABIND_NO_EXCEPTIONS
