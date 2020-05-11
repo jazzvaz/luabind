@@ -306,8 +306,7 @@ namespace luabind {
 
 			static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f) {
 				int const arguments = lua_gettop(L);
-#ifdef LUABIND_PERMISSIVE_MODE
-				if (!self.next)
+				if (get_permissive_mode() && !self.next)
 				{
 					typename traits::argument_converter_tuple_type converter_tuple;
 					using struct_type = match_struct< typename traits::stack_index_list, typename traits::signature_list >;
@@ -317,7 +316,6 @@ namespace luabind {
 					ctx.extra_candidates = 0;
 					return invoke(L, ctx, f, arguments, converter_tuple);
 				}
-#endif
 				return invoke_best_match(L, self, ctx, f, arguments);
 			}
 

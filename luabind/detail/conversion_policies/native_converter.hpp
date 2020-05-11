@@ -162,10 +162,9 @@ namespace luabind {
 			{
 			case LUA_TSTRING:
 				return 0;
-#ifdef LUABIND_PERMISSIVE_MODE
 			case LUA_TNUMBER:
-				return 1;
-#endif
+				if (get_permissive_mode())
+					return 1;
 			default:
 				return no_match;
 			}
@@ -215,10 +214,9 @@ namespace luabind {
 			case LUA_TNIL:
 				if (is_nil_conversion_allowed())
 					return 0;
-#ifdef LUABIND_PERMISSIVE_MODE
 			case LUA_TNUMBER:
-				return 1;
-#endif
+				if (get_permissive_mode())
+					return 1;
 			}
 			return no_match;
 		}

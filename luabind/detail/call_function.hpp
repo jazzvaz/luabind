@@ -74,11 +74,8 @@ namespace luabind
 				stack_pop pop(L, lua_gettop(L) - top + NumParams);
 
 				specialized_converter_policy_n<0, PolicyList, Ret, lua_to_cpp> converter;
-				if(converter.match(L, decorate_type_t<Ret>(), -1) < 0) {
-#ifndef LUABIND_PERMISSIVE_MODE
+				if(converter.match(L, decorate_type_t<Ret>(), -1) < 0 && !get_permissive_mode())
 					cast_error<Ret>(L);
-#endif
-				}
 				return converter.to_cpp(L, decorate_type_t<Ret>(), -1);
 			}
 		};

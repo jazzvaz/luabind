@@ -54,13 +54,11 @@ namespace luabind {
 				{
 					invoke_context ctx;
 					results = invoke<InjectorList, Signature>(L, *impl, ctx, impl->f);
-#ifndef LUABIND_PERMISSIVE_MODE
-					if (!ctx)
+					if (!get_permissive_mode() && !ctx)
 					{
 						error = true;
 						ctx.format_error(L, impl);
 					}
-#endif
 				}
 #ifndef LUABIND_NO_EXCEPTIONS
 				catch (...)

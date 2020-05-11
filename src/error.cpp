@@ -101,5 +101,14 @@ namespace luabind {
 		std::runtime_error((luabind::string(desc) + ": " + name).c_str())
 	{}
 
-}
+	namespace detail
+	{
+		bool permissive = false;
+	} // namespace detail
 
+	void set_permissive_mode(bool enable)
+	{ detail::permissive = enable; }
+
+	bool get_permissive_mode()
+	{ return detail::permissive; }
+}

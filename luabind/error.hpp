@@ -68,6 +68,18 @@ namespace luabind
 	LUABIND_API void set_pcall_callback(pcall_callback_fun e);
 	LUABIND_API pcall_callback_fun get_pcall_callback();
 
+	namespace detail
+	{
+		extern bool permissive;
+	} // namespace detail
+
+	// This will enable the following features:
+	// - native converter from number to <luabind::string> and <char const*>
+	// - function calls with missing arguments are not treated as errors
+	// - return value of lua function is converted to cpp without converter match check
+	LUABIND_API void set_permissive_mode(bool enable);
+	LUABIND_API bool get_permissive_mode();
+
 	// thrown when trying to use unregistered class or call nonexistent function
 	class LUABIND_API unresolved_name : public std::runtime_error
 	{
