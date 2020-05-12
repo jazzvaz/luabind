@@ -205,8 +205,8 @@ namespace luabind {
 
 	namespace detail
 	{
-		template<class T, class ValueWrapper, class Policies, class ErrorPolicy, class ReturnType >
-		ReturnType object_cast_aux(ValueWrapper const& value_wrapper, T*, Policies*, ErrorPolicy error_policy, ReturnType*)
+		template<class T, class ReturnType, class Policies, class ValueWrapper, class ErrorPolicy>
+		ReturnType object_cast_aux(ValueWrapper const& value_wrapper, ErrorPolicy error_policy)
 		{
 			lua_State* interpreter = lua_proxy_traits<ValueWrapper>::interpreter(value_wrapper);
 
@@ -257,30 +257,30 @@ namespace luabind {
 		};
 	} // namespace detail
 
-	template<class T, class ValueWrapper> inline
-		T object_cast(ValueWrapper const& value_wrapper)
+	template <class T, class ValueWrapper>
+	inline T object_cast(ValueWrapper const& wrapper)
 	{
-		return detail::object_cast_aux(value_wrapper, (T*)0, (no_policies*)0, detail::throw_error_policy<T>(), (T*)0);
+		return detail::object_cast_aux<T, T, no_policies>(wrapper, detail::throw_error_policy<T>());
 	}
 
-	template<class T, class ValueWrapper, class Policies> inline
-		T object_cast(ValueWrapper const& value_wrapper, Policies const&)
+	template <class T, class ValueWrapper, class Policies>
+	inline T object_cast(ValueWrapper const& wrapper, Policies const&)
 	{
-		return detail::object_cast_aux(value_wrapper, (T*)0, (Policies*)0, detail::throw_error_policy<T>(), (T*)0);
+		return detail::object_cast_aux<T, T, Policies>(wrapper, detail::throw_error_policy<T>());
 	}
 
 	template <typename T, typename ValueWrapper>
-	inline std::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper)
+	inline std::optional<T> object_cast_nothrow(ValueWrapper const& wrapper)
 	{
-		return detail::object_cast_aux(
-			value_wrapper, (T*)0, (no_policies*)0, detail::nothrow_error_policy(std::nullopt), (std::optional<T>*)0);
+		return detail::object_cast_aux<T, std::optional<T>, no_policies>(
+			wrapper, detail::nothrow_error_policy(std::nullopt));
 	}
 
 	template <typename T, typename ValueWrapper, typename Policies>
-	inline std::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper, Policies const&)
+	inline std::optional<T> object_cast_nothrow(ValueWrapper const& wrapper, Policies const&)
 	{
-		return detail::object_cast_aux(
-			value_wrapper, (T*)0, (Policies*)0, detail::nothrow_error_policy(std::nullopt), (std::optional<T>*)0);
+		return detail::object_cast_aux<T, std::optional<T>, Policies>(
+			wrapper, detail::nothrow_error_policy(std::nullopt));
 	}
 
 	template <class ValueWrapper>
