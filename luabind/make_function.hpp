@@ -6,7 +6,8 @@
 #include <luabind/config.hpp>
 #include <luabind/detail/object.hpp>
 #include <luabind/detail/call.hpp>
-#include <luabind/detail/deduce_signature.hpp>
+#include <luabind/detail/meta.hpp>
+#include <luabind/detail/type_traits.hpp>
 #include <luabind/detail/format_signature.hpp>
 #include <tuple>
 

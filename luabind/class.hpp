@@ -71,7 +71,6 @@
 #include <luabind/detail/operator_id.hpp>
 #include <luabind/detail/link_compatibility.hpp>
 #include <luabind/detail/inheritance.hpp>
-#include <luabind/detail/signature_match.hpp>
 #include <luabind/no_dependency.hpp>
 #include <luabind/typeid.hpp>
 #include <luabind/detail/meta.hpp>

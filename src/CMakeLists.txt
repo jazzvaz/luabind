@@ -82,7 +82,6 @@ set(LUABIND_DETAIL_API
 	../luabind/detail/crtp_iterator.hpp
 	../luabind/detail/debug.hpp
 	../luabind/detail/decorate_type.hpp
-	../luabind/detail/deduce_signature.hpp
 	../luabind/detail/enum_maker.hpp
 	../luabind/detail/format_signature.hpp
 	../luabind/detail/garbage_collector.hpp
@@ -100,7 +99,6 @@ set(LUABIND_DETAIL_API
 	../luabind/detail/primitives.hpp
 	../luabind/detail/property.hpp
 	../luabind/lua_stack.hpp
-	../luabind/detail/signature_match.hpp
 	../luabind/detail/stack_utils.hpp
 	../luabind/detail/type_traits.hpp
 )

@@ -4,7 +4,8 @@
 #pragma once
 
 #include <functional>
-#include <luabind/detail/deduce_signature.hpp>
+#include <luabind/detail/meta.hpp>
+#include <luabind/detail/type_traits.hpp>
 #include <luabind/detail/conversion_policies/conversion_base.hpp>
 #include <luabind/make_function.hpp>
 #include <luabind/detail/call_function.hpp>
