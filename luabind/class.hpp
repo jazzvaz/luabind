@@ -83,11 +83,7 @@
 
 namespace luabind {
 	namespace detail {
-		struct unspecified {};
-
 		template<class Derived> struct operator_;
-
-		struct you_need_to_define_a_get_const_holder_function_for_your_smart_ptr {};
 	}
 
 	template < typename... BaseClasses >
@@ -148,12 +144,12 @@ namespace luabind {
 	template<typename T, typename BaseOrBases = no_bases, typename HolderType = null_type, typename WrapperType = null_type>
 	struct class_;
 
-	// TODO: this function will only be invoked if the user hasn't defined a correct overload
-	// maybe we should have a static assert in here?
-	inline detail::you_need_to_define_a_get_const_holder_function_for_your_smart_ptr*
-		get_const_holder(...)
+	// This function will only be invoked if the user hasn't defined a correct overload
+	template <typename SmartPtr, bool Condition = false>
+	inline SmartPtr* get_const_holder(SmartPtr*)
 	{
-		return 0;
+		static_assert(Condition, "Define a get const holder function for your smart ptr");
+		return nullptr;
 	}
 
 	template <class T>
