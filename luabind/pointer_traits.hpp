@@ -73,48 +73,16 @@ namespace luabind {
 				"luabind: smart pointer does not allow ownership transfer");
 		}
 
-		namespace has_get_pointer_
-		{
-
-			struct any
-			{
-				template<class T> any(T const&);
-			};
-
-			struct no_overload_tag
-			{};
-
-			typedef char(&yes)[1];
-			typedef char(&no)[2];
-
-			no_overload_tag operator, (no_overload_tag, int);
-
-			// required for unqualified name lookup inside impl for shared_ptr<T>
-			// (otherwise we would need to put it either in global or std namespace)
-			using luabind::get_pointer;
-
-			detail::has_get_pointer_::no_overload_tag
-				get_pointer(detail::has_get_pointer_::any);
-
-			///@TODO: Rework
-			template<class T>
-			yes check(T const&);
-			no check(no_overload_tag);
-
-			template<class T>
-			struct impl
-			{
-				static typename std::add_lvalue_reference<T>::type x;
-				static const bool value = (sizeof(has_get_pointer_::check((get_pointer(x), 0))) == 1);
-				typedef std::integral_constant<bool, value> type;
-			};
-
-		} // namespace has_get_pointer_
-
-		template<class T>
-		struct has_get_pointer
-			: has_get_pointer_::impl<T>::type
+		template <typename T, typename = void>
+		struct has_get_pointer : std::false_type
 		{};
+
+		template <typename T>
+		struct has_get_pointer<T, std::void_t<decltype(get_pointer(std::declval<T>()))>> : std::true_type
+		{};
+
+		template <typename T>
+		constexpr bool has_get_pointer_v = has_get_pointer<T>::value;
 
 	} // namespace detail
 

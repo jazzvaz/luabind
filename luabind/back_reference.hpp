@@ -14,42 +14,23 @@ namespace luabind {
 
 	namespace detail
 	{
-		template<class T>
-		wrap_base const* get_back_reference_aux0(T const* p, std::true_type)
-		{
-			return dynamic_cast<wrap_base const*>(p);
-		}
-
-		template<class T>
-		wrap_base const* get_back_reference_aux0(T const*, std::false_type)
-		{
-			return 0;
-		}
-
-		template<class T>
-		wrap_base const* get_back_reference_aux1(T const* p)
-		{
-			return get_back_reference_aux0(p, std::is_polymorphic<T>());
-		}
-
-		template<class T>
-		wrap_base const* get_back_reference_aux2(T const& x, std::true_type)
-		{
-			return get_back_reference_aux1(get_pointer(x));
-		}
-
-		template<class T>
-		wrap_base const* get_back_reference_aux2(T const& x, std::false_type)
-		{
-			return get_back_reference_aux1(&x);
-		}
-
-		template<class T>
+		template <class T>
 		wrap_base const* get_back_reference(T const& x)
 		{
-			return detail::get_back_reference_aux2(x, has_get_pointer<T>());
+			if constexpr (has_get_pointer_v<T>)
+			{
+				auto p = get_pointer(x);
+				if constexpr (std::is_polymorphic_v<decltype(p)>)
+					return dynamic_cast<wrap_base const*>(p);
+			}
+			else
+			{
+				auto p = &x;
+				if constexpr (std::is_polymorphic_v<decltype(p)>)
+					return dynamic_cast<wrap_base const*>(p);
+			}
+			return nullptr;
 		}
-
 	} // namespace detail
 
 	template<class T>
