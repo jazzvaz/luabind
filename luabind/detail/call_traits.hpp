@@ -67,9 +67,9 @@ namespace luabind {
 
 			using param_type = typename ct_imp<
 				T,
-				std::is_pointer<T>::value,
-				std::is_integral<T>::value || std::is_floating_point<T>::value,
-				std::is_enum<T>::value
+				std::is_pointer_v<T>,
+				std::is_integral_v<T> || std::is_floating_point_v<T>,
+				std::is_enum_v<T>
 			>::param_type;
 		};
 

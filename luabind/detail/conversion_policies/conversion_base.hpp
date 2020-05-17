@@ -31,7 +31,7 @@ namespace luabind {
 		template <class T>
 		void make_pointee_instance(lua_State* L, T&& x, std::false_type, std::true_type)
 		{
-			using value_type = typename std::remove_reference<T>::type;
+			using value_type = std::remove_reference_t<T>;
 
 			luabind::unique_ptr<value_type> ptr(luabind_new<value_type>(std::move(x)));
 			make_pointer_instance(L, std::move(ptr));

@@ -30,8 +30,8 @@ namespace luabind {
 			template<typename StackIndexList>
 			static void postcall(lua_State* L, int results, StackIndexList)
 			{
-				lua_pushvalue(L, (meta::get<StackIndexList, N>::value));
-				lua_replace(L, (meta::get<StackIndexList, 0>::value + results));
+				lua_pushvalue(L, (meta::get_v<StackIndexList, N>));
+				lua_replace(L, (meta::get_v<StackIndexList, 0> + results));
 			}
 
 			template<class T, class Direction>

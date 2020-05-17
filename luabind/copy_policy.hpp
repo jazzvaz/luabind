@@ -31,7 +31,7 @@ namespace luabind {
 			template <class T, class Direction>
 			struct specialize
 			{
-				static_assert(std::is_same<Direction, cpp_to_lua>::value, "Copy policy only supports cpp -> lua");
+				static_assert(std::is_same_v<Direction, cpp_to_lua>, "Copy policy only supports cpp -> lua");
 				using type = copy_converter;
 			};
 		};

@@ -16,21 +16,27 @@ namespace luabind {
 		template <class T>
 		class lua_proxy_interface;
 
-		namespace check_object_interface
+		struct object_checker
 		{
 			template <class T>
-			std::true_type  check(lua_proxy_interface<T>*);
-			std::false_type check(void*);
-		} // namespace is_object_interface_aux
+			std::true_type operator()(lua_proxy_interface<T>*);
+			std::false_type operator()(void*);
+		};
 
 		template <class T>
-		struct is_object_interface : public decltype(check_object_interface::check((remove_const_reference_t<T>*)nullptr))
+		struct is_object_interface : decltype(object_checker()((remove_const_reference_t<T>*)0))
 		{};
+
+		template <class T>
+		constexpr bool is_object_interface_v = is_object_interface<T>::value;
 
 		template <class R, class T, class U>
 		struct enable_binary
-			: std::enable_if< is_object_interface<T>::value || is_object_interface<U>::value, R >
+			: std::enable_if< is_object_interface_v<T> || is_object_interface_v<U>, R >
 		{};
+
+		template <class R, class T, class U>
+		using enable_binary_t = typename enable_binary<R, T, U>::type;
 
 		template<class T, class U>
 		int binary_interpreter(lua_State*& L, T const& lhs, U const& rhs, std::true_type, std::true_type)
@@ -71,8 +77,7 @@ namespace luabind {
 		}
 
 		template<class LHS, class RHS>
-		typename enable_binary<bool, LHS, RHS>::type
-			operator==(LHS&& lhs, RHS&& rhs)
+		enable_binary_t<bool, LHS, RHS> operator==(LHS&& lhs, RHS&& rhs)
 		{
 			lua_State* L = 0;
 			switch(binary_interpreter(L, lhs, rhs)) {
@@ -88,8 +93,7 @@ namespace luabind {
 		}
 
 		template<class LHS, class RHS>
-		typename enable_binary<bool, LHS, RHS>::type
-			operator<(LHS&& lhs, RHS&& rhs)
+		enable_binary_t<bool, LHS, RHS> operator<(LHS&& lhs, RHS&& rhs)
 		{
 			lua_State* L = 0;
 			switch(binary_interpreter(L, lhs, rhs)) {
@@ -134,29 +138,25 @@ namespace luabind {
 
 
 		template<class LHS, class RHS>
-		typename enable_binary<bool, LHS, RHS>::type
-			operator>(LHS const& lhs, RHS const& rhs)
+		enable_binary_t<bool, LHS, RHS> operator>(LHS const& lhs, RHS const& rhs)
 		{
 			return !(lhs < rhs || lhs == rhs);
 		}
 
 		template<class LHS, class RHS>
-		typename enable_binary<bool, LHS, RHS>::type
-			operator<=(LHS const& lhs, RHS const& rhs)
+		enable_binary_t<bool, LHS, RHS> operator<=(LHS const& lhs, RHS const& rhs)
 		{
 			return lhs < rhs || lhs == rhs;
 		}
 
 		template<class LHS, class RHS>
-		typename enable_binary<bool, LHS, RHS>::type
-			operator>=(LHS const& lhs, RHS const& rhs)
+		enable_binary_t<bool, LHS, RHS> operator>=(LHS const& lhs, RHS const& rhs)
 		{
 			return !(lhs < rhs);
 		}
 
 		template<class LHS, class RHS>
-		typename enable_binary<bool, LHS, RHS>::type
-			operator!=(LHS const& lhs, RHS const& rhs)
+		enable_binary_t<bool, LHS, RHS> operator!=(LHS const& lhs, RHS const& rhs)
 		{
 			return !(lhs == rhs);
 		}
@@ -239,7 +239,7 @@ namespace luabind {
 					"luabind::set_error_callback()");
 				std::terminate();
 #endif
-				//return *(typename std::remove_reference<T>::type*)0; //DEAD CODE!
+				//return *(std::remove_reference_t<T>*)0; //DEAD CODE!
 			}
 		};
 

@@ -69,6 +69,9 @@ namespace luabind {
 			template< typename ConsumedList, unsigned int CurrentSum, unsigned int... StackIndices >
 			struct compute_stack_indices;
 
+			template< typename ConsumedList, unsigned int CurrentSum, unsigned int... StackIndices >
+			using compute_stack_indices_t = typename compute_stack_indices<ConsumedList, CurrentSum, StackIndices...>::type;
+
 			template< unsigned int Consumed0, unsigned int... Consumeds, unsigned int CurrentSum, unsigned int... StackIndices >
 			struct compute_stack_indices< meta::index_list< Consumed0, Consumeds... >, CurrentSum, StackIndices... >
 			{
@@ -168,20 +171,20 @@ namespace luabind {
 
 			using decorated_argument_list = meta::type_list< decorate_type_t<Arguments>... >;
 			// note that this is 0-based, so whenever you want to fetch from the converter list, you need to add 1
-			using argument_index_list = typename meta::make_index_range< 0, sizeof...(Arguments) >::type;
+			using argument_index_list = meta::index_range< 0, sizeof...(Arguments) >;
 			using argument_converter_list = typename compute_argument_converter_list<argument_list, PolicyList>::type;
-			using argument_converter_tuple_type = typename meta::make_tuple<argument_converter_list>::type;
+			using argument_converter_tuple_type = meta::make_tuple_t<argument_converter_list>;
 			using consumed_list = typename build_consumed_list<argument_converter_list>::consumed_list;
-			using stack_index_list = typename call_detail_new::compute_stack_indices< consumed_list, 1 >::type;
-			enum { arity = meta::sum<consumed_list>::value };
+			using stack_index_list = call_detail_new::compute_stack_indices_t< consumed_list, 1 >;
+			enum { arity = meta::sum_v<consumed_list> };
 		};
 
-		template< typename StackIndexList, typename SignatureList, unsigned int End = meta::size<SignatureList>::value, unsigned int Index = 1 >
+		template< typename StackIndexList, typename SignatureList, unsigned int End = meta::size_v<SignatureList>, unsigned int Index = 1 >
 		struct match_struct {
 			template< typename TupleType >
 			static int match(lua_State* L, TupleType& tuple)
 			{
-				const int this_match = std::get<Index - 1>(tuple).match(L, decorate_type_t<typename SignatureList::template at<Index>>(), meta::get<StackIndexList, Index - 1>::value);
+				const int this_match = std::get<Index - 1>(tuple).match(L, decorate_type_t<typename SignatureList::template at<Index>>(), meta::get_v<StackIndexList, Index - 1>);
 				return this_match >= 0 ?	// could also sum them up unconditionally
 					this_match + match_struct<StackIndexList, SignatureList, End, Index + 1>::match(L, tuple)
 					: no_match;
@@ -216,15 +219,15 @@ namespace luabind {
 
 					result_converter().to_lua(L,
 						f((std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-							typename meta::get<decorated_list, ArgumentIndices>::type(),
-							meta::get<stack_indices, ArgumentIndices>::value))...
+							meta::get_t<decorated_list, ArgumentIndices>(),
+							meta::get_v<stack_indices, ArgumentIndices>))...
 						)
 					);
 
 					meta::init_order{
 						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						typename meta::get<typename traits::decorated_argument_list, ArgumentIndices>::type(),
-						meta::get<typename traits::stack_index_list, ArgumentIndices>::value), 0)...
+						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
+						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
 					};
 				}
 			};
@@ -241,15 +244,15 @@ namespace luabind {
 					(void)L;
 
 					f(std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-						typename meta::get<decorated_list, ArgumentIndices>::type(),
-						meta::get<stack_indices, ArgumentIndices>::value)...
+						meta::get_t<decorated_list, ArgumentIndices>(),
+						meta::get_v<stack_indices, ArgumentIndices>)...
 
 					);
 
 					meta::init_order{
 						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						typename meta::get<typename traits::decorated_argument_list, ArgumentIndices>::type(),
-						meta::get<typename traits::stack_index_list, ArgumentIndices>::value), 0)...
+						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
+						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
 					};
 				}
 			};
@@ -264,19 +267,19 @@ namespace luabind {
 					using result_converter = typename traits::result_converter;
 
 					auto& object = std::get<0>(argument_tuple).to_cpp(L,
-						typename meta::get<typename traits::decorated_argument_list, 0>::type(), 1);
+						meta::get_t<typename traits::decorated_argument_list, 0>(), 1);
 
 					result_converter().to_lua(L,
 						(object.*f)(std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-							typename meta::get<decorated_list, ArgumentIndices>::type(),
-							meta::get<stack_indices, ArgumentIndices>::value)...
+							meta::get_t<decorated_list, ArgumentIndices>(),
+							meta::get_v<stack_indices, ArgumentIndices>)...
 							)
 					);
 
 					meta::init_order{
 						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						typename meta::get<typename traits::decorated_argument_list, ArgumentIndices>::type(),
-						meta::get<typename traits::stack_index_list, ArgumentIndices>::value), 0)...
+						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
+						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
 					};
 				}
 			};
@@ -289,17 +292,17 @@ namespace luabind {
 					using decorated_list = typename traits::decorated_argument_list;
 					using stack_indices = typename traits::stack_index_list;
 
-					auto& object = std::get<0>(argument_tuple).to_cpp(L, typename meta::get<typename traits::decorated_argument_list, 0>::type(), 1);
+					auto& object = std::get<0>(argument_tuple).to_cpp(L, meta::get_t<typename traits::decorated_argument_list, 0>(), 1);
 
 					(object.*f)(std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-						typename meta::get<decorated_list, ArgumentIndices>::type(),
-						meta::get<stack_indices, ArgumentIndices>::value)...
+						meta::get_t<decorated_list, ArgumentIndices>(),
+						meta::get_v<stack_indices, ArgumentIndices>)...
 						);
 
 					meta::init_order{
 						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						typename meta::get<typename traits::decorated_argument_list, ArgumentIndices>::type(),
-						meta::get<typename traits::stack_index_list, ArgumentIndices>::value), 0)...
+						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
+						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
 					};
 				}
 			};
@@ -325,16 +328,16 @@ namespace luabind {
 				int results = 0;
 
 				call_struct<
-					std::is_member_function_pointer<F>::value,
-					std::is_void<typename traits::result_type>::value,
+					std::is_member_function_pointer_v<F>,
+					std::is_void_v<typename traits::result_type>,
 					typename traits::argument_index_list
 				>::call(L, f, tuple);
 
 				results = lua_gettop(L) - args;
-				if (has_call_policy<PolicyList, yield_policy>::value) {
+				if (has_call_policy_v<PolicyList, yield_policy>) {
 					return -results - 1;
 				}
-				call_detail_new::policy_list_postcall < PolicyList, typename meta::push_front< typename traits::stack_index_list, meta::index<traits::arity> >::type >::postcall(L, results);
+				call_detail_new::policy_list_postcall < PolicyList, meta::push_front_t< typename traits::stack_index_list, meta::index<traits::arity> > >::postcall(L, results);
 
 				return results;
 			}

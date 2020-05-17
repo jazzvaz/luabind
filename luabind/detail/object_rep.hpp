@@ -83,7 +83,7 @@ namespace luabind {
 
 			instance_holder* m_instance;
 			static const size_t instance_buffer_size = 32;
-			std::aligned_storage<instance_buffer_size>::type m_instance_buffer;
+			std::aligned_storage_t<instance_buffer_size> m_instance_buffer;
 			class_rep* m_classrep; // the class information about this object's type
 			handle m_dependency_ref; // reference to lua table holding dependency references
 		};

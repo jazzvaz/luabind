@@ -20,25 +20,22 @@ namespace luabind {
 		};
 
 		template<class U>
-		char_array<sizeof(typename identity<U>::type)> indirect_sizeof_test(by_reference<U>);
+		char_array<sizeof(identity_t<U>)> indirect_sizeof_test(by_reference<U>);
 
 		template<class U>
-		char_array<sizeof(typename identity<U>::type)> indirect_sizeof_test(by_const_reference<U>);
+		char_array<sizeof(identity_t<U>)> indirect_sizeof_test(by_const_reference<U>);
 
 		template<class U>
-		char_array<sizeof(typename identity<U>::type)> indirect_sizeof_test(by_pointer<U>);
+		char_array<sizeof(identity_t<U>)> indirect_sizeof_test(by_pointer<U>);
 
 		template<class U>
-		char_array<sizeof(typename identity<U>::type)> indirect_sizeof_test(by_const_pointer<U>);
+		char_array<sizeof(identity_t<U>)> indirect_sizeof_test(by_const_pointer<U>);
 
 		template<class U>
-		char_array<sizeof(typename identity<U>::type)> indirect_sizeof_test(by_value<U>);
+		char_array<sizeof(identity_t<U>)> indirect_sizeof_test(by_value<U>);
 
-		template<class T>
-		struct indirect_sizeof
-		{
-			static const int value = sizeof(indirect_sizeof_test(decorate_type_t<T>()));
-		};
+		template <typename T>
+		constexpr int indirect_sizeof = sizeof(indirect_sizeof_test(decorate_type_t<T>()));
 
 		namespace out_value_detail {
 
@@ -67,7 +64,7 @@ namespace luabind {
 					get<T>().~T();
 				}
 
-				typename std::aligned_storage<Size>::type m_storage;
+				std::aligned_storage_t<Size> m_storage;
 
 			};
 
@@ -93,7 +90,7 @@ namespace luabind {
 					get().~T();
 				}
 
-				typename std::aligned_storage<sizeof(T), alignof(T)>::type m_storage;
+				std::aligned_storage_t<sizeof(T), alignof(T)> m_storage;
 
 			};
 
@@ -157,13 +154,13 @@ namespace luabind {
 			template<class T, class Direction>
 			struct specialize
 			{
-				static_assert(std::is_same< Direction, lua_to_cpp >::value, "Out value policy can only convert from lua to cpp");
-				static_assert(meta::or_< is_nonconst_reference<T>, is_nonconst_pointer<T> >::value, "Out value policy only accepts non const references or pointers");
+				static_assert(std::is_same_v< Direction, lua_to_cpp >, "Out value policy can only convert from lua to cpp");
+				static_assert(is_nonconst_reference_v<T> || is_nonconst_pointer_v<T>, "Out value policy only accepts non const references or pointers");
 
 				// Note to myself:
 				// Using the size and template members instead of a policy templated for the type seems
 				// to be done to tame template bloat. Need to check if this is worth is.
-				using base_type = typename std::remove_pointer< typename std::remove_reference< T >::type >::type;
+				using base_type = std::remove_pointer_t<std::remove_reference_t<T>>;
 				using type = out_value_converter<base_type, Policies>;
 			};
 		};
@@ -228,10 +225,10 @@ namespace luabind {
 			template<class T, class Direction>
 			struct specialize
 			{
-				static_assert(std::is_same< Direction, lua_to_cpp >::value, "Pure out value policy can only convert from lua to cpp");
-				static_assert(meta::or_< is_nonconst_reference<T>, is_nonconst_pointer<T> >::value, "Pure out value policy only accepts non const references or pointers");
+				static_assert(std::is_same_v< Direction, lua_to_cpp >, "Pure out value policy can only convert from lua to cpp");
+				static_assert(is_nonconst_reference_v<T> || is_nonconst_pointer_v<T>, "Pure out value policy only accepts non const references or pointers");
 
-				using type = pure_out_value_converter<indirect_sizeof<T>::value, Policies>;
+				using type = pure_out_value_converter<indirect_sizeof<T>, Policies>;
 			};
 		};
 

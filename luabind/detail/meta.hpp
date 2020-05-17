@@ -42,8 +42,17 @@ namespace luabind {
 		template< typename T >
 		struct size;
 
+		template< typename T >
+		constexpr unsigned int size_v = size<T>::value;
+
 		template< typename T, unsigned int Index >	// Specializations so index lists can use the same syntax
 		struct get;
+
+		template< typename T, unsigned int index >
+		using get_t = typename get< T, index >::type;
+
+		template< typename T, unsigned int Index >
+		constexpr unsigned int get_v = get<T, Index>::value;
 
 		template< typename... Lists >
 		struct join;
@@ -54,32 +63,54 @@ namespace luabind {
 			using type = typename join< typename join< List1, List2 >::type, Lists... >::type;
 		};
 
+		template< typename T1, typename... Types >
+		using join_t = typename join< T1, Types... >::type;
+
 		// convenience
 		template< typename T >
-		struct front : public get< T, 0 >
-		{
-		};
+		using front_t = get_t<T, 0>;
 
 		template< typename List, typename T >
 		struct push_front;
 
+		template< typename List, typename Type >
+		using push_front_t = typename push_front<List, Type>::type;
+
 		template< typename List, typename T >
 		struct push_back;
+
+		template< typename List, typename Type >
+		using push_back_t = typename push_back<List, Type>::type;
 
 		template< typename T >
 		struct pop_front;
 
 		template< typename T >
+		using pop_front_t = typename pop_front<T>::type;
+
+		template< typename T >
 		struct pop_back;
+
+		template< typename T >
+		using pop_back_t = typename pop_back<T>::type;
 
 		template< typename List, unsigned int Index, typename T >
 		struct replace;
 
+		template< typename List, unsigned int Index, typename T >
+		using replace_t = typename replace<List, Index, T>::type;
+
 		template< typename List, unsigned int Index, template< typename > class T >
 		struct enwrap;
 
+		template< typename List, unsigned int Index, template< typename > class T >
+		using enwrap_t = typename enwrap<List, Index, T>::type;
+
 		template< typename List, template< typename > class T >
 		struct enwrap_all;
+
+		template< typename List, template< typename > class T >
+		using enwrap_all_t = typename enwrap_all<List, T>::type;
 
 		template< typename List, unsigned int Index, template< typename > class T >
 		struct transform;
@@ -93,25 +124,14 @@ namespace luabind {
 		template< typename List, template< typename > class Function >
 		using transform_all_t = typename transform_all< List, Function >::type;
 
-
 		template< typename T, unsigned int start, unsigned int end >
-		struct sub_range;
+		struct make_sub_range;
 
 		/*
-		aliases
+		Index list sub_range [start, end)
 		*/
-		template< typename T >
-		using pop_front_t = typename pop_front<T>::type;
-
-		template< typename T1, typename... Types >
-		using join_t = typename join< T1, Types... >::type;
-
 		template< typename T, unsigned int start, unsigned int end >
-		using sub_range_t = typename sub_range< T, start, end >::type;
-
-		template< typename T, unsigned int index >
-		using get_t = typename get< T, index >::type;
-
+		using sub_range = typename make_sub_range< T, start, end >::type;
 
 		// Used as terminator on type and index lists
 		struct null_type {};
@@ -149,7 +169,7 @@ namespace luabind {
 
 		template< typename Type0, typename... Types, typename Type >
 		struct contains< type_list<Type0, Types...>, Type >
-			: std::conditional< std::is_same<Type0, Type>::value, std::true_type, contains< type_list<Types...>, Type > >::type
+			: std::disjunction< std::is_same<Type0, Type>, contains< type_list<Types...>, Type > >
 		{
 		};
 
@@ -158,6 +178,9 @@ namespace luabind {
 			: std::false_type
 		{
 		};
+
+		template< typename TypeList, typename Type >
+		constexpr bool contains_v = contains<TypeList, Type>::value;
 
 		/*
 		size
@@ -232,17 +255,17 @@ namespace luabind {
 		};
 
 		namespace detail {
-			template< typename HeadList, typename TailList, typename Type, unsigned int Index >
+			template< typename Head, typename Tail, typename Type, unsigned int Index >
 			struct replace_helper;
 
-			template< typename... HeadTypes, typename CurrentType, typename... TailTypes, typename Type, unsigned int Index >
-			struct replace_helper< type_list< HeadTypes... >, type_list< CurrentType, TailTypes... >, Type, Index> {
-				using type = typename replace_helper< type_list< HeadTypes..., CurrentType >, type_list<TailTypes...>, Type, Index - 1 >::type;
+			template< typename... Head, typename Current, typename... Tail, typename Type, unsigned int Index >
+			struct replace_helper< type_list< Head... >, type_list< Current, Tail... >, Type, Index> {
+				using type = typename replace_helper< type_list< Head..., Current >, type_list<Tail...>, Type, Index - 1 >::type;
 			};
 
-			template< typename... HeadTypes, typename CurrentType, typename... TailTypes, typename Type >
-			struct replace_helper< type_list< HeadTypes... >, type_list< CurrentType, TailTypes... >, Type, 0 > {
-				using type = type_list< HeadTypes..., Type, TailTypes... >;
+			template< typename... Head, typename Current, typename... Tail, typename Type >
+			struct replace_helper< type_list< Head... >, type_list< Current, Tail... >, Type, 0 > {
+				using type = type_list< Head..., Type, Tail... >;
 			};
 		}
 
@@ -252,21 +275,22 @@ namespace luabind {
 			using TypeList = type_list< Types... >;
 
 			using type = join_t<
-				sub_range_t< TypeList, 0, Index >,
-				meta::type_list<Type>,
-				sub_range_t< TypeList, Index + 1, sizeof...(Types) >
+				sub_range< TypeList, 0, Index >,
+				type_list<Type>,
+				sub_range< TypeList, Index + 1, sizeof...(Types) >
 			>;
 		};
 
 		/*
 		Enwrap all elements of a type list in an template
 		*/
-		template< typename... Types, unsigned int Index, template< typename >  class Enwrapper >
+		template< typename... Types, unsigned int Index, template< typename >
+		class Enwrapper >
 		struct enwrap< type_list< Types... >, Index, Enwrapper > {
 			using type = join_t<
-				sub_range_t< type_list<Types...>, 0, Index >,
+				sub_range< type_list<Types...>, 0, Index >,
 				Enwrapper< get_t< type_list<Types...>, Index> >,
-				sub_range_t< type_list<Types...>, Index + 1, sizeof...(Types) >
+				sub_range< type_list<Types...>, Index + 1, sizeof...(Types) >
 			>;
 		};
 
@@ -285,9 +309,9 @@ namespace luabind {
 		template< typename... Types, unsigned int Index, template< typename > class Function >
 		struct transform< type_list< Types... >, Index, Function > {
 			using type = join_t<
-				sub_range_t< type_list<Types...>, 0, Index >,
+				sub_range< type_list<Types...>, 0, Index >,
 				typename Function< get_t< type_list<Types...>, Index> >::type,
-				sub_range_t< type_list<Types...>, Index + 1, sizeof...(Types) >
+				sub_range< type_list<Types...>, Index + 1, sizeof...(Types) >
 			>;
 		};
 
@@ -311,6 +335,8 @@ namespace luabind {
 			using type = std::tuple< Types... >;
 		};
 
+		template< class TypeList >
+		using make_tuple_t = typename make_tuple<TypeList>::type;
 
 		/*
 		Type selection
@@ -326,31 +352,33 @@ namespace luabind {
 			using type = Result;
 		};
 
-
 		template< typename Case, typename... CaseList >
 		struct select_
 		{
-			using type = typename std::conditional<
-				std::is_convertible<Case, std::true_type>::value,
+			using type = std::conditional_t<
+				std::is_convertible_v<Case, std::true_type>,
 				typename Case::type,
 				typename select_<CaseList...>::type
-			>::type;
+			>;
 		};
 
 		template< typename Case >
 		struct select_< Case >
 		{
-			using type = typename std::conditional<
-				std::is_convertible<Case, std::true_type>::value,
+			using type = std::conditional_t<
+				std::is_convertible_v<Case, std::true_type>,
 				typename Case::type,
 				null_type
-			>::type;
+			>;
 		};
 
 		template< typename T >
 		struct select_< default_<T> > {
 			using type = typename default_<T>::type;
 		};
+
+		template< typename Case, typename... CaseList >
+		using select_t = typename select_<Case, CaseList...>::type;
 
 		/*
 		Create index lists to expand on type_lists
@@ -451,7 +479,8 @@ namespace luabind {
 			Creates the index list list of range [start, end)
 		*/
 		template< unsigned int start, unsigned int end >
-		struct make_index_range {
+		struct make_index_range
+		{
 			static_assert(end >= start, "end must be greater than or equal to start");
 			using type = typename detail::make_index_range< start, end >::type;
 		};
@@ -479,24 +508,18 @@ namespace luabind {
 
 		}
 
-		/*
-		Index list sub_range [start, end)
-		*/
 		template< unsigned int start, unsigned int end, unsigned int... Indices >
-		struct sub_range< index_list<Indices...>, start, end >
+		struct make_sub_range< index_list<Indices...>, start, end >
 		{
 			static_assert(end >= start, "end must be greater or equal to start");
-			using type = typename detail::sub_range_index< index_list<Indices...>, typename make_index_range<start, end>::type >::type;
+			using type = typename detail::sub_range_index< index_list<Indices...>, index_range<start, end> >::type;
 		};
 
-		/*
-		Type list sub_range [start, end)
-		*/
 		template< unsigned int start, unsigned int end, typename... Types >
-		struct sub_range< type_list<Types...>, start, end >
+		struct make_sub_range< type_list<Types...>, start, end >
 		{
 			static_assert(end >= start, "end must be greater or equal to start");
-			using type = typename detail::sub_range_type< type_list<Types...>, typename make_index_range<start, end>::type >::type;
+			using type = typename detail::sub_range_type< type_list<Types...>, index_range<start, end> >::type;
 		};
 
 		/*
@@ -530,6 +553,9 @@ namespace luabind {
 			static const unsigned int value = detail::sum_values<unsigned int, Args...>::value;
 		};
 
+		template< typename T >
+		constexpr unsigned int sum_v = sum<T>::value;
+
 		/*
 			and_ or_
 		*/
@@ -539,10 +565,7 @@ namespace luabind {
 
 		template< typename Convertible0, typename... Convertibles >
 		struct and_< Convertible0, Convertibles... >
-			: std::conditional <
-			std::is_convertible< Convertible0, std::true_type >::value,
-			and_< Convertibles... >,
-			std::false_type > ::type
+			: std::conditional_t <std::is_convertible_v< Convertible0, std::true_type >, and_< Convertibles... >, std::false_type >
 		{
 		};
 
@@ -558,11 +581,7 @@ namespace luabind {
 
 		template< typename Convertible0, typename... Convertibles >
 		struct or_< Convertible0, Convertibles... >
-			: std::conditional <
-			std::is_convertible< Convertible0, std::true_type >::value,
-			std::true_type,
-			or_< Convertibles... >
-			> ::type
+			: std::conditional_t<std::is_convertible_v< Convertible0, std::true_type >, std::true_type, or_< Convertibles... >>
 		{
 		};
 

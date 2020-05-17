@@ -280,22 +280,22 @@ namespace luabind {
 
 		template <class T>
 		struct reference_result
-			: std::conditional< std::is_pointer<T>::value || is_primitive<T>::value, T, typename std::add_lvalue_reference< T >::type >
+			: std::conditional< std::is_pointer_v<T> || is_primitive_v<T>, T, std::add_lvalue_reference_t< T > >
 		{};
 
 		template <class T>
 		struct reference_argument
-			: std::conditional< std::is_pointer<T>::value || is_primitive<T>::value, T, typename std::add_lvalue_reference< typename std::add_const<T>::type >::type >
+			: std::conditional< std::is_pointer_v<T> || is_primitive_v<T>, T, std::add_lvalue_reference_t< std::add_const_t<T> > >
 		{};
 
 		template <class T, class Policies>
 		struct inject_dependency_policy
 		{
-			using type = typename std::conditional <
-				is_primitive<T>::value || meta::contains<Policies, call_policy_injector< detail::no_dependency_policy > >::value,
+			using type = std::conditional_t <
+				is_primitive_v<T> || meta::contains_v<Policies, call_policy_injector< detail::no_dependency_policy > >,
 				Policies,
-				typename meta::push_back< Policies, call_policy_injector< dependency_policy<0, 1> > >::type
-			>::type;
+				meta::push_back_t< Policies, call_policy_injector< dependency_policy<0, 1> > >
+			>;
 		};
 
 		template <class Class, class Get, class GetPolicies, class Set = null_type, class SetPolicies = no_policies >
@@ -364,11 +364,8 @@ namespace luabind {
 		};
 
 		template <typename Default>
-		struct is_func
-		{
-			static constexpr bool value = std::is_function<typename std::remove_pointer<Default>::type>::value |
-				std::is_member_function_pointer<Default>::value;
-		};
+		constexpr bool is_func_v =
+			std::is_function_v<std::remove_pointer_t<Default>> | std::is_member_function_pointer_v<Default>;
 	} // namespace detail
 
 	// registers a class in the lua environment
@@ -412,7 +409,7 @@ namespace luabind {
 
 		template<class F, class Default, typename... Injectors>
 		class_& def(char const* name, F fn, Default default_, policy_list< Injectors... > policies = no_policies(),
-			typename std::enable_if<detail::is_func<Default>::value, Default>::type = nullptr)
+			std::enable_if_t<detail::is_func_v<Default>, Default> = nullptr)
 		{
 			return this->virtual_def(name, fn, policies, default_);
 		}
@@ -478,7 +475,7 @@ namespace luabind {
 		// virtual functions
 		template<class F, class Default, typename... Injectors>
 		class_& index(F fn, Default default_, policy_list< Injectors... > policies = no_policies(),
-			typename std::enable_if<detail::is_func<Default>::value, Default>::type = nullptr)
+			std::enable_if_t<detail::is_func_v<Default>, Default> = nullptr)
 		{
 			return this->virtual_def("__index", fn, policies, default_);
 		}
@@ -498,7 +495,7 @@ namespace luabind {
 		// virtual functions
 		template<class F, class Default, typename... Injectors>
 		class_& newindex(F fn, Default default_, policy_list< Injectors... > policies = no_policies(),
-			typename std::enable_if<detail::is_func<Default>::value, Default>::type = nullptr)
+			std::enable_if_t<detail::is_func_v<Default>, Default> = nullptr)
 		{
 			return this->virtual_def("__newindex", fn, policies, default_);
 		}
@@ -590,11 +587,11 @@ namespace luabind {
 			using signature_type = meta::type_list<void, argument const&, SignatureElements...>;
 			using policy_list_type = policy_list< Injectors... >;
 
-			using construct_type = typename std::conditional<
-				is_null_type<WrapperType>::value,
+			using construct_type = std::conditional_t<
+				is_null_type_v<WrapperType>,
 				T,
 				WrapperType
-			>::type;
+			>;
 
 			using registration_type = detail::constructor_registration<construct_type, HolderType, signature_type, policy_list_type>;
 			this->add_member(luabind_new<registration_type>());

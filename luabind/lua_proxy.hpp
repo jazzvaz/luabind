@@ -23,9 +23,13 @@ namespace luabind {
 		: lua_proxy_traits<T>::is_specialized
 	{};
 
+	template <typename T>
+	constexpr bool is_lua_proxy_type_v = is_lua_proxy_type<T>::value;
+
 	template< class T >
-	struct is_lua_proxy_arg
-		: std::conditional<is_lua_proxy_type<remove_const_reference_t<T>>::value, std::true_type, std::false_type >::type
-	{};
+	using is_lua_proxy_arg = is_lua_proxy_type<remove_const_reference_t<T>>;
+
+	template< class T >
+	constexpr bool is_lua_proxy_arg_v = is_lua_proxy_arg<T>::value;
 
 } // namespace luabind

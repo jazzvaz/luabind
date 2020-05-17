@@ -33,7 +33,7 @@ namespace luabind
 	template< unsigned int Index, typename T >
 	struct converter_policy_injector : policy_list<converter_policy_injector<Index, T>>
 	{
-		static constexpr bool has_postcall = std::is_convertible<T, detail::converter_policy_has_postcall_tag >::value;
+		static constexpr bool has_postcall = std::is_convertible_v<T, detail::converter_policy_has_postcall_tag >;
 	};
 
 	// A call policy injector instructs the call mechanism to call certain static function "postcall" on type T
@@ -63,6 +63,9 @@ namespace luabind
 		struct is_primitive
 			: default_converter<T>::is_native
 		{};
+
+		template<class T>
+		constexpr bool is_primitive_v = is_primitive<T>::value;
 
 		namespace policy_detail {
 			template< unsigned int Index, typename PoliciesList >
@@ -110,16 +113,14 @@ namespace luabind
 		// Fetches the converter policy for Signature element [Index] from the policy list [PolicyList] and specializes it
 		// for the concrete type [T] with [Direction] being either "lua_to_cpp" or "cpp_to_lua".
 		template<unsigned int Index, typename PolicyList, typename T, typename Direction>
-		using specialized_converter_policy_n = typename policy_detail::get_converter_policy<Index, PolicyList>::type::template specialize<T, Direction >::type;
+		using specialized_converter_policy_n = typename policy_detail::get_converter_policy<Index, PolicyList>::type::template specialize<T, Direction>::type;
 
 		/*
 			call_policies
 		*/
 
 		template< typename List, class Sought >
-		struct has_call_policy : public meta::contains< List, call_policy_injector< Sought > >
-		{
-		};
+		constexpr bool has_call_policy_v = meta::contains_v<List, call_policy_injector<Sought>>;
 
 	}
 } // namespace luabind::detail

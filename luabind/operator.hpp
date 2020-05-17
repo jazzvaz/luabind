@@ -25,7 +25,12 @@
 namespace luabind {
 	namespace detail {
 
-		template<class W, class T> struct unwrap_parameter_type;
+		template<class W, class T>
+		struct unwrap_parameter_type;
+
+		template<class W, class T>
+		using unwrap_parameter_type_t = typename unwrap_parameter_type<W, T>::type;
+
 		template<class Derived> struct operator_ {};
 
 		struct operator_void_return {};
@@ -65,8 +70,8 @@ namespace luabind {
 			{
 				static void execute(
 					lua_State* L
-					, typename detail::unwrap_parameter_type<T, Self>::type self
-					, typename detail::unwrap_parameter_type<T, Args>::type... args
+					, detail::unwrap_parameter_type_t<T, Self> self
+					, detail::unwrap_parameter_type_t<T, Args>... args
 				)
 				{
 					using namespace detail;
@@ -109,11 +114,11 @@ namespace luabind {
 		template<class W, class T>
 		struct unwrap_parameter_type
 		{
-			using type = typename meta::select_ <
+			using type = meta::select_t<
 				meta::case_< std::is_same<T, self_type>, W& >,
 				meta::case_< std::is_same<T, const_self_type >, W const& >,
-				meta::default_< typename unwrap_other<T>::type >
-			> ::type;
+				meta::default_< unwrap_other_t<T> >
+			>;
 		};
 
 		template<class Derived, class A, class B>
@@ -125,8 +130,8 @@ namespace luabind {
 			template<class T, class Policies>
 			struct apply
 			{
-				using arg0 = typename unwrap_parameter_type<T, A>::type;
-				using arg1 = typename unwrap_parameter_type<T, B>::type;
+				using arg0 = unwrap_parameter_type_t<T, A>;
+				using arg1 = unwrap_parameter_type_t<T, B>;
 
 				static void execute(lua_State* L, arg0 _0, arg1 _1)
 				{
@@ -150,7 +155,7 @@ namespace luabind {
 			template<class T, class Policies>
 			struct apply
 			{
-				using arg0 = typename unwrap_parameter_type<T, A>::type;
+				using arg0 = unwrap_parameter_type_t<T, A>;
 
 				static void execute(lua_State* L, arg0 _0)
 				{

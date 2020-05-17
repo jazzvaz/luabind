@@ -50,8 +50,8 @@ namespace luabind {
 			public construct_aux_helper <
 			T,
 			Pointer,
-			Signature, typename meta::sub_range< Signature, 2, meta::size<Signature>::value >::type,
-			typename meta::make_index_range<0, meta::size<Signature>::value - 2>::type >
+			Signature, meta::sub_range< Signature, 2, meta::size_v<Signature> >,
+			meta::index_range<0, meta::size_v<Signature> - 2>>
 		{
 		};
 

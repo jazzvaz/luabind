@@ -16,16 +16,28 @@ namespace luabind {
 			std::bool_constant<std::is_reference_v<T> && std::is_const_v<std::remove_reference_t<T>>>;
 
 		template<typename T>
+		constexpr bool is_const_reference_v = is_const_reference<T>::value;
+
+		template<typename T>
 		using is_nonconst_reference =
 			std::bool_constant<std::is_reference_v<T> && !std::is_const_v<std::remove_reference_t<T>>>;
+
+		template<typename T>
+		constexpr bool is_nonconst_reference_v = is_nonconst_reference<T>::value;
 
 		template<typename T>
 		using is_const_pointer =
 			std::bool_constant<std::is_pointer_v<T> && std::is_const_v<std::remove_pointer_t<T>>>;
 
 		template<typename T>
+		constexpr bool is_const_pointer_v = is_const_pointer<T>::value;
+
+		template<typename T>
 		using is_nonconst_pointer =
 			std::bool_constant<std::is_pointer_v<T> && !std::is_const_v<std::remove_pointer_t<T>>>;
+
+		template<typename T>
+		constexpr bool is_nonconst_pointer_v = is_nonconst_pointer<T>::value;
 
 		template<int v1, int v2>
 		struct max_c
@@ -52,6 +64,9 @@ namespace luabind {
 
 	template< >
 	struct is_null_type< null_type > : public std::true_type {};
+
+	template< typename T >
+	constexpr bool is_null_type_v = is_null_type<T>::value;
 
 	//
 	// deduce_signature

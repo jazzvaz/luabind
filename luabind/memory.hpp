@@ -70,7 +70,7 @@ namespace luabind
 #ifdef LUABIND_CUSTOM_ALLOCATOR
 		if (!pointer)
 			return;
-		detail::delete_helper<T, std::is_polymorphic<T>::value>::apply(pointer);
+		detail::delete_helper<T, std::is_polymorphic_v<T>>::apply(pointer);
 #else
 		delete pointer;
 #endif

@@ -39,16 +39,19 @@ namespace luabind {
 	
 		template< typename T >
 		struct is_function< T, std::enable_if_t<
-			std::is_pointer_v<T> && std::is_function_v< typename std::remove_pointer_t<T> >>>
+			std::is_pointer_v<T> && std::is_function_v< std::remove_pointer_t<T> >>>
 			: public std::true_type {};
 
 		template< typename T >
 		struct is_function< T, std::void_t< decltype(&T::operator()) > > : public std::true_type {};
+
+		template< typename T >
+		constexpr bool is_function_v = is_function<T>::value;
 	}
 
 
 	template <typename F>
-	struct default_converter<F, typename std::enable_if<detail::is_function<remove_const_reference_t<F>>::value>::type>
+	struct default_converter<F, std::enable_if_t<detail::is_function_v<remove_const_reference_t<F>>>>
 	{
 		using is_native = std::true_type;
 

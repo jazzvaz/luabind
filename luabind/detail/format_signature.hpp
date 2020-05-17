@@ -116,14 +116,14 @@ namespace luabind {
 		{
 			if(!first)
 				lua_pushliteral(L, ",");
-			type_to_string<typename meta::front<Signature>::type>::get(L);
-			format_signature_aux(L, false, typename meta::pop_front<Signature>::type());
+			type_to_string<meta::front_t<Signature>>::get(L);
+			format_signature_aux(L, false, meta::pop_front_t<Signature>());
 		}
 
 		template <class Signature>
 		int format_signature(lua_State* L, char const* function, Signature, bool concat = true)
 		{
-			using first = typename meta::front<Signature>::type;
+			using first = meta::front_t<Signature>;
 
 			type_to_string<first>::get(L);
 
@@ -134,10 +134,10 @@ namespace luabind {
 			format_signature_aux(
 				L
 				, true
-				, typename meta::pop_front<Signature>::type()
+				, meta::pop_front_t<Signature>()
 			);
 			lua_pushliteral(L, ")");
-			size_t ncat = meta::size<Signature>::value * 2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
+			size_t ncat = meta::size_v<Signature> * 2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
 			if (concat)
 			{
 				lua_concat(L, static_cast<int>(ncat));

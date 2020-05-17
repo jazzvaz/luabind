@@ -100,7 +100,7 @@ namespace luabind {
 			template<class T, class Direction>
 			struct specialize
 			{
-				static_assert(detail::is_nonconst_pointer<T>::value, "Adopt policy only accepts non-const pointers");
+				static_assert(detail::is_nonconst_pointer_v<T>, "Adopt policy only accepts non-const pointers");
 				using type = adopt_pointer<Pointer, Direction>;
 			};
 		};

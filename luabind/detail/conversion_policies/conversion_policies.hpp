@@ -44,15 +44,15 @@ namespace luabind {
 		// This is the one that gets hit, if default_policy doesn't hit one of the specializations defined all over the place
 		template< class T >
 		struct default_converter_generator
-			: public meta::select_ <
+			: public meta::select_t <
 			meta::case_< is_lua_proxy_arg<T>, lua_proxy_converter<T> >,
-			meta::case_< std::is_enum<typename std::remove_reference<T>::type>, enum_converter >,
+			meta::case_< std::is_enum<std::remove_reference_t<T>>, enum_converter >,
 			meta::case_< is_nonconst_pointer<T>, pointer_converter >,
 			meta::case_< is_const_pointer<T>, const_pointer_converter >,
 			meta::case_< is_nonconst_reference<T>, ref_converter >,
 			meta::case_< is_const_reference<T>, const_ref_converter >,
 			meta::default_< value_converter >
-			> ::type
+			>
 		{
 		};
 

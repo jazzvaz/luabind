@@ -78,7 +78,7 @@ namespace luabind {
 
 		static value_type to_cpp_deferred(lua_State* L, int index)
 		{
-			if((std::is_unsigned<value_type>::value && sizeof(value_type) >= sizeof(lua_Integer)) || (sizeof(value_type) > sizeof(lua_Integer))) {
+			if((std::is_unsigned_v<value_type> && sizeof(value_type) >= sizeof(lua_Integer)) || (sizeof(value_type) > sizeof(lua_Integer))) {
 				return static_cast<T>(lua_tonumber(L, index));
 			} else {
 				return static_cast<T>(lua_tointeger(L, index));
@@ -87,7 +87,7 @@ namespace luabind {
 
 		void to_lua_deferred(lua_State* L, param_type value)
 		{
-			if((std::is_unsigned<value_type>::value && sizeof(value_type) >= sizeof(lua_Integer)) || (sizeof(value_type) > sizeof(lua_Integer)))
+			if((std::is_unsigned_v<value_type> && sizeof(value_type) >= sizeof(lua_Integer)) || (sizeof(value_type) > sizeof(lua_Integer)))
 			{
 				lua_pushnumber(L, (lua_Number)value);
 			} else {
@@ -278,13 +278,13 @@ namespace luabind {
 	{};
 
 	template <typename T>
-	struct default_converter < T, typename std::enable_if< std::is_integral<remove_const_reference_t<T>>::value >::type >
+	struct default_converter < T, std::enable_if_t< std::is_integral_v<remove_const_reference_t<T>> > >
 		: integer_converter<T>
 	{
 	};
 
 	template <typename T>
-	struct default_converter < T, typename std::enable_if< std::is_floating_point<remove_const_reference_t<T>>::value >::type >
+	struct default_converter < T, std::enable_if_t< std::is_floating_point_v<remove_const_reference_t<T>> > >
 		: number_converter<T>
 	{
 	};

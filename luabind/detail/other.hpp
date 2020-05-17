@@ -38,5 +38,8 @@ namespace luabind {
 		public:
 			using type = T;
 		};
+
+		template <typename T>
+		using unwrap_other_t = typename unwrap_other<T>::type;
 	}
 } // namespace luabind::detail

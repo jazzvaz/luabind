@@ -32,7 +32,7 @@ namespace luabind
 			push_arguments<PolicyList, Pos + 1>(L, std::forward<Args>(args)...);
 		}
 
-		template<typename Ret, typename PolicyList, typename IndexList, unsigned int NumParams, int(*Function)(lua_State*, int, int), bool IsVoid = std::is_void<Ret>::value>
+		template<typename Ret, typename PolicyList, typename IndexList, unsigned int NumParams, int(*Function)(lua_State*, int, int), bool IsVoid = std::is_void_v<Ret>>
 		struct call_function_struct;
 
 		template<typename Ret, typename PolicyList, unsigned int NumParams, int(*Function)(lua_State*, int, int), unsigned int... Indices >
