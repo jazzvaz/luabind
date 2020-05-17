@@ -7,7 +7,7 @@
 
 namespace luabind
 {
-	LUABIND_API self_type self;
-	LUABIND_API const_self_type const_self;
+	self_type self;
+	const_self_type const_self;
 }
 

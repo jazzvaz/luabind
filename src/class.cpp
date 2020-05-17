@@ -16,7 +16,7 @@
 namespace luabind {
 	static bool mark_custom_types = true;
 
-	LUABIND_API void set_custom_type_marking(bool enable)
+	void set_custom_type_marking(bool enable)
 	{
 		mark_custom_types = enable;
 	}

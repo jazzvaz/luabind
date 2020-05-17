@@ -5,7 +5,7 @@
 
 #include <luabind/lua_include.hpp>
 
-#include <luabind/config.hpp>           // for LUABIND_API
+#include <luabind/config.hpp>
 
 #ifndef LUABIND_NO_EXCEPTIONS
 #include <luabind/error.hpp>            // for error
@@ -39,7 +39,7 @@ namespace luabind {
 				throw;
 		}
 
-		LUABIND_API void handle_exception_aux(lua_State* L)
+		void handle_exception_aux(lua_State* L)
 		{
 			try
 			{
@@ -74,7 +74,7 @@ namespace luabind {
 			}
 		}
 
-		LUABIND_API void register_exception_handler(exception_handler_base* handler)
+		void register_exception_handler(exception_handler_base* handler)
 		{
 			if(!handler_chain) handler_chain = handler;
 			else

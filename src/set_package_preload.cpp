@@ -5,7 +5,7 @@
 
 // Internal Includes
 #include <luabind/set_package_preload.hpp>
-#include <luabind/config.hpp>           // for LUABIND_API
+#include <luabind/config.hpp>
 #include <luabind/detail/object.hpp>    // for object, rawget, globals
 #include <luabind/detail/conversion_policies/conversion_policies.hpp>
 
@@ -40,7 +40,7 @@ static int proxy_loader(lua_State* L)
 }
 
 namespace luabind {
-	LUABIND_API void set_package_preload(lua_State* L, char const* modulename, object const& loader)
+	void set_package_preload(lua_State* L, char const* modulename, object const& loader)
 	{
 		loader.push(L);
 		lua_pushcclosure(L, &proxy_loader, 1);

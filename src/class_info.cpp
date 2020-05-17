@@ -19,7 +19,7 @@
 
 namespace luabind {
 
-	LUABIND_API class_info get_class_info(argument const& o)
+	class_info get_class_info(argument const& o)
 	{
 		lua_State* L = o.interpreter();
 		detail::class_rep * crep = NULL;
@@ -85,7 +85,7 @@ namespace luabind {
 		return result;
 	}
 
-	LUABIND_API object get_class_names(lua_State* L)
+	object get_class_names(lua_State* L)
 	{
 		detail::class_registry* reg = detail::class_registry::get_registry(L);
 
@@ -101,7 +101,7 @@ namespace luabind {
 		return result;
 	}
 
-	LUABIND_API void bind_class_info(lua_State* L)
+	void bind_class_info(lua_State* L)
 	{
 		detail::class_registry* reg = detail::class_registry::get_registry(L);
 		if (reg->find_class(typeid(class_info))) {

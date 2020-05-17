@@ -21,7 +21,7 @@ namespace luabind {
 
 	} // namespace unnamed
 
-	LUABIND_API void get_weak_table(lua_State* L)
+	void get_weak_table(lua_State* L)
 	{
 		lua_rawgetp(L, LUA_REGISTRYINDEX, &weak_table_tag);
 
@@ -43,7 +43,7 @@ namespace luabind {
 
 	}
 
-	LUABIND_API void get_impl_table(lua_State* L)
+	void get_impl_table(lua_State* L)
 	{
 
 		lua_pushlightuserdata(L, &impl_table_tag);

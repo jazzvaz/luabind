@@ -45,22 +45,22 @@ namespace luabind {
 	static bool break_on_call_error = true;
 	static bool break_on_cast_error = true;
 
-	LUABIND_API void set_call_error_break(bool enable)
+	void set_call_error_break(bool enable)
 	{
 		break_on_call_error = enable;
 	}
 
-	LUABIND_API bool get_call_error_break()
+	bool get_call_error_break()
 	{
 		return break_on_call_error;
 	}
 	
-	LUABIND_API void set_cast_error_break(bool enable)
+	void set_cast_error_break(bool enable)
 	{
 		break_on_cast_error = enable;
 	}
 
-	LUABIND_API bool get_cast_error_break()
+	bool get_cast_error_break()
 	{
 		return break_on_cast_error;
 	}

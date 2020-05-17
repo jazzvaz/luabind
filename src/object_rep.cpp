@@ -274,7 +274,7 @@ namespace luabind {
 
 		} // namespace unnamed
 
-		LUABIND_API void push_instance_metatable(lua_State* L)
+		void push_instance_metatable(lua_State* L)
 		{
 			// One sequence entry for the tag, 4 non-sequence entries for
 			// __gc, __index, __newindex and __metatable, and
@@ -314,7 +314,7 @@ namespace luabind {
 			}
 		}
 
-		LUABIND_API object_rep* get_instance(lua_State* L, int index)
+		object_rep* get_instance(lua_State* L, int index)
 		{
 			object_rep* result = static_cast<object_rep*>(lua_touserdata(L, index));
 
@@ -331,7 +331,7 @@ namespace luabind {
 			return result;
 		}
 
-		LUABIND_API object_rep* push_new_instance(lua_State* L, class_rep* cls)
+		object_rep* push_new_instance(lua_State* L, class_rep* cls)
 		{
 			void* storage = lua_newuserdata(L, sizeof(object_rep));
 			object_rep* result = new (storage) object_rep(0, cls);

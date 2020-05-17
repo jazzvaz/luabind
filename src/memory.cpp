@@ -10,7 +10,7 @@
 
 namespace luabind
 {
-	LUABIND_API allocator_func allocator = nullptr;
-	LUABIND_API void* allocator_context = nullptr;
+	allocator_func allocator = nullptr;
+	void* allocator_context = nullptr;
 }
 #endif

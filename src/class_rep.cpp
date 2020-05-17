@@ -7,6 +7,7 @@
 
 #include <luabind/detail/stack_utils.hpp>
 #include <luabind/luabind.hpp>
+#include <luabind/detail/class_rep.hpp>
 #include <luabind/exception_handler.hpp>
 #include <luabind/get_main_thread.hpp>
 #include <utility>
@@ -16,7 +17,7 @@ using namespace luabind::detail;
 namespace luabind {
 	namespace detail
 	{
-		LUABIND_API int property_tag(lua_State* L)
+		int property_tag(lua_State* L)
 		{
 			lua_pushliteral(L, "luabind: property_tag function can't be called");
 			lua_error(L);
@@ -158,7 +159,7 @@ void luabind::detail::class_rep::add_base_class(luabind::detail::class_rep* bcre
 	m_bases.push_back(bcrep);
 }
 
-LUABIND_API void luabind::disable_super_deprecation()
+void luabind::disable_super_deprecation()
 {
 	super_deprecation_disabled = true;
 }
@@ -305,7 +306,7 @@ int luabind::detail::class_rep::tostring(lua_State* L)
 	return 1;
 }
 
-LUABIND_API bool luabind::detail::is_class_rep(lua_State* L, int index)
+bool luabind::detail::is_class_rep(lua_State* L, int index)
 {
 	if (!lua_getmetatable(L, index))
 		return false;

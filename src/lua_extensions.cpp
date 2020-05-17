@@ -9,7 +9,7 @@
 
 namespace luabind
 {
-	LUABIND_API const char* lua52L_tolstring(lua_State* L, int idx, size_t* len)
+	const char* lua52L_tolstring(lua_State* L, int idx, size_t* len)
 	{
 		if (!luaL_callmeta(L, idx, "__tostring"))
 		{
@@ -38,7 +38,7 @@ namespace luabind
 	
 	namespace detail
 	{
-		LUABIND_API const char* luaL_tolstring_diag(lua_State* L, int idx, size_t* len)
+		const char* luaL_tolstring_diag(lua_State* L, int idx, size_t* len)
 		{
 			if (!luaL_callmeta(L, idx, "__tostring"))
 			{

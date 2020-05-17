@@ -48,7 +48,7 @@ namespace luabind {
 
 	} // namespace unnamed
 
-	LUABIND_API lua_State* get_main_thread(lua_State* L)
+	lua_State* get_main_thread(lua_State* L)
 	{
 		lua_pushlightuserdata(L, &main_thread_tag);
 		lua_rawget(L, LUA_REGISTRYINDEX);
@@ -94,7 +94,7 @@ namespace luabind {
 
 	}	// namespace anonymous
 
-	LUABIND_API void open(lua_State* L)
+	void open(lua_State* L)
 	{
 		bool is_main_thread = lua_pushthread(L) == 1;
 		lua_pop(L, 1);

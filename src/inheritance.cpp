@@ -10,8 +10,8 @@
 namespace luabind {
 	namespace detail {
 
-		LUABIND_API char class_id_map_tag = 0;
-		LUABIND_API char class_map_tag = 0;
+		char class_id_map_tag = 0;
+		char class_map_tag = 0;
 		char cast_graph_tag = 0;
 
 		class_id const class_id_map::local_id_base = std::numeric_limits<class_id>::max() / 2;
@@ -214,7 +214,7 @@ namespace luabind {
 		cast_graph::~cast_graph()
 		{}
 
-		LUABIND_API class_id allocate_class_id(type_id const& cls)
+		class_id allocate_class_id(type_id const& cls)
 		{
 			// use plain map here because this function is called by static initializers,
 			// so luabind::allocator is not set yet

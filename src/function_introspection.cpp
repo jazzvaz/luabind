@@ -5,7 +5,7 @@
 
 // Internal Includes
 #include <luabind/function_introspection.hpp>
-#include <luabind/config.hpp>           // for LUABIND_API
+#include <luabind/config.hpp>
 
 #include <luabind/wrapper_base.hpp>
 #include <luabind/detail/call_member.hpp>
@@ -73,7 +73,7 @@ namespace luabind {
 
 	}
 
-	LUABIND_API int bind_function_introspection(lua_State * L) {
+	int bind_function_introspection(lua_State * L) {
 		lua_getglobal(L, "function_info");
 		detail::stack_pop pop(L, 1);
 		if (lua_istable(L, -1))

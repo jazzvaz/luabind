@@ -49,7 +49,7 @@ namespace luabind {
 
 		} // namespace unnamed
 
-		LUABIND_API bool is_luabind_function(lua_State* L, int index, bool allow_default /*= true*/)
+		bool is_luabind_function(lua_State* L, int index, bool allow_default /*= true*/)
 		{
 			if(!lua_getupvalue(L, index, 2))
 				return false;
@@ -72,8 +72,7 @@ namespace luabind {
 
 		} // namespace unnamed
 
-		LUABIND_API void add_overload(
-			object const& context, char const* name, object const& fn)
+		void add_overload(object const& context, char const* name, object const& fn)
 		{
 			function_object* f = *touserdata<function_object*>(std::get<1>(getupvalue(fn, 1)));
 			f->name = name;
@@ -90,7 +89,7 @@ namespace luabind {
 			context[name] = fn;
 		}
 
-		LUABIND_API object make_function_aux(lua_State* L, function_object* impl, bool default_scope /*= false*/)
+		object make_function_aux(lua_State* L, function_object* impl, bool default_scope /*= false*/)
 		{
 			void* storage = lua_newuserdata(L, sizeof(function_object*));
 			push_function_metatable(L);
