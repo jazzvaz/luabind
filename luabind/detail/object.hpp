@@ -306,7 +306,7 @@ namespace luabind {
 		lua_proxy_traits<ValueWrapper>::unwrap(interpreter, value);
 		detail::stack_pop pop(interpreter, 2);
 		const char* name = lua_getupvalue(interpreter, -1, index);
-		return std::make_tuple(name, object(from_stack(interpreter, -1)));
+		return {name, object(from_stack(interpreter, -1))};
 	}
 
 	template <class ValueWrapper1, class ValueWrapper2>

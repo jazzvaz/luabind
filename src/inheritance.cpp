@@ -75,7 +75,7 @@ namespace luabind {
 
 			void cache::put(class_id src, class_id target, class_id dynamic_id, std::ptrdiff_t object_offset, std::ptrdiff_t offset, int distance)
 			{
-				m_cache.insert(std::make_pair(key_type(src, target, dynamic_id, object_offset), cache_entry(offset, distance)));
+				m_cache.emplace(key_type(src, target, dynamic_id, object_offset), cache_entry(offset, distance));
 			}
 
 			void cache::invalidate()
@@ -118,8 +118,10 @@ namespace luabind {
 
 		std::pair<void*, int> cast_graph::impl::cast(void* const p, class_id src, class_id target, class_id dynamic_id, void const* dynamic_ptr) const
 		{
-			if(src == target) return std::make_pair(p, 0);
-			if(src >= m_vertices.size() || target >= m_vertices.size()) return std::pair<void*, int>((void*)0, -1);
+			if (src == target)
+				return {p, 0};
+			if(src >= m_vertices.size() || target >= m_vertices.size())
+				return {nullptr, -1};
 
 			std::ptrdiff_t const object_offset = (char const*)dynamic_ptr - (char const*)p;
 			cache_entry cached = m_cache.get(src, target, dynamic_id, object_offset);
@@ -127,8 +129,8 @@ namespace luabind {
 			if(cached.first != cache::unknown)
 			{
 				if(cached.first == cache::invalid)
-					return std::pair<void*, int>((void*)0, -1);
-				return std::make_pair((char*)p + cached.first, cached.second);
+					return {nullptr, -1};
+				return {(char*)p + cached.first, cached.second};
 			}
 
 			luabind::queue<queue_entry> q;
@@ -155,7 +157,7 @@ namespace luabind {
 						, (char*)qe.p - (char*)p, qe.distance
 					);
 
-					return std::make_pair(qe.p, qe.distance);
+					return {qe.p, qe.distance};
 				}
 
 				for(auto const& e : v.edges) {
@@ -168,7 +170,7 @@ namespace luabind {
 
 			m_cache.put(src, target, dynamic_id, object_offset, cache::invalid, -1);
 
-			return std::pair<void*, int>((void*)0, -1);
+			return {nullptr, -1};
 		}
 
 		void cast_graph::impl::insert(class_id src, class_id target, cast_function cast)
@@ -179,7 +181,7 @@ namespace luabind {
 			{
 				m_vertices.reserve(max_id + 1);
 				for(class_id i = m_vertices.size(); i < max_id + 1; ++i)
-					m_vertices.push_back(vertex(i));
+					m_vertices.emplace_back(i);
 			}
 
 			luabind::vector<edge>& edges = m_vertices[src].edges;
@@ -190,7 +192,7 @@ namespace luabind {
 
 			if(i == edges.end() || i->target != target)
 			{
-				edges.insert(i, edge(target, cast));
+				edges.emplace(i, target, cast);
 				m_cache.invalidate();
 			}
 		}
@@ -221,10 +223,11 @@ namespace luabind {
 			static map_type registered;
 			static class_id id = 0;
 
-			std::pair<map_type::iterator, bool> inserted = registered.insert(std::make_pair(cls, id));
-			if(inserted.second) ++id;
+			auto [it, inserted] = registered.emplace(cls, id);
+			if (inserted)
+				++id;
 
-			return inserted.first->second;
+			return it->second;
 		}
 
 	} // namespace detail
