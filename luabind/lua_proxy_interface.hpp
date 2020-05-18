@@ -39,41 +39,29 @@ namespace luabind {
 		using enable_binary_t = typename enable_binary<R, T, U>::type;
 
 		template<class T, class U>
-		int binary_interpreter(lua_State*& L, T const& lhs, U const& rhs, std::true_type, std::true_type)
-		{
-			L = lua_proxy_traits<T>::interpreter(lhs);
-			lua_State* L2 = lua_proxy_traits<U>::interpreter(rhs);
-
-			// you are comparing objects with different interpreters
-			// that's not allowed.
-			assert(L == L2 || L == 0 || L2 == 0);
-
-			// if the two objects we compare have different interpreters
-			// then they
-
-			if(L != L2) return -1;
-			if(L == 0) return 1;
-			return 0;
-		}
-
-		template<class T, class U>
-		int binary_interpreter(lua_State*& L, T const& x, U const&, std::true_type, std::false_type)
-		{
-			L = lua_proxy_traits<T>::interpreter(x);
-			return 0;
-		}
-
-		template<class T, class U>
-		int binary_interpreter(lua_State*& L, T const&, U const& x, std::false_type, std::true_type)
-		{
-			L = lua_proxy_traits<U>::interpreter(x);
-			return 0;
-		}
-
-		template<class T, class U>
 		int binary_interpreter(lua_State*& L, T const& x, U const& y)
 		{
-			return binary_interpreter(L, x, y, is_lua_proxy_type<T>(), is_lua_proxy_type<U>());
+			if constexpr (is_lua_proxy_type_v<T> && is_lua_proxy_type_v<U>)
+			{
+				L = lua_proxy_traits<T>::interpreter(x);
+				lua_State* L2 = lua_proxy_traits<U>::interpreter(y);
+				// you are comparing objects with different interpreters
+				// that's not allowed.
+				assert(L == L2 || !L || !L2);
+				// if the two objects we compare have different interpreters
+				// then they
+				if (L != L2)
+					return -1;
+				if (!L)
+					return 1;
+			}
+			else if constexpr (is_lua_proxy_type_v<T>)
+				L = lua_proxy_traits<T>::interpreter(x);
+			else if constexpr (is_lua_proxy_type_v<U>)
+				L = lua_proxy_traits<U>::interpreter(y);
+			else
+				static_assert(false, "both types must be lua proxy types");
+			return 0;
 		}
 
 		template<class LHS, class RHS>
