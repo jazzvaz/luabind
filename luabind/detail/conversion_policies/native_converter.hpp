@@ -71,6 +71,10 @@ namespace luabind {
 		using value_type = typename native_converter_base<T>::value_type;
 		using param_type = typename native_converter_base<T>::param_type;
 
+		static constexpr bool use_lua_number =
+			(std::is_unsigned_v<value_type> && sizeof(value_type) >= sizeof(lua_Integer))
+			|| (sizeof(value_type) > sizeof(lua_Integer));
+
 		static int compute_score(lua_State* L, int index)
 		{
 			return lua_type(L, index) == LUA_TNUMBER ? 0 : no_match;
@@ -78,7 +82,7 @@ namespace luabind {
 
 		static value_type to_cpp_deferred(lua_State* L, int index)
 		{
-			if((std::is_unsigned_v<value_type> && sizeof(value_type) >= sizeof(lua_Integer)) || (sizeof(value_type) > sizeof(lua_Integer))) {
+			if constexpr (use_lua_number) {
 				return static_cast<T>(lua_tonumber(L, index));
 			} else {
 				return static_cast<T>(lua_tointeger(L, index));
@@ -87,7 +91,7 @@ namespace luabind {
 
 		void to_lua_deferred(lua_State* L, param_type value)
 		{
-			if((std::is_unsigned_v<value_type> && sizeof(value_type) >= sizeof(lua_Integer)) || (sizeof(value_type) > sizeof(lua_Integer)))
+			if constexpr (use_lua_number)
 			{
 				lua_pushnumber(L, (lua_Number)value);
 			} else {
