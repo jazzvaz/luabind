@@ -123,24 +123,18 @@ namespace luabind {
 
 		}
 
-		// VC2013RC doesn't support expanding a template and its member template in one expression, that's why we have to to incrementally build
-		// the converter list instead of a single combined expansion.
-		template< typename ArgumentList, typename PolicyList, typename CurrentList = meta::type_list<>, unsigned int Counter = 1 >
-		struct compute_argument_converter_list;
+		template <typename ArgList, typename PolicyList, typename ArgIndexList>
+		struct argument_converter_list;
 
-		template< typename Argument0, typename... Arguments, typename PolicyList, typename... CurrentConverters, unsigned int Counter >
-		struct compute_argument_converter_list< meta::type_list<Argument0, Arguments... >, PolicyList, meta::type_list<CurrentConverters...>, Counter >
+		template <typename ArgList, typename PolicyList, uint32_t... Indices>
+		struct argument_converter_list<ArgList, PolicyList, meta::index_list<Indices...>>
 		{
-			using converter_type = typename policy_detail::get_converter_policy<Counter, PolicyList>::type;
-			using this_specialized = typename converter_type::template specialize<Argument0, lua_to_cpp >::type;
-			using type = typename compute_argument_converter_list<meta::type_list<Arguments...>, PolicyList, meta::type_list<CurrentConverters..., this_specialized>, Counter + 1>::type;
+			using type = meta::type_list< // policy 0 is for return value, so add 1
+				specialized_converter_policy_n<Indices + 1, PolicyList, meta::get_t<ArgList, Indices>, lua_to_cpp>...>;
 		};
 
-		template<typename PolicyList, typename... CurrentConverters, unsigned int Counter >
-		struct compute_argument_converter_list< meta::type_list<>, PolicyList, meta::type_list<CurrentConverters...>, Counter >
-		{
-			using type = meta::type_list<CurrentConverters...>;
-		};
+		template <typename ArgList, typename PolicyList, typename ArgIndexList>
+		using argument_converter_list_t = typename argument_converter_list<ArgList, PolicyList, ArgIndexList>::type;
 
 		template< typename ConverterList >
 		struct build_consumed_list;
@@ -166,9 +160,9 @@ namespace luabind {
 			using decorated_argument_list = meta::type_list< decorate_type_t<Arguments>... >;
 			// note that this is 0-based, so whenever you want to fetch from the converter list, you need to add 1
 			using argument_index_list = meta::index_range< 0, sizeof...(Arguments) >;
-			using argument_converter_list = typename compute_argument_converter_list<argument_list, PolicyList>::type;
-			using argument_converter_tuple_type = meta::make_tuple_t<argument_converter_list>;
-			using consumed_list = typename build_consumed_list<argument_converter_list>::consumed_list;
+			using arg_converter_list = argument_converter_list_t<argument_list, policy_list, argument_index_list>;
+			using argument_converter_tuple_type = meta::make_tuple_t<arg_converter_list>;
+			using consumed_list = typename build_consumed_list<arg_converter_list>::consumed_list;
 			using stack_index_list = call_detail_new::compute_stack_indices_t< consumed_list, 1 >;
 			enum { arity = meta::sum_v<consumed_list> };
 		};
