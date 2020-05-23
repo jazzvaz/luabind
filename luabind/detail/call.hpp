@@ -59,49 +59,46 @@ namespace luabind {
 			int candidate_index;
 		};
 
-		namespace call_detail_new {
+		/*
+			Compute Stack Indices
+			Given the list of argument converter arities, computes the stack indices that each converter addresses.
+		*/
+		template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
+		struct compute_stack_indices;
 
-			/*
-				Compute Stack Indices
-				Given the list of argument converter arities, computes the stack indices that each converter addresses.
-			*/
-			template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
-			struct compute_stack_indices;
+		template <uint32_t Head, uint32_t... Tail, uint32_t Sum, uint32_t... StackIndices>
+		struct compute_stack_indices<meta::index_list<Head, Tail...>, Sum, StackIndices...>
+		{
+			using next = compute_stack_indices<meta::index_list<Tail...>, Sum + Head, StackIndices..., Sum>;
+			using type = typename next::type;
+		};
 
-			template <uint32_t Head, uint32_t... Tail, uint32_t Sum, uint32_t... StackIndices>
-			struct compute_stack_indices<meta::index_list<Head, Tail...>, Sum, StackIndices...>
-			{
-				using next = compute_stack_indices<meta::index_list<Tail...>, Sum + Head, StackIndices..., Sum>;
-				using type = typename next::type;
-			};
+		template <uint32_t Sum, uint32_t... StackIndices>
+		struct compute_stack_indices<meta::index_list<>, Sum, StackIndices...>
+		{
+			using type = meta::index_list<StackIndices...>;
+		};
 
-			template <uint32_t Sum, uint32_t... StackIndices>
-			struct compute_stack_indices<meta::index_list<>, Sum, StackIndices...>
-			{
-				using type = meta::index_list<StackIndices...>;
-			};
+		template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
+		using compute_stack_indices_t = typename compute_stack_indices<ConsumedList, Sum, StackIndices...>::type;
 
-			template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
-			using compute_stack_indices_t = typename compute_stack_indices<ConsumedList, Sum, StackIndices...>::type;
+		template <typename StackIndexList, typename Policy>
+		void postcall(lua_State* L, int results, StackIndexList, call_policy_injector<Policy>)
+		{
+			Policy::postcall(L, results, StackIndexList());
+		}
 
-			template <typename StackIndexList, typename Policy>
-			void postcall(lua_State* L, int results, StackIndexList, call_policy_injector<Policy>)
-			{
+		template <typename StackIndexList, typename Policy, uint32_t Index>
+		void postcall(lua_State* L, int results, StackIndexList, converter_policy_injector<Index, Policy>)
+		{
+			if constexpr (converter_policy_injector<Index, Policy>::has_postcall)
 				Policy::postcall(L, results, StackIndexList());
-			}
+		}
 
-			template <typename StackIndexList, typename Policy, uint32_t Index>
-			void postcall(lua_State* L, int results, StackIndexList, converter_policy_injector<Index, Policy>)
-			{
-				if constexpr (converter_policy_injector<Index, Policy>::has_postcall)
-					Policy::postcall(L, results, StackIndexList());
-			}
-
-			template <typename... PolicyInjectors, typename StackIndexList>
-			void postcall(lua_State* L, int results, StackIndexList, meta::type_list<PolicyInjectors...>)
-			{
-				(postcall(L, results, StackIndexList(), PolicyInjectors()), ...);
-			}
+		template <typename... PolicyInjectors, typename StackIndexList>
+		void postcall(lua_State* L, int results, StackIndexList, meta::type_list<PolicyInjectors...>)
+		{
+			(postcall(L, results, StackIndexList(), PolicyInjectors()), ...);
 		}
 
 		template <typename ArgList, typename PolicyList, typename ArgIndexList>
@@ -144,7 +141,7 @@ namespace luabind {
 			using arg_converter_list = argument_converter_list_t<argument_list, policy_list, argument_index_list>;
 			using argument_converter_tuple_type = meta::make_tuple_t<arg_converter_list>;
 			using consumed_list = typename build_consumed_list<arg_converter_list>::consumed_list;
-			using stack_index_list = call_detail_new::compute_stack_indices_t< consumed_list, 1 >;
+			using stack_index_list = compute_stack_indices_t< consumed_list, 1 >;
 			enum { arity = meta::sum_v<consumed_list> };
 		};
 
@@ -242,7 +239,7 @@ namespace luabind {
 					return -results - 1;
 				}
 				using indices_w_arity = meta::push_front_t<typename traits::stack_index_list, meta::index<traits::arity>>;
-				call_detail_new::postcall(L, results, indices_w_arity(), PolicyList());
+				postcall(L, results, indices_w_arity(), PolicyList());
 
 				return results;
 			}
