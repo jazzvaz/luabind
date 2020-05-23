@@ -84,43 +84,24 @@ namespace luabind {
 			template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
 			using compute_stack_indices_t = typename compute_stack_indices<ConsumedList, Sum, StackIndices...>::type;
 
-			template< typename PolicyList, typename StackIndexList >
-			struct policy_list_postcall;
+			template <typename StackIndexList, typename Policy>
+			void postcall(lua_State* L, int results, StackIndexList, call_policy_injector<Policy>)
+			{
+				Policy::postcall(L, results, StackIndexList());
+			}
 
-			template< typename Policy0, typename... Policies, typename StackIndexList >
-			struct policy_list_postcall< meta::type_list< call_policy_injector<Policy0>, Policies... >, StackIndexList > {
-				static void postcall(lua_State* L, int results) {
-					Policy0::postcall(L, results, StackIndexList());
-					policy_list_postcall< meta::type_list< Policies... >, StackIndexList >::postcall(L, results);
-				}
-			};
+			template <typename StackIndexList, typename Policy, uint32_t Index>
+			void postcall(lua_State* L, int results, StackIndexList, converter_policy_injector<Index, Policy>)
+			{
+				if constexpr (converter_policy_injector<Index, Policy>::has_postcall)
+					Policy::postcall(L, results, StackIndexList());
+			}
 
-			template< typename ConverterPolicy, typename StackIndexList, bool has_postcall >
-			struct converter_policy_postcall {
-				static void postcall(lua_State* L, int results) {
-					ConverterPolicy::postcall(L, results, StackIndexList());
-				}
-			};
-
-			template< typename ConverterPolicy, typename StackIndexList >
-			struct converter_policy_postcall< ConverterPolicy, StackIndexList, false > {
-				static void postcall(lua_State* /*L*/, int /*results*/) {
-				}
-			};
-
-			template< unsigned int Index, typename Policy, typename... Policies, typename StackIndexList >
-			struct policy_list_postcall< meta::type_list< converter_policy_injector< Index, Policy >, Policies... >, StackIndexList > {
-				static void postcall(lua_State* L, int results) {
-					converter_policy_postcall < Policy, StackIndexList, converter_policy_injector< Index, Policy >::has_postcall >::postcall(L, results);
-					policy_list_postcall< meta::type_list< Policies... >, StackIndexList >::postcall(L, results);
-				}
-			};
-
-			template< typename StackIndexList >
-			struct policy_list_postcall< meta::type_list< >, StackIndexList > {
-				static void postcall(lua_State* /*L*/, int /*results*/) {}
-			};
-
+			template <typename... PolicyInjectors, typename StackIndexList>
+			void postcall(lua_State* L, int results, StackIndexList, meta::type_list<PolicyInjectors...>)
+			{
+				(postcall(L, results, StackIndexList(), PolicyInjectors()), ...);
+			}
 		}
 
 		template <typename ArgList, typename PolicyList, typename ArgIndexList>
@@ -325,7 +306,8 @@ namespace luabind {
 				if (has_call_policy_v<PolicyList, yield_policy>) {
 					return -results - 1;
 				}
-				call_detail_new::policy_list_postcall < PolicyList, meta::push_front_t< typename traits::stack_index_list, meta::index<traits::arity> > >::postcall(L, results);
+				using indices_w_arity = meta::push_front_t<typename traits::stack_index_list, meta::index<traits::arity>>;
+				call_detail_new::postcall(L, results, indices_w_arity(), PolicyList());
 
 				return results;
 			}
