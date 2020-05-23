@@ -18,7 +18,7 @@ namespace luabind
 	namespace detail {
 
 		template<class R, typename PolicyList, unsigned int... Indices, typename... Args>
-		R call_member_impl(lua_State* L, std::true_type /*void*/, meta::index_list<Indices...>, Args&&... args)
+		R call_member_impl(lua_State* L, meta::index_list<Indices...>, Args&&... args)
 		{
 			// don't count the function and self-reference
 			// since those will be popped by pcall
@@ -27,47 +27,23 @@ namespace luabind
 			// pcall will pop the function and self reference
 			// and all the parameters
 
-			meta::init_order{ (
-				specialized_converter_policy_n<Indices, PolicyList, unwrapped_t<Args>, cpp_to_lua>().to_lua(L, unwrapped<Args>::get(std::forward<Args>(args))), 0)...
-			};
+			(specialized_converter_policy_n<Indices, PolicyList, unwrapped_t<Args>, cpp_to_lua>().to_lua(L, unwrapped<Args>::get(std::forward<Args>(args))), ...);
 
-			if(pcall(L, sizeof...(Args)+1, 0))
+			if (pcall(L, sizeof...(Args)+1, std::is_void_v<R> ? 0 : 1))
 			{
 				assert(lua_gettop(L) == top + 1);
 				call_error(L);
 			}
 			// pops the return values from the function
 			stack_pop pop(L, lua_gettop(L) - top);
-		}
-
-		template<class R, typename PolicyList, unsigned int... Indices, typename... Args>
-		R call_member_impl(lua_State* L, std::false_type /*void*/, meta::index_list<Indices...>, Args&&... args)
-		{
-			// don't count the function and self-reference
-			// since those will be popped by pcall
-			int top = lua_gettop(L) - 2;
-
-			// pcall will pop the function and self reference
-			// and all the parameters
-
-			meta::init_order{ (
-				specialized_converter_policy_n<Indices, PolicyList, unwrapped_t<Args>, cpp_to_lua>().to_lua(L, unwrapped<Args>::get(std::forward<Args>(args))), 0)...
-			};
-
-			if(pcall(L, sizeof...(Args)+1, 1))
+			if constexpr (!std::is_void_v<R>)
 			{
-				assert(lua_gettop(L) == top + 1);
-				call_error(L);
+				specialized_converter_policy_n<0, PolicyList, R, lua_to_cpp> converter;
+				if (converter.match(L, decorate_type_t<R>(), -1) < 0 && !get_permissive_mode())
+					cast_error<R>(L);
+				return converter.to_cpp(L, decorate_type_t<R>(), -1);
 			}
-			// pops the return values from the function
-			stack_pop pop(L, lua_gettop(L) - top);
-
-			specialized_converter_policy_n<0, PolicyList, R, lua_to_cpp> converter;
-			if(converter.match(L, decorate_type_t<R>(), -1) < 0 && !get_permissive_mode())
-				cast_error<R>(L);
-			return converter.to_cpp(L, decorate_type_t<R>(), -1);
 		}
-
 
 	} // detail
 
@@ -90,7 +66,8 @@ namespace luabind
 		// are on the stack. These will both
 		// be popped by pcall
 
-		return detail::call_member_impl<R, PolicyList>(obj.interpreter(), std::is_void<R>(), meta::index_range<1, sizeof...(Args)+1>(), std::forward<Args>(args)...);
+		return detail::call_member_impl<R, PolicyList>(
+			obj.interpreter(), meta::index_range<1, sizeof...(Args)+1>(), std::forward<Args>(args)...);
 	}
 
 	template <class R, typename... Args>
