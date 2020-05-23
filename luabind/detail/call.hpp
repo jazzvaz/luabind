@@ -65,24 +65,24 @@ namespace luabind {
 				Compute Stack Indices
 				Given the list of argument converter arities, computes the stack indices that each converter addresses.
 			*/
-
-			template< typename ConsumedList, unsigned int CurrentSum, unsigned int... StackIndices >
+			template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
 			struct compute_stack_indices;
 
-			template< typename ConsumedList, unsigned int CurrentSum, unsigned int... StackIndices >
-			using compute_stack_indices_t = typename compute_stack_indices<ConsumedList, CurrentSum, StackIndices...>::type;
-
-			template< unsigned int Consumed0, unsigned int... Consumeds, unsigned int CurrentSum, unsigned int... StackIndices >
-			struct compute_stack_indices< meta::index_list< Consumed0, Consumeds... >, CurrentSum, StackIndices... >
+			template <uint32_t Head, uint32_t... Tail, uint32_t Sum, uint32_t... StackIndices>
+			struct compute_stack_indices<meta::index_list<Head, Tail...>, Sum, StackIndices...>
 			{
-				using type = typename compute_stack_indices< meta::index_list< Consumeds... >, CurrentSum + Consumed0, StackIndices..., CurrentSum >::type;
+				using next = compute_stack_indices<meta::index_list<Tail...>, Sum + Head, StackIndices..., Sum>;
+				using type = typename next::type;
 			};
 
-			template< unsigned int CurrentSum, unsigned int... StackIndices >
-			struct compute_stack_indices< meta::index_list< >, CurrentSum, StackIndices... >
+			template <uint32_t Sum, uint32_t... StackIndices>
+			struct compute_stack_indices<meta::index_list<>, Sum, StackIndices...>
 			{
-				using type = meta::index_list< StackIndices... >;
+				using type = meta::index_list<StackIndices...>;
 			};
+
+			template <typename ConsumedList, uint32_t Sum, uint32_t... StackIndices>
+			using compute_stack_indices_t = typename compute_stack_indices<ConsumedList, Sum, StackIndices...>::type;
 
 			template< typename PolicyList, typename StackIndexList >
 			struct policy_list_postcall;
