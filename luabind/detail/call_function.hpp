@@ -32,59 +32,37 @@ namespace luabind
 			push_arguments<PolicyList, Pos + 1>(L, std::forward<Args>(args)...);
 		}
 
-		template<typename Ret, typename PolicyList, typename IndexList, unsigned int NumParams, int(*Function)(lua_State*, int, int), bool IsVoid = std::is_void_v<Ret>>
-		struct call_function_struct;
+		using lua_fun = int(*)(lua_State*, int, int);
 
-		template<typename Ret, typename PolicyList, unsigned int NumParams, int(*Function)(lua_State*, int, int), unsigned int... Indices >
-		struct call_function_struct< Ret, PolicyList, meta::index_list<Indices...>, NumParams, Function, true /* void */ >
+		template <typename PolicyList, typename IndexList, uint32_t NArgs, typename Ret, typename... Args>
+		Ret call_function(lua_State* L, lua_fun function, Args&&... args)
 		{
-			template< typename... Args >
-			static void call(lua_State* L, Args&&... args) {
-				int top = lua_gettop(L);
-
-				push_arguments<PolicyList, 1>(L, std::forward<Args>(args)...);
-
-				if(Function(L, sizeof...(Args), 0)) {
-					if(Function == &detail::pcall) {
-						assert(lua_gettop(L) == static_cast<int>(top - NumParams + 1));
-					}
-					call_error(L);
-				}
-				// pops the return values from the function call
-				stack_pop pop(L, lua_gettop(L) - top + NumParams);
+			int top = lua_gettop(L);
+			push_arguments<PolicyList, 1>(L, std::forward<Args>(args)...);
+			if (function(L, sizeof...(Args), 1))
+			{
+				if (function == &detail::pcall)
+					assert(lua_gettop(L) == static_cast<int>(top - NArgs + 1));
+				call_error(L);
 			}
-		};
-
-		template<typename Ret, typename PolicyList, unsigned int NumParams, int(*Function)(lua_State*, int, int), unsigned int... Indices >
-		struct call_function_struct< Ret, PolicyList, meta::index_list<Indices...>, NumParams, Function, false /* void */ >
-		{
-			template< typename... Args >
-			static Ret call(lua_State* L, Args&&... args) {
-				int top = lua_gettop(L);
-
-				push_arguments<PolicyList, 1>(L, std::forward<Args>(args)...);
-
-				if(Function(L, sizeof...(Args), 1)) {
-					if(Function == &detail::pcall) {
-						assert(lua_gettop(L) == static_cast<int>(top - NumParams + 1));
-					}
-					call_error(L);
-				}
-				// pops the return values from the function call
-				stack_pop pop(L, lua_gettop(L) - top + NumParams);
-
+			// pops the return values from the function call
+			stack_pop pop(L, lua_gettop(L) - top + NArgs);
+			if constexpr (!std::is_void_v<Ret>)
+			{
 				specialized_converter_policy_n<0, PolicyList, Ret, lua_to_cpp> converter;
 				if(converter.match(L, decorate_type_t<Ret>(), -1) < 0 && !get_permissive_mode())
 					cast_error<Ret>(L);
 				return converter.to_cpp(L, decorate_type_t<Ret>(), -1);
 			}
-		};
+		}
 	}
 
 	template<class R, typename PolicyList = no_policies, typename... Args>
 	R call_pushed_function(lua_State* L, Args&&... args)
 	{
-		return detail::call_function_struct<R, PolicyList, meta::index_range<1, sizeof...(Args)+1>, 1, &detail::pcall >::call(L, std::forward<Args>(args)...);
+		using index_list = meta::index_range<1, sizeof...(Args)+1>;
+		return detail::call_function<PolicyList, index_list, 1, R>(
+			L, &detail::pcall, std::forward<Args>(args)...);
 	}
 
 	template<class R, typename PolicyList = no_policies, typename... Args>
@@ -98,7 +76,9 @@ namespace luabind
 	template<class R, typename PolicyList = no_policies, typename... Args>
 	R resume_pushed_function(lua_State* L, Args&&... args)
 	{
-		return detail::call_function_struct<R, PolicyList, meta::index_range<1, sizeof...(Args)+1>, 1, &detail::resume_impl >::call(L, std::forward<Args>(args)...);
+		using index_list = meta::index_range<1, sizeof...(Args)+1>;
+		return detail::call_function<PolicyList, index_list, 1, R>(
+			L, &detail::resume_impl, std::forward<Args>(args)...);
 	}
 
 	template<class R, typename PolicyList = no_policies, typename... Args>
@@ -112,7 +92,9 @@ namespace luabind
 	template<class R, typename PolicyList = no_policies, typename... Args>
 	R resume(lua_State* L, Args&&... args)
 	{
-		return detail::call_function_struct<R, PolicyList, meta::index_range<1, sizeof...(Args)+1>, 0, &detail::resume_impl >::call(L, std::forward<Args>(args)...);
+		using index_list = meta::index_range<1, sizeof...(Args)+1>;
+		return detail::call_function<PolicyList, index_list, 0, R>(
+			L, &detail::resume_impl, std::forward<Args>(args)...);
 	}
 
 }
