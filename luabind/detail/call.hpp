@@ -84,12 +84,6 @@ namespace luabind {
 				using type = meta::index_list< StackIndices... >;
 			};
 
-			template< typename Foo >
-			struct FooFoo {	// Foo!
-				enum { consumed_args = Foo::consumed_args };
-			};
-
-
 			template< typename PolicyList, typename StackIndexList >
 			struct policy_list_postcall;
 
@@ -153,7 +147,7 @@ namespace luabind {
 
 		template< typename... Converters >
 		struct build_consumed_list< meta::type_list< Converters... > > {
-			using consumed_list = meta::index_list< call_detail_new::FooFoo<Converters>::consumed_args... >;
+			using consumed_list = meta::index_list<Converters::consumed_args...>;
 		};
 
 		template< typename SignatureList, typename PolicyList >
