@@ -173,108 +173,52 @@ namespace luabind {
 		struct invoke_struct
 		{
 			using traits = invoke_traits< Signature, PolicyList >;
+			using converter_tuple = typename traits::argument_converter_tuple_type;
+			using result_converter = typename traits::result_converter;
+			using decorated_list = typename traits::decorated_argument_list;
+			using stack_indices = typename traits::stack_index_list;
+			using arg_index_list = typename traits::argument_index_list;
+			using signature_list = typename traits::signature_list;
+			using result_type = typename traits::result_type;
 
-			template< bool IsMember, bool IsVoid, typename IndexList >
-			struct call_struct;
-
-			template< unsigned int... ArgumentIndices >
-			struct call_struct< false /*member*/, false /*void*/, meta::index_list<ArgumentIndices...> >
+			template <uint32_t Index>
+			static decltype(auto) convert_to_cpp(lua_State* L, converter_tuple& cvt)
 			{
-				static void call(lua_State* L, F& f, typename traits::argument_converter_tuple_type& argument_tuple)
-				{
-					using decorated_list = typename traits::decorated_argument_list;
-					using stack_indices = typename traits::stack_index_list;
-					using result_converter = typename traits::result_converter;
+				auto& converter = std::get<Index>(cvt);
+				using decorated_type = meta::get_t<decorated_list, Index>;
+				auto i = meta::get_v<stack_indices, Index>;
+				return converter.to_cpp(L, decorated_type(), i);
+			}
 
-					result_converter().to_lua(L,
-						f((std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-							meta::get_t<decorated_list, ArgumentIndices>(),
-							meta::get_v<stack_indices, ArgumentIndices>))...
-						)
-					);
-
-					meta::init_order{
-						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
-						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
-					};
-				}
-			};
-
-			template< unsigned int... ArgumentIndices >
-			struct call_struct< false /*member*/, true /*void*/, meta::index_list<ArgumentIndices...> >
+			template <uint32_t Index>
+			static decltype(auto) convert_postcall(lua_State* L, converter_tuple& cvt)
 			{
-				static void call(lua_State* L, F& f, typename traits::argument_converter_tuple_type& argument_tuple)
-				{
-					using decorated_list = typename traits::decorated_argument_list;
-					using stack_indices = typename traits::stack_index_list;
+				auto& converter = std::get<Index>(cvt);
+				using decorated_type = meta::get_t<decorated_list, Index>;
+				auto i = meta::get_v<stack_indices, Index>;
+				return converter.converter_postcall(L, decorated_type(), i);
+			}
 
-					// This prevents unused warnings with empty parameter lists
-					(void)L;
-
-					f(std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-						meta::get_t<decorated_list, ArgumentIndices>(),
-						meta::get_v<stack_indices, ArgumentIndices>)...
-
-					);
-
-					meta::init_order{
-						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
-						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
-					};
-				}
-			};
-
-			template< unsigned int ClassIndex, unsigned int... ArgumentIndices >
-			struct call_struct< true /*member*/, false /*void*/, meta::index_list<ClassIndex, ArgumentIndices...> >
+			template <uint32_t... Indices>
+			static void call_free(lua_State* L, F& f, meta::index_list<Indices...>, converter_tuple& cvt)
 			{
-				static void call(lua_State* L, F& f, typename traits::argument_converter_tuple_type& argument_tuple)
-				{
-					using decorated_list = typename traits::decorated_argument_list;
-					using stack_indices = typename traits::stack_index_list;
-					using result_converter = typename traits::result_converter;
+				if constexpr (!std::is_void_v<result_type>)
+					result_converter().to_lua(L, f(convert_to_cpp<Indices>(L, cvt)...));
+				else
+					f(convert_to_cpp<Indices>(L, cvt)...);
+				(convert_postcall<Indices>(L, cvt), ...);
+			}
 
-					auto& object = std::get<0>(argument_tuple).to_cpp(L,
-						meta::get_t<typename traits::decorated_argument_list, 0>(), 1);
-
-					result_converter().to_lua(L,
-						(object.*f)(std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-							meta::get_t<decorated_list, ArgumentIndices>(),
-							meta::get_v<stack_indices, ArgumentIndices>)...
-							)
-					);
-
-					meta::init_order{
-						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
-						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
-					};
-				}
-			};
-
-			template< unsigned int ClassIndex, unsigned int... ArgumentIndices >
-			struct call_struct< true /*member*/, true /*void*/, meta::index_list<ClassIndex, ArgumentIndices...> >
+			template <uint32_t IThis, uint32_t... Indices>
+			static void call_member(lua_State* L, F& f, meta::index_list<IThis, Indices...>, converter_tuple& cvt)
 			{
-				static void call(lua_State* L, F& f, typename traits::argument_converter_tuple_type& argument_tuple)
-				{
-					using decorated_list = typename traits::decorated_argument_list;
-					using stack_indices = typename traits::stack_index_list;
-
-					auto& object = std::get<0>(argument_tuple).to_cpp(L, meta::get_t<typename traits::decorated_argument_list, 0>(), 1);
-
-					(object.*f)(std::get<ArgumentIndices>(argument_tuple).to_cpp(L,
-						meta::get_t<decorated_list, ArgumentIndices>(),
-						meta::get_v<stack_indices, ArgumentIndices>)...
-						);
-
-					meta::init_order{
-						(std::get<ArgumentIndices>(argument_tuple).converter_postcall(L,
-						meta::get_t<typename traits::decorated_argument_list, ArgumentIndices>(),
-						meta::get_v<typename traits::stack_index_list, ArgumentIndices>), 0)...
-					};
-				}
-			};
+				auto& obj = convert_to_cpp<IThis>(L, cvt);
+				if constexpr (!std::is_void_v<result_type>)
+					result_converter().to_lua(L, (obj.*f)(convert_to_cpp<Indices>(L, cvt)...));
+				else
+					(obj.*f)(convert_to_cpp<Indices>(L, cvt)...);
+				(convert_postcall<Indices>(L, cvt), ...);
+			}
 
 			static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f) {
 				int const arguments = lua_gettop(L);
@@ -292,16 +236,13 @@ namespace luabind {
 			}
 
 			template< typename TupleType >
-			static int invoke(lua_State* L, invoke_context& ctx, F& f, int args, TupleType& tuple)
+			static int invoke(lua_State* L, invoke_context& ctx, F& f, int args, TupleType& conv_tuple)
 			{
 				int results = 0;
-
-				call_struct<
-					std::is_member_function_pointer_v<F>,
-					std::is_void_v<typename traits::result_type>,
-					typename traits::argument_index_list
-				>::call(L, f, tuple);
-
+				if constexpr (std::is_member_function_pointer_v<F>)
+					call_member(L, f, arg_index_list(), conv_tuple);
+				else
+					call_free(L, f, arg_index_list(), conv_tuple);
 				results = lua_gettop(L) - args;
 				if (has_call_policy_v<PolicyList, yield_policy>) {
 					return -results - 1;
