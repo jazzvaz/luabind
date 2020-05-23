@@ -148,27 +148,6 @@ namespace luabind {
 			enum { arity = meta::sum_v<consumed_list> };
 		};
 
-		template< typename StackIndexList, typename SignatureList, unsigned int End = meta::size_v<SignatureList>, unsigned int Index = 1 >
-		struct match_struct {
-			template< typename TupleType >
-			static int match(lua_State* L, TupleType& tuple)
-			{
-				const int this_match = std::get<Index - 1>(tuple).match(L, decorate_type_t<typename SignatureList::template at<Index>>(), meta::get_v<StackIndexList, Index - 1>);
-				return this_match >= 0 ?	// could also sum them up unconditionally
-					this_match + match_struct<StackIndexList, SignatureList, End, Index + 1>::match(L, tuple)
-					: no_match;
-			}
-		};
-
-		template< typename StackIndexList, typename SignatureList, unsigned int Index >
-		struct match_struct< StackIndexList, SignatureList, Index, Index >
-		{
-			template< typename TupleType >
-			static int match(lua_State* /*L*/, TupleType&) {
-				return 0;
-			}
-		};
-
 		template< typename PolicyList, typename Signature, typename F >
 		struct invoke_struct
 		{
@@ -220,17 +199,31 @@ namespace luabind {
 				(convert_postcall<Indices>(L, cvt), ...);
 			}
 
+			template <uint32_t Index>
+			static int match_arg(lua_State* L, converter_tuple& cvt)
+			{
+				auto& converter = std::get<Index>(cvt);
+				using decorated_type = meta::get_t<decorated_list, Index>;
+				auto i = meta::get_v<stack_indices, Index>;
+				return converter.match(L, decorated_type(), i);
+			}
+
+			template <uint32_t... Indices>
+			static int match_args(lua_State* L, meta::index_list<Indices...>, converter_tuple& cvt)
+			{
+				return (match_arg<Indices-1>(L, cvt) + ... + 0);
+			}
+
 			static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f) {
 				int const arguments = lua_gettop(L);
 				if (get_permissive_mode() && !self.next)
 				{
-					typename traits::argument_converter_tuple_type converter_tuple;
-					using struct_type = match_struct< typename traits::stack_index_list, typename traits::signature_list >;
-					ctx.best_score = struct_type::match(L, converter_tuple);
+					converter_tuple cvt;
+					ctx.best_score = match_args(L, stack_indices(), cvt);
 					ctx.candidates[0] = &self;
 					ctx.candidate_index = 1;
 					ctx.extra_candidates = 0;
-					return invoke(L, ctx, f, arguments, converter_tuple);
+					return invoke(L, ctx, f, arguments, cvt);
 				}
 				return invoke_best_match(L, self, ctx, f, arguments);
 			}
@@ -258,7 +251,7 @@ namespace luabind {
 				int score = no_match;
 
 				// Even match needs the tuple, since pointer_converters buffer the cast result
-				typename traits::argument_converter_tuple_type converter_tuple;
+				converter_tuple cvt;
 
 				if(traits::arity == args) {
 					// Things to remember:
@@ -266,8 +259,7 @@ namespace luabind {
 					// is the total distance of all arguments to their given types (graph distance).
 					// This is why we can say MaxArguments = 100, MaxDerivationDepth = 100, so no match will be > 100*100=10k and -10k1 absorbs every match.
 					// This gets rid of the awkward checks during converter match traversal.
-					using struct_type = match_struct< typename traits::stack_index_list, typename traits::signature_list >;
-					score = struct_type::match(L, converter_tuple);
+					score = match_args(L, stack_indices(), cvt);
 				}
 
 				if(score >= 0 && score < ctx.best_score) {
@@ -291,7 +283,7 @@ namespace luabind {
 
 				if(score == ctx.best_score && ctx.candidate_index == 1)
 				{
-					results = invoke(L, ctx, f, args, converter_tuple);
+					results = invoke(L, ctx, f, args, cvt);
 				}
 
 				return results;
