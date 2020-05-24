@@ -13,38 +13,30 @@
 # include <cxxabi.h>
 #endif
 
-namespace luabind {
-
+namespace luabind
+{
 	class type_id
 	{
 	public:
-		type_id()
-			: id(&typeid(null_type))
+		type_id() :
+			id(&typeid(null_type))
 		{}
 
-		type_id(std::type_info const& id)
-			: id(&id)
+		type_id(std::type_info const& id) :
+			id(&id)
 		{}
 
 		bool operator!=(type_id const& other) const
-		{
-			return *id != *other.id;
-		}
+		{ return *id != *other.id; }
 
 		bool operator==(type_id const& other) const
-		{
-			return *id == *other.id;
-		}
+		{ return *id == *other.id; }
 
 		bool operator<(type_id const& other) const
-		{
-			return id->before(*other.id);
-		}
+		{ return id->before(*other.id); }
 
 		size_t hash_code() const
-		{
-			return id->hash_code();
-		}
+		{ return id->hash_code(); }
 
 		luabind::string name() const
 		{
@@ -64,5 +56,4 @@ namespace luabind {
 	private:
 		std::type_info const* id;
 	};
-
 } // namespace luabind

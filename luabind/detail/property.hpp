@@ -3,28 +3,21 @@
 
 #pragma once
 
-namespace luabind {
-	namespace detail {
+namespace luabind::detail
+{
+	template <class Class, class T, class Result = T>
+	struct access_member_ptr
+	{
+		access_member_ptr(T Class::* mem_ptr) :
+			mem_ptr(mem_ptr)
+		{}
 
-		template <class Class, class T, class Result = T>
-		struct access_member_ptr
-		{
-			access_member_ptr(T Class::* mem_ptr)
-				: mem_ptr(mem_ptr)
-			{}
+		Result operator()(Class const& x) const
+		{ return const_cast<Class&>(x).*mem_ptr; }
 
-			Result operator()(Class const& x) const
-			{
-				return const_cast<Class&>(x).*mem_ptr;
-			}
+		void operator()(Class& x, T const& value) const
+		{ x.*mem_ptr = value; }
 
-			void operator()(Class& x, T const& value) const
-			{
-				x.*mem_ptr = value;
-			}
-
-			T Class::* mem_ptr;
-		};
-
-	} // namespace detail
-} // namespace luabind
+		T Class::* mem_ptr;
+	};
+} // namespace luabind::detail

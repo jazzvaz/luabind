@@ -12,5 +12,5 @@ namespace luabind
 {
 	allocator_func allocator = nullptr;
 	void* allocator_context = nullptr;
-}
+} // namespace luabind
 #endif

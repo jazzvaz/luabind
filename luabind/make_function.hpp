@@ -22,7 +22,7 @@ namespace luabind::detail
 # pragma pack(push)
 # pragma pack(16)
 #endif
-	template <class F, class ArgList, class PolicyList>
+	template <class F, class RArgList, class PolicyList>
 	struct function_object_impl : function_object
 	{
 		function_object_impl(F f) :
@@ -32,12 +32,12 @@ namespace luabind::detail
 
 		int call(lua_State* L, invoke_context& ctx, int args) /*const*/
 		{
-			return invoke_best_match<PolicyList, ArgList>(L, *this, ctx, f, args);
+			return invoke_best_match<PolicyList, RArgList>(L, *this, ctx, f, args);
 		}
 
 		int format_signature(lua_State* L, char const* function, bool concat = true) const
 		{
-			return detail::format_signature(L, function, ArgList(), concat);
+			return detail::format_signature(L, function, RArgList(), concat);
 		}
 
 		static std::tuple<bool, int> safe_entry_point(lua_State* L)
@@ -51,7 +51,7 @@ namespace luabind::detail
 #endif
 			{
 				invoke_context ctx;
-				results = invoke<PolicyList, ArgList>(L, *impl, ctx, impl->f);
+				results = invoke<PolicyList, RArgList>(L, *impl, ctx, impl->f);
 				if (!get_permissive_mode() && !ctx)
 				{
 					error = true;
@@ -83,9 +83,9 @@ namespace luabind::detail
 		F f;
 	};
 
-# ifdef _MSC_VER
-#  pragma pack(pop)
-# endif
+#ifdef _MSC_VER
+# pragma pack(pop)
+#endif
 
 	LUABIND_API object make_function_aux(lua_State* L, function_object* impl, bool default_scope = false);
 	LUABIND_API void add_overload(object const&, char const*, object const&);
@@ -93,17 +93,17 @@ namespace luabind::detail
 
 namespace luabind
 {
-	template <class F, typename... Args, typename... Policies>
+	template <class F, typename... RArgs, typename... Policies>
 	object make_function(lua_State* L, F f, bool default_scope,
-		meta::type_list<Args...>, meta::type_list<Policies...>)
+		meta::type_list<RArgs...>, meta::type_list<Policies...>)
 	{
-		using ArgList = meta::type_list<Args...>;
+		using RArgList = meta::type_list<RArgs...>;
 		using PolicyList = meta::type_list<Policies...>;
-		auto impl = luabind_new<detail::function_object_impl<F, ArgList, PolicyList>>(f);
+		auto impl = luabind_new<detail::function_object_impl<F, RArgList, PolicyList>>(f);
 		return detail::make_function_aux(L, impl, default_scope);
 	}
 
-	template <class F, typename... Policies >
+	template <class F, typename... Policies>
 	object make_function(lua_State* L, F f, bool default_scope, meta::type_list<Policies...>)
 	{
 		using PolicyList = meta::type_list<Policies...>;

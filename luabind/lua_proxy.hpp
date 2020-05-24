@@ -6,30 +6,25 @@
 #include <type_traits>
 #include <luabind/detail/type_traits.hpp>
 
-namespace luabind {
-
-	//
-	// Concept "lua_proxy"
-	//
-
-	template<class T>
+namespace luabind
+{
+	template <class T>
 	struct lua_proxy_traits
 	{
 		using is_specialized = std::false_type;
 	};
 
-	template<class T>
-	struct is_lua_proxy_type
-		: lua_proxy_traits<T>::is_specialized
+	template <class T>
+	struct is_lua_proxy_type :
+		lua_proxy_traits<T>::is_specialized
 	{};
 
 	template <typename T>
 	constexpr bool is_lua_proxy_type_v = is_lua_proxy_type<T>::value;
 
-	template< class T >
+	template <class T>
 	using is_lua_proxy_arg = is_lua_proxy_type<remove_const_reference_t<T>>;
 
-	template< class T >
+	template <class T>
 	constexpr bool is_lua_proxy_arg_v = is_lua_proxy_arg<T>::value;
-
 } // namespace luabind

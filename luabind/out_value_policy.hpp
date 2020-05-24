@@ -41,7 +41,7 @@ namespace luabind::detail
 		template <int Size>
 		struct temporary_storage_size
 		{
-			template <typename T, typename... Args >
+			template <typename T, typename... Args>
 			void construct(Args&&... args)
 			{ new (&m_storage) T(std::forward<Args>(args)...); }
 
@@ -60,7 +60,7 @@ namespace luabind::detail
 		template <typename T>
 		struct temporary_storage_type
 		{
-			template <typename... Args >
+			template <typename... Args>
 			void construct(Args&&... args)
 			{ new (&m_storage) T(std::forward<Args>(args)...); }
 
@@ -127,7 +127,7 @@ namespace luabind::detail
 		template <class T, class Direction>
 		struct specialize
 		{
-			static_assert(std::is_same_v< Direction, lua_to_cpp >,
+			static_assert(std::is_same_v< Direction, lua_to_cpp>,
 				"Out value policy can only convert from lua to cpp");
 			static_assert(is_nonconst_reference_v<T> || is_nonconst_pointer_v<T>,
 				"Out value policy only accepts non const references or pointers");

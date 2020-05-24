@@ -7,9 +7,7 @@
 extern "C"
 {
 #endif
-
 	struct lua_State;
-
 #ifndef LUABIND_CPLUSPLUS_LUA
 }
 #endif

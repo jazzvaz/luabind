@@ -5,9 +5,8 @@
 
 #include <luabind/detail/link_compatibility.hpp>
 
-namespace luabind {
-	namespace detail {
-
+namespace luabind::detail
+{
 #ifdef LUABIND_NOT_THREADSAFE
 		void not_threadsafe_defined_conflict() {}
 #else
@@ -19,7 +18,4 @@ namespace luabind {
 #else
 		void no_error_checking_not_defined_conflict() {}
 #endif
-
-	}
 }
-

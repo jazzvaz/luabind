@@ -6,8 +6,7 @@
 #include <luabind/config.hpp>
 #include <luabind/lua_state_fwd.hpp>
 
-namespace luabind {
-
-	LUABIND_API int bind_function_introspection(lua_State * L);
-
-} // end of namespace luabind
+namespace luabind
+{
+	LUABIND_API int bind_function_introspection(lua_State* L);
+} // namespace luabind

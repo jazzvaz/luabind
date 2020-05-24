@@ -4,7 +4,6 @@
 #define LUABIND_BUILDING
 
 #include <luabind/lua_include.hpp>
-
 #include <luabind/scope.hpp>
 #include <luabind/detail/debug.hpp>
 #include <luabind/detail/stack_utils.hpp>

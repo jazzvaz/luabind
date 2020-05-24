@@ -16,10 +16,8 @@ namespace luabind
 	namespace detail
 	{
 		inline void* call_allocator(void const* ptr, size_t size)
-		{
-			return allocator(allocator_context, ptr, size);
-		}
-	}
+		{ return allocator(allocator_context, ptr, size); }
+	} // namespace detail
 #endif
 
 	template <typename T, typename... Args>
@@ -48,18 +46,14 @@ namespace luabind
 		struct delete_helper
 		{
 			static void apply(T*& pointer)
-			{
-				delete_helper2(pointer, dynamic_cast<void*>(pointer));
-			}
+			{ delete_helper2(pointer, dynamic_cast<void*>(pointer)); }
 		};
 
 		template <typename T>
 		struct delete_helper<T, false>
 		{
 			static void apply(T*& pointer)
-			{
-				delete_helper2(pointer, pointer);
-			}
+			{ delete_helper2(pointer, pointer); }
 		};
 	}
 #endif
@@ -81,12 +75,10 @@ namespace luabind
 	struct luabind_deleter
 	{
 		void operator()(T* ptr) const
-		{
-			luabind_delete(ptr);
-		}
+		{ luabind_delete(ptr); }
 	};
 #else
 	template <typename T>
 	using luabind_deleter = std::default_delete<T>;
 #endif
-}
+} // namespace luabind

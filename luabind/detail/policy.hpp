@@ -104,7 +104,7 @@ namespace luabind::detail
 	}
 
 	// Fetches converter policy for Signature element [Index] from policy list [PolicyList]
-	template <uint32_t Index, typename PolicyList >
+	template <uint32_t Index, typename PolicyList>
 	using fetched_converter_policy = typename policy_detail::get_converter_policy<Index, PolicyList>::type;
 
 	// Specializes converter policy [ConverterPolicy] for type [Type] in direction [Direction]

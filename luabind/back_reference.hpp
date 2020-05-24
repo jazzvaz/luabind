@@ -9,34 +9,38 @@
 #include <luabind/wrapper_base.hpp>
 #include <luabind/pointer_traits.hpp>
 
-namespace luabind {
+namespace luabind
+{
 	struct wrap_base;
+} // namespace luabind
 
-	namespace detail
+namespace luabind::detail
+{
+	template <class T>
+	wrap_base const* get_back_reference(T const& x)
 	{
-		template <class T>
-		wrap_base const* get_back_reference(T const& x)
+		if constexpr (has_get_pointer_v<T>)
 		{
-			if constexpr (has_get_pointer_v<T>)
-			{
-				auto p = get_pointer(x);
-				if constexpr (std::is_polymorphic_v<decltype(p)>)
-					return dynamic_cast<wrap_base const*>(p);
-			}
-			else
-			{
-				auto p = &x;
-				if constexpr (std::is_polymorphic_v<decltype(p)>)
-					return dynamic_cast<wrap_base const*>(p);
-			}
-			return nullptr;
+			auto p = get_pointer(x);
+			if constexpr (std::is_polymorphic_v<decltype(p)>)
+				return dynamic_cast<wrap_base const*>(p);
 		}
-	} // namespace detail
+		else
+		{
+			auto p = &x;
+			if constexpr (std::is_polymorphic_v<decltype(p)>)
+				return dynamic_cast<wrap_base const*>(p);
+		}
+		return nullptr;
+	}
+} // namespace luabind::detail
 
-	template<class T>
+namespace luabind
+{
+	template <class T>
 	bool get_back_reference(lua_State* L, T const& x)
 	{
-		if(wrap_base const* w = detail::get_back_reference(x))
+		if (wrap_base const* w = detail::get_back_reference(x))
 		{
 			detail::wrap_access::ref(*w).get(L);
 			return true;
@@ -44,10 +48,10 @@ namespace luabind {
 		return false;
 	}
 
-	template<class T>
+	template <class T>
 	bool move_back_reference(lua_State* L, T const& x)
 	{
-		if(wrap_base* w = const_cast<wrap_base*>(detail::get_back_reference(x)))
+		if (wrap_base* w = const_cast<wrap_base*>(detail::get_back_reference(x)))
 		{
 			assert(detail::wrap_access::ref(*w).m_strong_ref.is_valid());
 			detail::wrap_access::ref(*w).get(L);
@@ -56,5 +60,4 @@ namespace luabind {
 		}
 		return false;
 	}
-
 } // namespace luabind

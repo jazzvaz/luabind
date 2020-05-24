@@ -10,7 +10,7 @@ namespace luabind
 	namespace detail
 	{
 		struct nil_type {};
-	}
+	} // namespace detail
 
 	constexpr detail::nil_type nil;
-}
+} // namespace luabind

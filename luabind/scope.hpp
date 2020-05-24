@@ -9,33 +9,29 @@
 #include <luabind/lua_state_fwd.hpp>
 #include <memory>
 
-namespace luabind {
-
+namespace luabind
+{
 	struct scope;
-
 } // namespace luabind
 
-namespace luabind {
-	namespace detail {
+namespace luabind::detail
+{
+	struct LUABIND_API registration
+	{
+	public:
+		virtual ~registration();
 
-		struct LUABIND_API registration
-		{
-			registration();
-			virtual ~registration();
+	protected:
+		virtual void register_(lua_State*, bool default_scope = false) const = 0;
 
-		protected:
-			virtual void register_(lua_State*, bool default_scope = false) const = 0;
-
-		private:
-			friend struct ::luabind::scope;
-			registration* m_next;
-		};
-
-	}
+	private:
+		friend struct ::luabind::scope;
+		registration* m_next = nullptr; // XXX: convert to unique_ptr?
+	};
 } // namespace luabind::detail
 
-namespace luabind {
-
+namespace luabind
+{
 	struct LUABIND_API scope
 	{
 		scope();
@@ -44,13 +40,12 @@ namespace luabind {
 		~scope();
 
 		scope& operator=(scope const& other_);
-
 		scope& operator,(scope s);
 
 		void register_(lua_State* L, bool default_scope = false) const;
 
 	private:
-		detail::registration* m_chain;
+		detail::registration* m_chain; // XXX: convert to unique_ptr?
 	};
 
 	class LUABIND_API namespace_ : public scope
@@ -76,13 +71,9 @@ namespace luabind {
 	};
 
 	inline module_ module(object const& table)
-	{
-		return module_(table);
-	}
+	{ return module_(table); }
 
-	inline module_ module(lua_State* L, char const* name = 0)
-	{
-		return module_(L, name);
-	}
+	inline module_ module(lua_State* L, char const* name = nullptr)
+	{ return module_(L, name); }
 
 } // namespace luabind

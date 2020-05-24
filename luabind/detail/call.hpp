@@ -104,7 +104,7 @@ namespace luabind::detail
 	struct build_consumed_list;
 
 	template <typename... Converters>
-	struct build_consumed_list<meta::type_list<Converters... >>
+	struct build_consumed_list<meta::type_list<Converters...>>
 	{
 		using type = meta::index_list<Converters::consumed_args...>;
 	};
@@ -119,7 +119,7 @@ namespace luabind::detail
 		using signature_list = meta::type_list<Result, Args...>;
 		using policy_list = PolicyList;
 		using result_type = Result;
-		using result_converter = specialized_converter_policy_n<0, PolicyList, result_type, cpp_to_lua >;
+		using result_converter = specialized_converter_policy_n<0, PolicyList, result_type, cpp_to_lua>;
 		using arg_list = meta::type_list<Args...>;
 		using decorated_arg_list = meta::type_list<decorate_type_t<Args>...>;
 		// note that this is 0-based, so whenever you want to fetch from the converter list, you need to add 1

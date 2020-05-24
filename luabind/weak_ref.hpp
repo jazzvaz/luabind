@@ -6,12 +6,12 @@
 #include <luabind/config.hpp>
 #include <luabind/lua_state_fwd.hpp>
 
-namespace luabind {
-
+namespace luabind
+{
 	class LUABIND_API weak_ref
 	{
 	public:
-		weak_ref();
+		weak_ref() = default;
 		weak_ref(lua_State* main, lua_State* L, int index);
 		weak_ref(weak_ref const&);
 		~weak_ref();
@@ -29,7 +29,6 @@ namespace luabind {
 
 	private:
 		struct impl;
-		impl* m_impl;
+		impl* m_impl = nullptr;
 	};
-
 } // namespace luabind

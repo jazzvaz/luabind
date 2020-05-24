@@ -13,33 +13,29 @@
 
 #include <luabind/config.hpp>
 
-namespace luabind {
-
-	template<class T>
+namespace luabind
+{
+	template <class T>
 	struct other
 	{
 		using type = T;
 	};
-
 } // namespace luabind
 
-namespace luabind {
-	namespace detail {
-		template<typename T>
-		class unwrap_other
-		{
-		public:
-			using type = T;
-		};
+namespace luabind::detail
+{
+	template <typename T>
+	struct unwrap_other
+	{
+		using type = T;
+	};
 
-		template<typename T>
-		class unwrap_other<other<T> >
-		{
-		public:
-			using type = T;
-		};
+	template <typename T>
+	struct unwrap_other<other<T>>
+	{
+		using type = T;
+	};
 
-		template <typename T>
-		using unwrap_other_t = typename unwrap_other<T>::type;
-	}
+	template <typename T>
+	using unwrap_other_t = typename unwrap_other<T>::type;
 } // namespace luabind::detail

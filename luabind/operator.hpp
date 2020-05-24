@@ -44,7 +44,7 @@ namespace luabind::detail
 
 	template <class Policies, class T>
 	void operator_result(lua_State* L, T const& x)
-	{ specialized_converter_policy_n<0, Policies, T, cpp_to_lua >().to_lua(L, x); }
+	{ specialized_converter_policy_n<0, Policies, T, cpp_to_lua>().to_lua(L, x); }
 } // namespace luabind::detail
 
 namespace luabind::operators
@@ -119,7 +119,7 @@ namespace luabind::detail
 	};
 
 	template <class Derived, class A>
-	struct unary_operator : operator_<unary_operator<Derived, A> >
+	struct unary_operator : operator_<unary_operator<Derived, A>>
 	{
 		unary_operator(int) {}
 

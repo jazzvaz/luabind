@@ -7,8 +7,8 @@
 #include <luabind/make_function.hpp>
 #include <luabind/lua_state_fwd.hpp>
 
-namespace luabind {
-
+namespace luabind
+{
 	LUABIND_API void set_package_preload(lua_State* L, char const* modulename, object const& loader);
 
 	template <typename F>
@@ -20,4 +20,4 @@ namespace luabind {
 		detail::add_overload(luabind::newtable(L), modulename, f);
 		set_package_preload(L, modulename, f);
 	}
-}
+} // namespace luabind

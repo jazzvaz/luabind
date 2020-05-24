@@ -88,6 +88,6 @@ namespace luabind
 		}
 
 		void to_lua(lua_State* L, F value)
-		{ luabind::make_function(L, value, false).push(L); }
+		{ make_function(L, value, false).push(L); }
 	};
 } // namespace luabind

@@ -5,12 +5,11 @@
 
 #include <luabind/lua_state_fwd.hpp>
 
-namespace luabind {
-
-	template<class T>
+namespace luabind
+{
+	template <class T>
 	bool get_back_reference(lua_State* L, T const& x);
 
-	template<class T>
+	template <class T>
 	bool move_back_reference(lua_State* L, T const& x);
-
 } // namespace luabind

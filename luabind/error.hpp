@@ -16,9 +16,7 @@
 
 namespace luabind
 {
-
 #ifndef LUABIND_NO_EXCEPTIONS
-
 	// this exception usually means that the lua function you called
 	// from C++ failed with an error code. You will have to
 	// read the error code from the top of the lua stack
@@ -30,7 +28,6 @@ namespace luabind
 	{
 	public:
 		explicit error(lua_State* L);
-
 		virtual const char* what() const throw();
 
 	private:
@@ -43,10 +40,14 @@ namespace luabind
 	class LUABIND_API cast_failed : public std::exception
 	{
 	public:
-		cast_failed(lua_State* L, type_id const& i) : m_L(L), m_info(i) {}
+		cast_failed(lua_State* L, type_id const& i) :
+			m_L(L),
+			m_info(i)
+		{}
 		lua_State* state() const throw() { return m_L; }
 		type_id info() const throw() { return m_info; }
 		virtual const char* what() const throw() { return "unable to make cast"; }
+
 	private:
 		lua_State* m_L;
 		type_id m_info;
@@ -62,7 +63,6 @@ namespace luabind
 	LUABIND_API void set_cast_failed_callback(cast_failed_callback_fun c);
 	LUABIND_API error_callback_fun get_error_callback();
 	LUABIND_API cast_failed_callback_fun get_cast_failed_callback();
-
 #endif
 
 	LUABIND_API void set_pcall_callback(pcall_callback_fun e);
@@ -86,4 +86,4 @@ namespace luabind
 	public:
 		unresolved_name(const char* desc, const char* name);
 	};
-}
+} // namespace luabind

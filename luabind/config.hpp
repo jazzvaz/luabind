@@ -10,20 +10,20 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 // the maximum number of arguments of functions that's
 // registered. Must at least be 2
 #ifndef LUABIND_MAX_ARITY
-#define LUABIND_MAX_ARITY 100
+# define LUABIND_MAX_ARITY 100
 #elif LUABIND_MAX_ARITY <= 1
-#undef LUABIND_MAX_ARITY
-#define LUABIND_MAX_ARITY 2
+# undef LUABIND_MAX_ARITY
+# define LUABIND_MAX_ARITY 2
 #endif
 
 // the maximum number of classes one class
 // can derive from
 // max bases must at least be 1
 #ifndef LUABIND_MAX_BASES
-#define LUABIND_MAX_BASES 100
+# define LUABIND_MAX_BASES 100
 #elif LUABIND_MAX_BASES <= 0
-#undef LUABIND_MAX_BASES
-#define LUABIND_MAX_BASES 1
+# undef LUABIND_MAX_BASES
+# define LUABIND_MAX_BASES 1
 #endif
 
 // LUABIND_NO_ERROR_CHECKING
@@ -88,20 +88,20 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 # define __cdecl
 #endif
 
-namespace luabind {
-
+namespace luabind
+{
 	LUABIND_API void disable_super_deprecation();
 	LUABIND_API void set_custom_type_marking(bool enable);
 	LUABIND_API bool is_nil_conversion_allowed();
 	LUABIND_API void allow_nil_conversion(bool allow);
 
-	namespace detail {
-		const int max_argument_count = 100;
-		const int max_hierarchy_depth = 100;
+	namespace detail
+	{
+		constexpr int max_argument_count = 100;
+		constexpr int max_hierarchy_depth = 100;
 	}
 
-	const int no_match = -(detail::max_argument_count*detail::max_hierarchy_depth + 1);
-
+	constexpr int no_match = -(detail::max_argument_count*detail::max_hierarchy_depth + 1);
 } // namespace luabind
 
 #include <luabind/types.hpp>

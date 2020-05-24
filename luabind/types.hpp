@@ -35,4 +35,4 @@ namespace luabind
 	using dequeue = std::deque<T, memory_allocator<T>>;
 	template <typename T>
 	using queue = std::queue<T, dequeue<T>>;
-}
+} // namespace luabind
