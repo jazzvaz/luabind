@@ -1,10 +1,10 @@
-bin.v2
-bin
+# Exclude all dot files except .gitignore
+.*
+!.gitignore
+
+# Build results
+build/
+pkg/
 doc/*.html
 doc/version.rst
-build
-lua
-*.user
-temp
-.vs
-.vscode
+
