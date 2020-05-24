@@ -5,19 +5,15 @@
 
 #include <luabind/detail/policy.hpp>
 
-namespace luabind {
-
-	namespace detail
+namespace luabind::detail
+{
+	struct no_dependency_policy
 	{
+		static void postcall(lua_State*, int /*results*/, meta::index_list_tag) {}
+	};
+} // namespace detail
 
-		struct no_dependency_policy
-		{
-			static void postcall(lua_State*, int /*results*/, meta::index_list_tag)
-			{}
-		};
-
-	} // namespace detail
-
-	using no_dependency = policy_list<call_policy_injector<detail::no_dependency_policy>>;
-
+namespace luabind::policy
+{
+	using no_dependency = policy_list<postcall_injector<detail::no_dependency_policy>>;
 } // namespace luabind

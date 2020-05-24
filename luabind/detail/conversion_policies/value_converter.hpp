@@ -8,55 +8,44 @@
 #include <luabind/back_reference.hpp>
 #include <luabind/detail/object_rep.hpp>
 
-namespace luabind {
-	namespace detail {
+namespace luabind::detail
+{
+	struct value_converter
+	{
+		using type = value_converter;
+		using is_native = std::false_type;
 
-		struct value_converter
+		static constexpr int consumed_args = 1;
+
+		void* result = nullptr;
+
+		template <class T>
+		void to_lua(lua_State* L, T&& x)
 		{
-			using type      = value_converter;
-			using is_native = std::false_type;
+			if (luabind::get_back_reference(L, x))
+				return;
+			make_value_instance(L, std::forward<T>(x));
+		}
 
-			enum { consumed_args = 1 };
+		template <class T>
+		T to_cpp(lua_State*, by_value<T>, int)
+		{ return *static_cast<T*>(result); }
 
-			value_converter()
-				: result(0)
-			{}
+		template <class T>
+		int match(lua_State* L, by_value<T>, int index)
+		{
+			// special case if we get nil in, try to match the holder type
+			if (lua_isnil(L, index))
+				return no_match;
+			object_rep* obj = get_instance(L, index);
+			if (!obj)
+				return no_match;
+			auto [ptr, score] = obj->get_instance(registered_class<T>::id);
+			result = ptr;
+			return score;
+		}
 
-			void* result;
-
-			template<class T>
-			void to_lua(lua_State* L, T&& x)
-			{
-				if(luabind::get_back_reference(L, x))
-					return;
-
-				make_value_instance(L, std::forward<T>(x));
-			}
-
-			template<class T>
-			T to_cpp(lua_State*, by_value<T>, int)
-			{
-				return *static_cast<T*>(result);
-			}
-
-			template<class T>
-			int match(lua_State* L, by_value<T>, int index)
-			{
-				// special case if we get nil in, try to match the holder type
-				if(lua_isnil(L, index))
-					return no_match;
-
-				object_rep* obj = get_instance(L, index);
-				if(obj == 0) return no_match;
-
-				std::pair<void*, int> s = obj->get_instance(registered_class<T>::id);
-				result = s.first;
-				return s.second;
-			}
-
-			template<class T>
-			void converter_postcall(lua_State*, T, int) {}
-		};
-
-	}
-}
+		template <class T>
+		void converter_postcall(lua_State*, T, int) {}
+	};
+} // namespace luabind::detail
