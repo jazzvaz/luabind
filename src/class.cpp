@@ -13,296 +13,236 @@
 #include <cstring>
 #include <iostream>
 
-namespace luabind {
+namespace luabind
+{
 	static bool mark_custom_types = true;
 
 	void set_custom_type_marking(bool enable)
+	{ mark_custom_types = enable; }
+} // namespace luabind
+
+namespace luabind::detail
+{
+	struct cast_entry
 	{
-		mark_custom_types = enable;
-	}
+		cast_entry(class_id src, class_id target, cast_function cast) :
+			src(src),
+			target(target),
+			cast(cast)
+		{}
 
-	namespace detail {
+		class_id src;
+		class_id target;
+		cast_function cast;
+	};
 
+	struct class_registration : registration
+	{
+		class_registration(char const* name)
+		{ m_name = name; }
 
-		namespace
-		{
-			struct cast_entry
-			{
-				cast_entry(class_id src, class_id target, cast_function cast)
-					: src(src)
-					, target(target)
-					, cast(cast)
-				{}
+		void register_(lua_State* L, bool default_scope = false) const;
 
-				class_id src;
-				class_id target;
-				cast_function cast;
-			};
+		const char* m_name;
 
-		} // namespace unnamed
+		mutable luabind::map<const char*, int, detail::ltstr> m_static_constants;
 
-		struct class_registration : registration
-		{
-			class_registration(char const* name);
+		mutable luabind::vector<type_id> m_bases;
 
-			void register_(lua_State* L, bool default_scope = false) const;
+		type_id  m_type;
+		class_id m_id;
+		class_id m_wrapper_id;
+		type_id  m_wrapper_type;
+		luabind::vector<cast_entry> m_casts;
 
-			const char* m_name;
+		scope m_scope;
+		scope m_members;
+		scope m_default_members;
+	};
 
-			mutable luabind::map<const char*, int, detail::ltstr> m_static_constants;
+	void class_registration::register_(lua_State* L, bool /*default_scope = false*/) const
+	{
+		LUABIND_CHECK_STACK(L);
+		assert(lua_type(L, -1) == LUA_TTABLE);
+		if (m_name)
+			lua_pushstring(L, m_name);
+		detail::class_rep* crep;
+		detail::class_registry* r = detail::class_registry::get_registry(L);
+		// create a class_rep structure for this class.
+		// allocate it within lua to let lua collect it on
+		// lua_close(). This is better than allocating it
+		// as a static, since it will then be destructed
+		// when the program exits instead.
+		// warning: we assume that lua will not
+		// move the userdata memory.
+		lua_newuserdata(L, sizeof(detail::class_rep));
+		crep = reinterpret_cast<detail::class_rep*>(lua_touserdata(L, -1));
+		new (crep) detail::class_rep(m_type, m_name, L);
+		// register this new type in the class registry
+		r->add_class(m_type, crep);
+		
+		lua_rawgetp(L, LUA_REGISTRYINDEX, &class_map_tag);
+		class_map& classes = *static_cast<class_map*>(lua_touserdata(L, -1));
+		lua_pop(L, 1);
 
-			mutable luabind::vector<type_id> m_bases;
+		classes.put(m_id, crep);
+		bool const has_wrapper = m_wrapper_id != registered_class<null_type>::id;
+		if (has_wrapper)
+			classes.put(m_wrapper_id, crep);
+		crep->m_static_constants.swap(m_static_constants);
+		detail::class_registry* registry = detail::class_registry::get_registry(L);
 
-			type_id  m_type;
-			class_id m_id;
-			class_id m_wrapper_id;
-			type_id  m_wrapper_type;
-			luabind::vector<cast_entry> m_casts;
+		crep->get_default_table(L);
+		m_scope.register_(L);
+		m_default_members.register_(L, true);
+		lua_pop(L, 1);
 
-			scope m_scope;
-			scope m_members;
-			scope m_default_members;
-		};
+		crep->get_table(L);
+		m_members.register_(L);
+		lua_pop(L, 1);
 
-		class_registration::class_registration(char const* name)
-		{
-			m_name = name;
-		}
+		lua_rawgetp(L, LUA_REGISTRYINDEX, &cast_graph_tag);
+		cast_graph* const casts = static_cast<cast_graph*>(lua_touserdata(L, -1));
+		lua_pop(L, 1);
 
-		void class_registration::register_(lua_State* L, bool /*default_scope = false*/) const
+		lua_rawgetp(L, LUA_REGISTRYINDEX, &class_id_map_tag);
+		class_id_map* const class_ids = static_cast<class_id_map*>(lua_touserdata(L, -1));
+		lua_pop(L, 1);
+
+		class_ids->put(m_id, m_type);
+
+		if (has_wrapper)
+			class_ids->put(m_wrapper_id, m_wrapper_type);
+		for (auto const& e : m_casts)
+			casts->insert(e.src, e.target, e.cast);
+
+		for (const auto& base : m_bases)
 		{
 			LUABIND_CHECK_STACK(L);
-
-			assert(lua_type(L, -1) == LUA_TTABLE);
-
-			if (m_name)
-				lua_pushstring(L, m_name);
-
-			detail::class_rep* crep;
-
-			detail::class_registry* r = detail::class_registry::get_registry(L);
-			// create a class_rep structure for this class.
-			// allocate it within lua to let lua collect it on
-			// lua_close(). This is better than allocating it
-			// as a static, since it will then be destructed
-			// when the program exits instead.
-			// warning: we assume that lua will not
-			// move the userdata memory.
-			lua_newuserdata(L, sizeof(detail::class_rep));
-			crep = reinterpret_cast<detail::class_rep*>(lua_touserdata(L, -1));
-
-			new(crep) detail::class_rep(
-				m_type
-				, m_name
-				, L
-			);
-
-			// register this new type in the class registry
-			r->add_class(m_type, crep);
-
-			lua_rawgetp(L, LUA_REGISTRYINDEX, &class_map_tag);
-			class_map& classes = *static_cast<class_map*>(
-				lua_touserdata(L, -1));
-			lua_pop(L, 1);
-
-			classes.put(m_id, crep);
-
-			bool const has_wrapper = m_wrapper_id != registered_class<null_type>::id;
-
-			if(has_wrapper)
-				classes.put(m_wrapper_id, crep);
-
-			crep->m_static_constants.swap(m_static_constants);
-
-			detail::class_registry* registry = detail::class_registry::get_registry(L);
-
-			crep->get_default_table(L);
-			m_scope.register_(L);
-			m_default_members.register_(L, true);
-			lua_pop(L, 1);
-
+			// the baseclass' class_rep structure
+			detail::class_rep* bcrep = registry->find_class(base);
+			crep->add_base_class(bcrep);
+			// copy base class table
 			crep->get_table(L);
-			m_members.register_(L);
-			lua_pop(L, 1);
-
-			lua_rawgetp(L, LUA_REGISTRYINDEX, &cast_graph_tag);
-			cast_graph* const casts = static_cast<cast_graph*>(lua_touserdata(L, -1));
-			lua_pop(L, 1);
-
-			lua_rawgetp(L, LUA_REGISTRYINDEX, &class_id_map_tag);
-			class_id_map* const class_ids = static_cast<class_id_map*>(lua_touserdata(L, -1));
-			lua_pop(L, 1);
-
-			class_ids->put(m_id, m_type);
-
-			if(has_wrapper) {
-				class_ids->put(m_wrapper_id, m_wrapper_type);
-			}
-
-			for(auto const& e : m_casts) {
-				casts->insert(e.src, e.target, e.cast);
-			}
-
-			for(const auto& base : m_bases) {
-				LUABIND_CHECK_STACK(L);
-
-				// the baseclass' class_rep structure
-				detail::class_rep* bcrep = registry->find_class(base);
-				crep->add_base_class(bcrep);
-
-				// copy base class table
-				crep->get_table(L);
-				bcrep->get_table(L);
-				lua_pushnil(L);
-
-				while(lua_next(L, -2))
+			bcrep->get_table(L);
+			lua_pushnil(L);
+			while (lua_next(L, -2))
+			{
+				lua_pushvalue(L, -2); // copy key
+				lua_gettable(L, -5);
+				if (!lua_isnil(L, -1))
 				{
-					lua_pushvalue(L, -2); // copy key
-					lua_gettable(L, -5);
-
-					if(!lua_isnil(L, -1))
-					{
-						lua_pop(L, 2);
-						continue;
-					}
-
-					lua_pop(L, 1);
-					lua_pushvalue(L, -2); // copy key
-					lua_insert(L, -2);
-
-					lua_settable(L, -5);
+					lua_pop(L, 2);
+					continue;
 				}
-				lua_pop(L, 2);
-
-				// copy base class detaults table
-				crep->get_default_table(L);
-				bcrep->get_default_table(L);
-				lua_pushnil(L);
-
-				while(lua_next(L, -2))
-				{
-					lua_pushvalue(L, -2); // copy key
-					lua_gettable(L, -5);
-
-					if(!lua_isnil(L, -1))
-					{
-						lua_pop(L, 2);
-						continue;
-					}
-
-					lua_pop(L, 1);
-					lua_pushvalue(L, -2); // copy key
-					lua_insert(L, -2);
-
-					lua_settable(L, -5);
-				}
-				lua_pop(L, 2);
-
-			}
-			if (m_name)
-				lua_settable(L, -3);
-			else
 				lua_pop(L, 1);
-		}
-
-		// -- interface ---------------------------------------------------------
-
-		class_base::class_base(char const* name)
-			: scope(luabind::unique_ptr<registration>(
-				m_registration = luabind_new<class_registration>(name))
-			)
-		{
-		}
-
-		void class_base::init(
-			type_id const& type_id_, class_id id
-			, type_id const& wrapper_type, class_id wrapper_id)
-		{
-			m_registration->m_type = type_id_;
-			m_registration->m_id = id;
-			m_registration->m_wrapper_type = wrapper_type;
-			m_registration->m_wrapper_id = wrapper_id;
-		}
-
-		void class_base::add_base(type_id const& base)
-		{
-			m_registration->m_bases.push_back(base);
-		}
-
-		void class_base::add_member(registration* member)
-		{
-			luabind::unique_ptr<registration> ptr(member);
-			m_registration->m_members.operator,(scope(std::move(ptr)));
-		}
-
-		void class_base::add_default_member(registration* member)
-		{
-			luabind::unique_ptr<registration> ptr(member);
-			m_registration->m_default_members.operator,(scope(std::move(ptr)));
-		}
-
-		const char* class_base::name() const
-		{
-			return m_registration->m_name;
-		}
-
-		void class_base::add_static_constant(const char* name, int val)
-		{
-			m_registration->m_static_constants[name] = val;
-		}
-
-		void class_base::add_inner_scope(scope& s)
-		{
-			m_registration->m_scope.operator,(s);
-		}
-
-		void class_base::add_cast(
-			class_id src, class_id target, cast_function cast)
-		{
-			m_registration->m_casts.push_back(cast_entry(src, target, cast));
-		}
-
-		luabind::string get_class_name(lua_State* L, type_id const& i)
-		{
-			luabind::string ret;
-
-			assert(L);
-
-			class_registry* r = class_registry::get_registry(L);
-			class_rep* crep = r->find_class(i);
-
-			if(crep == 0 || crep->name() == 0)
-			{
-				if (mark_custom_types)
-				{
-					ret = crep ? "unnamed [" : "custom [";
-					ret += i.name();
-					ret += "]";
-				}
-				else
-					ret = i.name();
-			} else
-			{
-				/* TODO reimplement this?
-				if (i == crep->holder_type())
-				{
-					ret += "smart_ptr<";
-					ret += crep->name();
-					ret += ">";
-				}
-				else if (i == crep->const_holder_type())
-				{
-					ret += "smart_ptr<const ";
-					ret += crep->name();
-					ret += ">";
-				}
-				else*/
-				{
-					ret += crep->name();
-				}
+				lua_pushvalue(L, -2); // copy key
+				lua_insert(L, -2);
+				lua_settable(L, -5);
 			}
-			return ret;
+			lua_pop(L, 2);
+			// copy base class defaults table
+			crep->get_default_table(L);
+			bcrep->get_default_table(L);
+			lua_pushnil(L);
+			while (lua_next(L, -2))
+			{
+				lua_pushvalue(L, -2); // copy key
+				lua_gettable(L, -5);
+				if (!lua_isnil(L, -1))
+				{
+					lua_pop(L, 2);
+					continue;
+				}
+				lua_pop(L, 1);
+				lua_pushvalue(L, -2); // copy key
+				lua_insert(L, -2);
+				lua_settable(L, -5);
+			}
+			lua_pop(L, 2);
 		}
+		if (m_name)
+			lua_settable(L, -3);
+		else
+			lua_pop(L, 1);
+	}
 
+	class_base::class_base(char const* name) :
+		scope(luabind::unique_ptr<registration>(m_registration = luabind_new<class_registration>(name)))
+	{}
+
+	void class_base::init(type_id const& type_id_, class_id id, type_id const& w_type, class_id w_id)
+	{
+		m_registration->m_type = type_id_;
+		m_registration->m_id = id;
+		m_registration->m_wrapper_type = w_type;
+		m_registration->m_wrapper_id = w_id;
+	}
+
+	void class_base::add_base(type_id const& base)
+	{ m_registration->m_bases.push_back(base); }
+
+	void class_base::add_member(registration* member)
+	{
+		luabind::unique_ptr<registration> ptr(member);
+		m_registration->m_members.operator,(scope(std::move(ptr)));
+	}
+
+	void class_base::add_default_member(registration* member)
+	{
+		luabind::unique_ptr<registration> ptr(member);
+		m_registration->m_default_members.operator,(scope(std::move(ptr)));
+	}
+
+	const char* class_base::name() const
+	{ return m_registration->m_name; }
+
+	void class_base::add_static_constant(const char* name, int val)
+	{ m_registration->m_static_constants[name] = val; }
+
+	void class_base::add_inner_scope(scope& s)
+	{ m_registration->m_scope.operator,(s); }
+
+	void class_base::add_cast(class_id src, class_id target, cast_function cast)
+	{ m_registration->m_casts.push_back(cast_entry(src, target, cast)); }
+
+	luabind::string get_class_name(lua_State* L, type_id const& i)
+	{
+		assert(L);
+		class_registry* r = class_registry::get_registry(L);
+		class_rep* crep = r->find_class(i);
+		luabind::string ret;
+		if (!crep || !crep->name())
+		{
+			if (mark_custom_types)
+			{
+				ret = crep ? "unnamed [" : "custom [";
+				ret += i.name();
+				ret += "]";
+			}
+			else
+				ret = i.name();
+		}
+		else
+		{
+			/* TODO reimplement this?
+			if (i == crep->holder_type())
+			{
+				ret += "smart_ptr<";
+				ret += crep->name();
+				ret += ">";
+			}
+			else if (i == crep->const_holder_type())
+			{
+				ret += "smart_ptr<const ";
+				ret += crep->name();
+				ret += ">";
+			}
+			else*/
+			{
+				ret += crep->name();
+			}
+		}
+		return ret;
 	}
 } // namespace luabind::detail
