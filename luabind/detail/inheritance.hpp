@@ -11,159 +11,138 @@
 #include <vector>
 #include <luabind/typeid.hpp>
 
-namespace luabind {
+namespace luabind::detail
+{
+	LUABIND_API extern char class_id_map_tag;
+	LUABIND_API extern char class_map_tag;
+	extern char cast_graph_tag;
 
-	namespace detail {
+	using cast_function = void*(*)(void*);
+	using class_id = size_t;
 
-		LUABIND_API extern char class_id_map_tag;
-		LUABIND_API extern char class_map_tag;
-		extern char cast_graph_tag;
+	constexpr class_id unknown_class = std::numeric_limits<class_id>::max();
 
-		using cast_function = void*(*)(void*);
-		using class_id      = std::size_t;
+	class class_rep;
 
-		constexpr class_id unknown_class = std::numeric_limits<class_id>::max();
+	class LUABIND_API cast_graph
+	{
+	public:
+		cast_graph();
+		~cast_graph();
 
-		class class_rep;
+		// `src` and `p` here describe the *most derived* object. This means that
+		// for a polymorphic type, the pointer must be cast with
+		// dynamic_cast<void*> before being passed in here, and `src` has to
+		// match typeid(*p).
+		std::pair<void*, int> cast(void* p, class_id src, class_id tgt, class_id d_id, void const* d_ptr) const;
+		void insert(class_id src, class_id tgt, cast_function cast);
 
-		class LUABIND_API cast_graph
-		{
-		public:
-			cast_graph();
-			~cast_graph();
+	private:
+		class impl;
+		luabind::unique_ptr<impl> m_impl;
+	};
 
-			// `src` and `p` here describe the *most derived* object. This means that
-			// for a polymorphic type, the pointer must be cast with
-			// dynamic_cast<void*> before being passed in here, and `src` has to
-			// match typeid(*p).
-			std::pair<void*, int> cast(void* p, class_id src, class_id target, class_id dynamic_id, void const* dynamic_ptr) const;
-			void insert(class_id src, class_id target, cast_function cast);
+	// Maps a type_id to a class_id. Note that this actually partitions the
+	// id-space into two, using one half for "local" ids; ids that are used only as
+	// keys into the conversion cache. This is needed because we need a unique key
+	// even for types that hasn't been registered explicitly.
+	class LUABIND_API class_id_map
+	{
+	public:
+		class_id_map();
 
-		private:
-			class impl;
-			luabind::unique_ptr<impl> m_impl;
-		};
+		class_id get(type_id const& type) const;
+		class_id get_local(type_id const& type);
+		void put(class_id id, type_id const& type);
 
-		// Maps a type_id to a class_id. Note that this actually partitions the
-		// id-space into two, using one half for "local" ids; ids that are used only as
-		// keys into the conversion cache. This is needed because we need a unique key
-		// even for types that hasn't been registered explicitly.
-		class LUABIND_API class_id_map
-		{
-		public:
-			class_id_map();
+	private:
+		using map_type = luabind::map<type_id, class_id>;
+		map_type m_classes;
+		class_id m_local_id;
+		static class_id const local_id_base;
+	};
 
-			class_id get(type_id const& type) const;
-			class_id get_local(type_id const& type);
-			void put(class_id id, type_id const& type);
+	inline class_id_map::class_id_map() :
+		m_local_id(local_id_base)
+	{}
 
-		private:
-			using map_type = luabind::map<type_id, class_id>;
-			map_type m_classes;
-			class_id m_local_id;
+	inline class_id class_id_map::get(type_id const& type) const
+	{
+		map_type::const_iterator i = m_classes.find(type);
+		if (i == m_classes.end() || i->second >= local_id_base)
+			return unknown_class;
+		return i->second;
+	}
 
-			static class_id const local_id_base;
-		};
+	inline class_id class_id_map::get_local(type_id const& type)
+	{
+		auto [it, inserted] = m_classes.emplace(type, 0);
+		if (inserted)
+			it->second = m_local_id++;
+		assert(m_local_id >= local_id_base);
+		return it->second;
+	}
 
-		inline class_id_map::class_id_map()
-			: m_local_id(local_id_base)
-		{}
+	inline void class_id_map::put(class_id id, type_id const& type)
+	{
+		assert(id < local_id_base);
+		auto [it, inserted] = m_classes.emplace(type, 0);
+		assert(inserted || it->second == id || it->second >= local_id_base);
+		it->second = id;
+	}
 
-		inline class_id class_id_map::get(type_id const& type) const
-		{
-			map_type::const_iterator i = m_classes.find(type);
-			if(i == m_classes.end() || i->second >= local_id_base) {
-				return unknown_class;
-			}
-			else {
-				return i->second;
-			}
-		}
+	class class_map
+	{
+	public:
+		class_rep* get(class_id id) const;
+		void put(class_id id, class_rep* cls);
 
-		inline class_id class_id_map::get_local(type_id const& type)
-		{
-			auto [it, inserted] = m_classes.emplace(type, 0);
+	private:
+		luabind::vector<class_rep*> m_classes;
+	};
 
-			if(inserted)
-				it->second = m_local_id++;
-			assert(m_local_id >= local_id_base);
-			return it->second;
-		}
+	inline class_rep* class_map::get(class_id id) const
+	{
+		if (id >= m_classes.size())
+			return 0;
+		return m_classes[id];
+	}
 
-		inline void class_id_map::put(class_id id, type_id const& type)
-		{
-			assert(id < local_id_base);
+	inline void class_map::put(class_id id, class_rep* cls)
+	{
+		if (id >= m_classes.size())
+			m_classes.resize(id + 1);
+		m_classes[id] = cls;
+	}
 
-			auto [it, inserted] = m_classes.emplace(type, 0);
+	template <class S, class T>
+	struct static_cast_
+	{
+		static void* execute(void* p)
+		{ return static_cast<T*>(static_cast<S*>(p)); }
+	};
 
-			assert(
-				inserted
-				|| it->second == id
-				|| it->second >= local_id_base
-			);
+	template <class S, class T>
+	struct dynamic_cast_
+	{
+		static void* execute(void* p)
+		{ return dynamic_cast<T*>(static_cast<S*>(p)); }
+	};
 
-			it->second = id;
-		}
+	// Thread safe class_id allocation.
+	LUABIND_API class_id allocate_class_id(type_id const& cls);
 
-		class class_map
-		{
-		public:
-			class_rep* get(class_id id) const;
-			void put(class_id id, class_rep* cls);
+	template <class T>
+	struct registered_class
+	{
+		static class_id const id;
+	};
 
-		private:
-			luabind::vector<class_rep*> m_classes;
-		};
+	template <class T>
+	class_id const registered_class<T>::id = allocate_class_id(typeid(T));
 
-		inline class_rep* class_map::get(class_id id) const
-		{
-			if(id >= m_classes.size())
-				return 0;
-			return m_classes[id];
-		}
-
-		inline void class_map::put(class_id id, class_rep* cls)
-		{
-			if(id >= m_classes.size())
-				m_classes.resize(id + 1);
-			m_classes[id] = cls;
-		}
-
-		template <class S, class T>
-		struct static_cast_
-		{
-			static void* execute(void* p)
-			{
-				return static_cast<T*>(static_cast<S*>(p));
-			}
-		};
-
-		template <class S, class T>
-		struct dynamic_cast_
-		{
-			static void* execute(void* p)
-			{
-				return dynamic_cast<T*>(static_cast<S*>(p));
-			}
-		};
-
-		// Thread safe class_id allocation.
-		LUABIND_API class_id allocate_class_id(type_id const& cls);
-
-		template <class T>
-		struct registered_class
-		{
-			static class_id const id;
-		};
-
-		template <class T>
-		class_id const registered_class<T>::id = allocate_class_id(typeid(T));
-
-		template <class T>
-		struct registered_class<T const>
-			: registered_class<T>
-		{};
-
-	}	// namespace detail
-
-} // namespace luabind
+	template <class T>
+	struct registered_class<T const> :
+		registered_class<T>
+	{};
+} // namespace luabind::detail
