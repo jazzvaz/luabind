@@ -4,28 +4,20 @@
 #define LUABIND_BUILDING
 
 #include <algorithm>
-
 #include <luabind/lua_include.hpp>
-
 #include <luabind/config.hpp>
 #include <luabind/weak_ref.hpp>
 #include <cassert>
 
-namespace luabind {
+namespace luabind
+{
+	static char weak_table_tag;
+	static char impl_table_tag;
 
-	namespace
-	{
-
-		int weak_table_tag;
-		int impl_table_tag;
-
-	} // namespace unnamed
-
-	void get_weak_table(lua_State* L)
+	static void get_weak_table(lua_State* L)
 	{
 		lua_rawgetp(L, LUA_REGISTRYINDEX, &weak_table_tag);
-
-		if(lua_isnil(L, -1))
+		if (lua_isnil(L, -1))
 		{
 			lua_pop(L, 1);
 			lua_newtable(L);
@@ -36,53 +28,37 @@ namespace luabind {
 			lua_rawset(L, -3);
 			// set metatable
 			lua_setmetatable(L, -2);
-
 			lua_pushvalue(L, -1);
 			lua_rawsetp(L, LUA_REGISTRYINDEX, &weak_table_tag);
 		}
-
 	}
 
-	void get_impl_table(lua_State* L)
+	static void get_impl_table(lua_State* L)
 	{
-
 		lua_pushlightuserdata(L, &impl_table_tag);
 		lua_rawget(L, LUA_REGISTRYINDEX);
-
-		if(lua_isnil(L, -1))
+		if (lua_isnil(L, -1))
 		{
 			lua_pop(L, 1);
-
 			lua_newtable(L);
 			lua_pushvalue(L, -1);
 			lua_rawsetp(L, LUA_REGISTRYINDEX, &impl_table_tag);
 		}
-
 	}
-
-} // namespace luabind
-
-namespace luabind
-{
 
 	struct weak_ref::impl
 	{
-		impl(lua_State* main, lua_State* s, int index)
-			: count(0)
-			, state(main)
-			, ref(0)
+		impl(lua_State* main, lua_State* s, int index) :
+			state(main)
 		{
-
 			get_impl_table(s);
 			lua_pushlightuserdata(s, this);
 			ref = luaL_ref(s, -2);
 			lua_pop(s, 1);
-
 			get_weak_table(s);
 			lua_pushvalue(s, index);
 			lua_rawseti(s, -2, ref);
 			lua_pop(s, 1);
-
 		}
 
 		~impl()
@@ -92,34 +68,28 @@ namespace luabind
 			lua_pop(state, 1);
 		}
 
-		int count;
+		int count = 0;
 		lua_State* state;
-		int ref;
+		int ref = 0;
 	};
 
-	weak_ref::weak_ref()
-		: m_impl(0)
-	{
-	}
-
-	weak_ref::weak_ref(lua_State* main, lua_State* L, int index)
-		: m_impl(luabind_new<impl>(main, L, index))
+	weak_ref::weak_ref(lua_State* main, lua_State* L, int index) :
+		m_impl(luabind_new<impl>(main, L, index))
 	{
 		m_impl->count = 1;
 	}
 
-	weak_ref::weak_ref(weak_ref const& other)
-		: m_impl(other.m_impl)
+	weak_ref::weak_ref(weak_ref const& other) :
+		m_impl(other.m_impl)
 	{
-		if(m_impl) ++m_impl->count;
+		if (m_impl)
+			m_impl->count++;
 	}
 
 	weak_ref::~weak_ref()
 	{
-		if(m_impl && --m_impl->count == 0)
-		{
+		if (m_impl && --m_impl->count == 0)
 			luabind_delete(m_impl);
-		}
 	}
 
 	weak_ref& weak_ref::operator=(weak_ref const& other)
@@ -129,9 +99,7 @@ namespace luabind
 	}
 
 	void weak_ref::swap(weak_ref& other)
-	{
-		std::swap(m_impl, other.m_impl);
-	}
+	{ std::swap(m_impl, other.m_impl); }
 
 	int weak_ref::id() const
 	{
@@ -157,6 +125,4 @@ namespace luabind
 		assert(m_impl);
 		return m_impl->state;
 	}
-
 } // namespace luabind
-
