@@ -1,8 +1,6 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
-#define LUABIND_BUILDING
-
 #include <luabind/lua_include.hpp>       // for lua_gettop, lua_touserdata, etc
 #include <luabind/detail/class_rep.hpp>  // for class_rep, is_class_rep
 #include <luabind/detail/object_rep.hpp> // for get_instance, object_rep

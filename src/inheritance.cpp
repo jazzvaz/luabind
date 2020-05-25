@@ -1,8 +1,6 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2009 The Luabind Authors
 
-#define LUABIND_BUILDING
-
 #include <limits>
 #include <luabind/typeid.hpp>
 #include <luabind/detail/inheritance.hpp>

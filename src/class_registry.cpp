@@ -1,8 +1,6 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2004 The Luabind Authors
 
-#define LUABIND_BUILDING
-
 #include <luabind/lua_include.hpp> // for lua_pushstring, lua_rawset, etc
 #include <luabind/config.hpp>
 #include <luabind/typeid.hpp> // for type_id
