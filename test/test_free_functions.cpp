@@ -126,17 +126,27 @@ TEST_CASE("free_functions")
 
 
 	DOSTRING(L,"function failing_fun() error('expected error message') end");
-
-	char const* expected_msg =
-#if LUA_VERSION_NUM >= 502
-	"[string \"function failing_fun() error('expected error ...\"]:1: expected error message";
-#else
-	"[string \"function failing_fun() error('expected erro...\"]:1: expected error message";
-#endif
-
-	CHECK_THROWS_WITH_AS(
-		call_function<void>(L, "failing_fun"),
-		expected_msg,
-		luabind::error const&);
+	// LuaJIT 2.0.5 (which defines LUA_VERSION_NUM 501) and Lua 5.1.5 produce different
+	// error messages here, so we check if it matches any of 2 expected variants
+	std::string expected_v1 =
+		"[string \"function failing_fun() error('expected error ...\"]:1: expected error message";
+	std::string expected_v2 =
+		"[string \"function failing_fun() error('expected erro...\"]:1: expected error message";
+	bool exception_thrown = true;
+	try
+	{
+		call_function<void>(L, "failing_fun");
+		exception_thrown = false;
+	}
+	catch (luabind::error const& e)
+	{
+		auto expected = [&](auto m){ return m == expected_v1 || m == expected_v2; };
+		CHECK(expected(e.what()));
+	}
+	catch (...)
+	{
+		FAIL("call_function<void>(L, \"failing_fun\") threw unexpected exception");
+	}
+	CHECK_MESSAGE(exception_thrown, "call_function<void>(L, \"failing_fun\") didn't throw");
 }
 
