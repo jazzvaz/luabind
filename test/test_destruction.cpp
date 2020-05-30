@@ -4,6 +4,7 @@
 #include "test.hpp"
 #include <luabind/luabind.hpp>
 
+#if LUA_VERSION_NUM >= 502 // __gc metamethod is supported since Lua 5.2
 struct cpp_class
 {
     void method() {}
@@ -29,3 +30,4 @@ TEST_CASE("destruction")
         "error in __gc metamethod ([string \"t = { }...\"]:3: attempt to index field 'cpp_class' (a userdata value))"
 	);
 }
+#endif
