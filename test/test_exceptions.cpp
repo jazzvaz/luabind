@@ -60,7 +60,7 @@ TEST_CASE("exceptions")
         "void __init(luabind::argument const&,int,int)\n"
         "void __init(luabind::argument const&,int)\n"
         "void __init(luabind::argument const&)\n"
-		"Passed arguments [3]: string ('incorrect'), string ('parameters'), string ('constructor')\n");
+		"Passed arguments [4]: userdata (throw&), string ('incorrect'), string ('parameters'), string ('constructor')\n");
 
     const int end_count = ex::count;
     CHECK( start_count == end_count );
