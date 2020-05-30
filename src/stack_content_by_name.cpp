@@ -8,34 +8,34 @@
 
 namespace luabind::detail
 {
-	luabind::string stack_content_by_name(lua_State* L, int start_index)
-	{
-		luabind::string ret;
-		int top = lua_gettop(L);
-		for (int i = start_index; i <= top; i++)
-		{
-			object_rep* obj = get_instance(L, i);
-			class_rep* crep = is_class_rep(L, i) ? (class_rep*)lua_touserdata(L, i) : nullptr;
-			if (!obj && !crep)
-			{
-				int type = lua_type(L, i);
-				ret += lua_typename(L, type);
-			}
-			else if (obj)
-			{
-				if (obj->is_const())
-					ret += "const ";
-				ret += obj->crep()->name();
-			}
-			else if (crep)
-			{
-				ret += "<";
-				ret += crep->name();
-				ret += ">";
-			}
-			if (i < top)
-				ret += ", ";
-		}
-		return ret;
-	}
+    luabind::string stack_content_by_name(lua_State* L, int start_index)
+    {
+        luabind::string ret;
+        int top = lua_gettop(L);
+        for (int i = start_index; i <= top; i++)
+        {
+            object_rep* obj = get_instance(L, i);
+            class_rep* crep = is_class_rep(L, i) ? (class_rep*)lua_touserdata(L, i) : nullptr;
+            if (!obj && !crep)
+            {
+                int type = lua_type(L, i);
+                ret += lua_typename(L, type);
+            }
+            else if (obj)
+            {
+                if (obj->is_const())
+                    ret += "const ";
+                ret += obj->crep()->name();
+            }
+            else if (crep)
+            {
+                ret += "<";
+                ret += crep->name();
+                ret += ">";
+            }
+            if (i < top)
+                ret += ", ";
+        }
+        return ret;
+    }
 } // namespace luabind::detail

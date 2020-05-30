@@ -40,7 +40,7 @@ TEST_CASE("back_reference")
           .def(constructor<>()),
         def("filter0", &filter0),
 
-		class_<base1, no_bases, std::shared_ptr<base1>, base_wrap1 >("base1")
+        class_<base1, no_bases, std::shared_ptr<base1>, base_wrap1 >("base1")
           .def(constructor<>()),
         def("filter1", &filter1)
     ];

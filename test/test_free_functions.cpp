@@ -27,7 +27,7 @@ int f(int x, int y)
 
 int string_length(luabind::string v)
 {
-	return v.length();
+    return v.length();
 }
 
 base* create_base()
@@ -82,7 +82,7 @@ TEST_CASE("free_functions")
         def("f", (int(*)(int)) &f),
         def("f", (int(*)(int, int)) &f),
         def("create", &create_base, policy::adopt<0>()),
-		def("string_length", &string_length),
+        def("string_length", &string_length),
         def("test_value_converter", &test_value_converter),
         def("test_pointer_converter", &test_pointer_converter)
   
@@ -106,15 +106,15 @@ TEST_CASE("free_functions")
     base* ptr = call_function<base*, policy::adopt<0>>(L, "lua_create");
     luabind_delete(ptr);
 
-	int Arg0=1;
-	CHECK(call_function<int>(L, "f", Arg0)==2);
+    int Arg0=1;
+    CHECK(call_function<int>(L, "f", Arg0)==2);
 
-	luabind::string Arg1="lua means moon";
-	CHECK(call_function<int>(L, "string_length", Arg1)==14);
+    luabind::string Arg1="lua means moon";
+    CHECK(call_function<int>(L, "string_length", Arg1)==14);
 
-	double Arg2=2;
-	CHECK(call_function<int>(L, "f", Arg2)==3);
-	
+    double Arg2=2;
+    CHECK(call_function<int>(L, "f", Arg2)==3);
+    
     DOSTRING(L,"test_value_converter('converted string')");
     DOSTRING(L,"test_pointer_converter('converted string')");
 
@@ -122,31 +122,31 @@ TEST_CASE("free_functions")
         "No matching overload found, candidates:\n"
         "int f(int,int)\n"
         "int f(int)\n"
-		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
+        "Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
 
-	DOSTRING(L,"function failing_fun() error('expected error message') end");
-	// LuaJIT 2.0.5 (which defines LUA_VERSION_NUM 501) and Lua 5.1.5 produce different
-	// error messages here, so we check if it matches any of 2 expected variants
-	std::string expected_v1 =
-		"[string \"function failing_fun() error('expected error ...\"]:1: expected error message";
-	std::string expected_v2 =
-		"[string \"function failing_fun() error('expected erro...\"]:1: expected error message";
-	bool exception_thrown = true;
-	try
-	{
-		call_function<void>(L, "failing_fun");
-		exception_thrown = false;
-	}
-	catch (luabind::error const& e)
-	{
-		auto expected = [&](auto m){ return m == expected_v1 || m == expected_v2; };
-		CHECK(expected(e.what()));
-	}
-	catch (...)
-	{
-		FAIL("call_function<void>(L, \"failing_fun\") threw unexpected exception");
-	}
-	CHECK_MESSAGE(exception_thrown, "call_function<void>(L, \"failing_fun\") didn't throw");
+    DOSTRING(L,"function failing_fun() error('expected error message') end");
+    // LuaJIT 2.0.5 (which defines LUA_VERSION_NUM 501) and Lua 5.1.5 produce different
+    // error messages here, so we check if it matches any of 2 expected variants
+    std::string expected_v1 =
+        "[string \"function failing_fun() error('expected error ...\"]:1: expected error message";
+    std::string expected_v2 =
+        "[string \"function failing_fun() error('expected erro...\"]:1: expected error message";
+    bool exception_thrown = true;
+    try
+    {
+        call_function<void>(L, "failing_fun");
+        exception_thrown = false;
+    }
+    catch (luabind::error const& e)
+    {
+        auto expected = [&](auto m){ return m == expected_v1 || m == expected_v2; };
+        CHECK(expected(e.what()));
+    }
+    catch (...)
+    {
+        FAIL("call_function<void>(L, \"failing_fun\") threw unexpected exception");
+    }
+    CHECK_MESSAGE(exception_thrown, "call_function<void>(L, \"failing_fun\") didn't throw");
 }
 

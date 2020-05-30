@@ -22,13 +22,13 @@ struct X
 TEST_CASE("tag_function")
 {
     using namespace luabind;
-	
+    
     module(L) [
         def("f", tag_function<int(int)>(std::bind(&f, 5, std::placeholders::_1))),
 
         class_<X>("X")
             .def(constructor<>())
-			.def("f", tag_function<int(X&, int)>(std::bind(&X::f, std::placeholders::_1, 10, std::placeholders::_2)))
+            .def("f", tag_function<int(X&, int)>(std::bind(&X::f, std::placeholders::_1, 10, std::placeholders::_2)))
     ];
 
     DOSTRING(L,

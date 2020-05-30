@@ -20,88 +20,88 @@ Added Borland specific fixes for reference types
 
 namespace luabind::detail
 {
-	template <typename T, bool small_>
-	struct ct_imp2
-	{
-		using param_type = const T&;
-	};
+    template <typename T, bool small_>
+    struct ct_imp2
+    {
+        using param_type = const T&;
+    };
 
-	template <typename T>
-	struct ct_imp2<T, true>
-	{
-		using param_type = const T;
-	};
+    template <typename T>
+    struct ct_imp2<T, true>
+    {
+        using param_type = const T;
+    };
 
-	template <typename T, bool isp, bool b1, bool b2>
-	struct ct_imp
-	{
-		using param_type = const T&;
-	};
+    template <typename T, bool isp, bool b1, bool b2>
+    struct ct_imp
+    {
+        using param_type = const T&;
+    };
 
-	template <typename T, bool isp, bool b2>
-	struct ct_imp<T, isp, true, b2>
-	{
-		using param_type = typename ct_imp2<T, sizeof(T) <= sizeof(void*)>::param_type;
-	};
+    template <typename T, bool isp, bool b2>
+    struct ct_imp<T, isp, true, b2>
+    {
+        using param_type = typename ct_imp2<T, sizeof(T) <= sizeof(void*)>::param_type;
+    };
 
-	template <typename T, bool isp, bool b1>
-	struct ct_imp<T, isp, b1, true>
-	{
-		using param_type = typename ct_imp2<T, sizeof(T) <= sizeof(void*)>::param_type;
-	};
+    template <typename T, bool isp, bool b1>
+    struct ct_imp<T, isp, b1, true>
+    {
+        using param_type = typename ct_imp2<T, sizeof(T) <= sizeof(void*)>::param_type;
+    };
 
-	template <typename T, bool b1, bool b2>
-	struct ct_imp<T, true, b1, b2>
-	{
-		using param_type = const T;
-	};
+    template <typename T, bool b1, bool b2>
+    struct ct_imp<T, true, b1, b2>
+    {
+        using param_type = const T;
+    };
 
-	template <typename T>
-	struct call_traits
-	{
-	public:
-		using value_type = T;
-		using reference = T&;
-		using const_reference = const T&;
+    template <typename T>
+    struct call_traits
+    {
+    public:
+        using value_type = T;
+        using reference = T&;
+        using const_reference = const T&;
 
-		using param_type = typename ct_imp<
-			T,
-			std::is_pointer_v<T>,
-			std::is_integral_v<T> || std::is_floating_point_v<T>,
-			std::is_enum_v<T>
-		>::param_type;
-	};
+        using param_type = typename ct_imp<
+            T,
+            std::is_pointer_v<T>,
+            std::is_integral_v<T> || std::is_floating_point_v<T>,
+            std::is_enum_v<T>
+        >::param_type;
+    };
 
-	template <typename T>
-	struct call_traits<T&>
-	{
-		using value_type = T&;
-		using reference = T&;
-		using const_reference = const T&;
-		using param_type = T&;
-	};
+    template <typename T>
+    struct call_traits<T&>
+    {
+        using value_type = T&;
+        using reference = T&;
+        using const_reference = const T&;
+        using param_type = T&;
+    };
 
-	template <typename T, std::size_t N>
-	struct call_traits<T[N]>
-	{
-	private:
-		using array_type = T[N];
-	public:
-		using value_type = const T*;
-		using reference = array_type&;
-		using const_reference = const array_type&;
-		using param_type = const T* const;
-	};
+    template <typename T, std::size_t N>
+    struct call_traits<T[N]>
+    {
+    private:
+        using array_type = T[N];
+    public:
+        using value_type = const T*;
+        using reference = array_type&;
+        using const_reference = const array_type&;
+        using param_type = const T* const;
+    };
 
-	template <typename T, std::size_t N>
-	struct call_traits<const T[N]>
-	{
-	private:
-		using array_type = const T[N];
-	public:
-		using value_type = const T*;
-		using reference = array_type&;
-		using const_reference = const array_type&;
-		using param_type = const T* const;
-	};
+    template <typename T, std::size_t N>
+    struct call_traits<const T[N]>
+    {
+    private:
+        using array_type = const T[N];
+    public:
+        using value_type = const T*;
+        using reference = array_type&;
+        using const_reference = const array_type&;
+        using param_type = const T* const;
+    };
 } // namespace luabind::detail

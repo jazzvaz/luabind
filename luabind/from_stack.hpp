@@ -7,14 +7,14 @@
 
 namespace luabind
 {
-	struct from_stack
-	{
-		from_stack(lua_State* L, int index) :
-			interpreter(L),
-			index(index)
-		{}
+    struct from_stack
+    {
+        from_stack(lua_State* L, int index) :
+            interpreter(L),
+            index(index)
+        {}
 
-		lua_State* interpreter;
-		int index;
-	};
+        lua_State* interpreter;
+        int index;
+    };
 } // namespace luabind

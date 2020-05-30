@@ -8,5 +8,5 @@
 
 namespace luabind
 {
-	LUABIND_API lua_State* get_main_thread(lua_State* L);
+    LUABIND_API lua_State* get_main_thread(lua_State* L);
 } // namespace luabind

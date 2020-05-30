@@ -8,9 +8,9 @@
 
 namespace luabind
 {
-	class type_id;
+    class type_id;
 
-	using error_callback_fun = void(*)(lua_State*);
-	using cast_failed_callback_fun = void(*)(lua_State*, type_id const&);
-	using pcall_callback_fun = void(*)(lua_State*);
+    using error_callback_fun = void(*)(lua_State*);
+    using cast_failed_callback_fun = void(*)(lua_State*, type_id const&);
+    using pcall_callback_fun = void(*)(lua_State*);
 } // namespace luabind

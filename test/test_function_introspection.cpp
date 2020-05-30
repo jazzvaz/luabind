@@ -32,8 +32,8 @@ TEST_CASE("function_introspection")
 {
     using namespace luabind;
     bind_function_introspection(L);
-	// second call must succeed too
-	bind_function_introspection(L);
+    // second call must succeed too
+    bind_function_introspection(L);
     
     DOSTRING(L,
         "assert(function_info.get_function_name)");
@@ -98,7 +98,7 @@ TEST_CASE("function_introspection")
         "No matching overload found, candidates:\n"
         "int f(int,int)\n"
         "int f(int)\n"
-		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
+        "Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
 
     DOSTRING(L,"function failing_fun() error('expected error message') end");

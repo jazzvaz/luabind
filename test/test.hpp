@@ -14,14 +14,14 @@
 
 struct lua_state
 {
-	~lua_state();
-	void initialize();
-	operator lua_State*() const { return m_state; }
-	void check() const;
+    ~lua_state();
+    void initialize();
+    operator lua_State*() const { return m_state; }
+    void check() const;
 
 private:
-	lua_State* m_state = nullptr;
-	int m_top = 0;
+    lua_State* m_state = nullptr;
+    int m_top = 0;
 };
 
 inline lua_State *L = nullptr;
@@ -50,14 +50,14 @@ std::string demangle(std::type_info const& id);
 //#undef CAT2
 
 //#define TEST_NOTHROW(x) \
-//	try \
-//	{ \
-//		x; \
-//	} \
-//	catch (...) \
-//	{ \
-//		TEST_ERROR("Exception thrown: " #x); \
-//	}
+//    try \
+//    { \
+//        x; \
+//    } \
+//    catch (...) \
+//    { \
+//        TEST_ERROR("Exception thrown: " #x); \
+//    }
 
 void dostring(lua_State* L, char const* str);
 
@@ -80,8 +80,8 @@ struct counted_type
 //    }
 //    catch (luabind::error const& e)
 //    {
-//		using namespace std;
-//		if (std::strcmp(e.what(), expected))
+//        using namespace std;
+//        if (std::strcmp(e.what(), expected))
 //            TEST_ERROR(e.what());
 //    }
 //    catch (luabind::string const& s)

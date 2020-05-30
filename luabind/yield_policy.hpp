@@ -8,13 +8,13 @@
 
 namespace luabind::detail
 {
-	struct yield_policy
-	{
-		inline static void postcall(lua_State*, int /*results*/, meta::index_list_tag) {}
-	};
+    struct yield_policy
+    {
+        inline static void postcall(lua_State*, int /*results*/, meta::index_list_tag) {}
+    };
 } // namespace luabind::detail
 
 namespace luabind::policy
 {
-	using yield = postcall_injector<detail::yield_policy>;
+    using yield = postcall_injector<detail::yield_policy>;
 } // namespace luabind::policy

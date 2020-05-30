@@ -7,9 +7,9 @@
 
 namespace luabind
 {
-	template <class T>
-	bool get_back_reference(lua_State* L, T const& x);
+    template <class T>
+    bool get_back_reference(lua_State* L, T const& x);
 
-	template <class T>
-	bool move_back_reference(lua_State* L, T const& x);
+    template <class T>
+    bool move_back_reference(lua_State* L, T const& x);
 } // namespace luabind

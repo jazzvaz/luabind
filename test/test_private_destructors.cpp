@@ -33,9 +33,9 @@ struct ptr
         ptr_count++;
     }
 
-	explicit operator bool() const {
-		return p != nullptr;
-	}
+    explicit operator bool() const {
+        return p != nullptr;
+    }
 
     template <class U>
     ptr(ptr<U> const& other)

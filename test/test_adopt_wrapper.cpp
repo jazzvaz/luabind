@@ -21,7 +21,7 @@ X* make()
 
 void take(X* p)
 {
-	luabind::luabind_delete(p);
+    luabind::luabind_delete(p);
 }
 
 TEST_CASE("adopt_wrapper")

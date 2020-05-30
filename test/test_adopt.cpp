@@ -28,7 +28,7 @@ struct Base_wrap : Base, luabind::wrap_base
 
 void destroy(Base* p)
 {
-	luabind::luabind_delete(p);
+    luabind::luabind_delete(p);
 }
 
 Base* adopted = 0;
@@ -50,10 +50,10 @@ TEST_CASE("adopt")
     disable_super_deprecation();
 
     module(L) [
-		class_<Base, no_bases, default_holder, Base_wrap>("Base")
-			.def(constructor<>()),
+        class_<Base, no_bases, default_holder, Base_wrap>("Base")
+            .def(constructor<>()),
 
-		def("take_ownership", &take_ownership, policy::adopt<1>()),
+        def("take_ownership", &take_ownership, policy::adopt<1>()),
         def("not_null", &not_null)
     ];
 
@@ -135,7 +135,7 @@ TEST_CASE("adopt")
 
     CHECK(Base::count == 2);
 
-	luabind_delete(adopted);
+    luabind_delete(adopted);
 
     DOSTRING(L,
         "collectgarbage('collect')\n"
@@ -159,7 +159,7 @@ TEST_CASE("adopt")
 
     CHECK(Base::count == 2);
 
-	luabind_delete(adopted);
+    luabind_delete(adopted);
 
     DOSTRING(L,
         "collectgarbage('collect')\n"
@@ -174,7 +174,7 @@ TEST_CASE("adopt")
         "not_null(x)\n"
     );
 
-	luabind_delete(adopted);
+    luabind_delete(adopted);
 
     DOSTRING(L,
         "x = nil\n"

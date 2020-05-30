@@ -8,5 +8,5 @@
 
 namespace luabind
 {
-	LUABIND_API int bind_function_introspection(lua_State* L);
+    LUABIND_API int bind_function_introspection(lua_State* L);
 } // namespace luabind

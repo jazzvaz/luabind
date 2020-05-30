@@ -16,8 +16,8 @@ struct X
     int x;
     int y;
 
-	void take_private(private_struct)
-	{}
+    void take_private(private_struct)
+    {}
 };
 
 struct unnamed
@@ -25,7 +25,7 @@ struct unnamed
 
 unnamed make_unnamed()
 {
-	return unnamed();
+    return unnamed();
 }
 
 TEST_CASE("class_info")
@@ -40,12 +40,12 @@ TEST_CASE("class_info")
             .def("f", &X::f)
             .def_readonly("x", &X::x)
             .def_readonly("y", &X::y)
-			.def("take_private", &X::take_private),
+            .def("take_private", &X::take_private),
 
-		class_<unnamed>()
-			.def(constructor<>()),
-		
-		def("make_unnamed", &make_unnamed)
+        class_<unnamed>()
+            .def(constructor<>()),
+        
+        def("make_unnamed", &make_unnamed)
     ];
 
     DOSTRING(L,
@@ -54,9 +54,9 @@ TEST_CASE("class_info")
         "assert(info.name == 'X')\n"
         "assert(info.methods['f'] == x.f)\n"
         "assert(info.methods['__init'] == x.__init)\n"
-		"attrs = info.attributes\n"
-		"assert(attrs[1] == 'x' or attrs[2] == 'x')\n"
-		"assert(attrs[1] == 'y' or attrs[2] == 'y')\n");
+        "attrs = info.attributes\n"
+        "assert(attrs[1] == 'x' or attrs[2] == 'x')\n"
+        "assert(attrs[1] == 'y' or attrs[2] == 'y')\n");
 
     DOSTRING(L,
         "info = class_info(2)\n"
@@ -80,21 +80,21 @@ TEST_CASE("class_info")
         "assert(info.attributes[2] == 'x')\n"
     );
 
-	DOSTRING_EXPECTED(L,
-		"x:take_private(nil)\n",
-		"No matching overload found, candidates:\n"
-		"void take_private(X&,custom [struct private_struct])\n"
-		"Passed arguments [2]: userdata (X&), nil (nil)\n");
+    DOSTRING_EXPECTED(L,
+        "x:take_private(nil)\n",
+        "No matching overload found, candidates:\n"
+        "void take_private(X&,custom [struct private_struct])\n"
+        "Passed arguments [2]: userdata (X&), nil (nil)\n");
 
-	DOSTRING(L,
-		"u = make_unnamed()\n"
-		"info = class_info(u)\n"
-		"assert(info.name == 'unnamed [struct unnamed]')");
+    DOSTRING(L,
+        "u = make_unnamed()\n"
+        "info = class_info(u)\n"
+        "assert(info.name == 'unnamed [struct unnamed]')");
 
-	DOSTRING(L,
-		"s = tostring(X)\n"
-		"assert(s:match('^class X (.+)$'))"
-	);
-	DOSTRING(L,"print(X)");
+    DOSTRING(L,
+        "s = tostring(X)\n"
+        "assert(s:match('^class X (.+)$'))"
+    );
+    DOSTRING(L,"print(X)");
 }
 

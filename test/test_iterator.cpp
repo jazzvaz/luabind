@@ -15,42 +15,42 @@ struct container
     }
 
     struct iterator
-		: public luabind::detail::crtp_iterator< iterator, std::forward_iterator_tag, int >
+        : public luabind::detail::crtp_iterator< iterator, std::forward_iterator_tag, int >
     {
         static std::size_t alive;
 
         iterator(int* p)
-			: p_(p)
+            : p_(p)
         {
             ++alive;
         }
 
-		iterator(const iterator& other)
-			: p_(other.p_)
-		{
-			++alive;
-		}
+        iterator(const iterator& other)
+            : p_(other.p_)
+        {
+            ++alive;
+        }
 
-		void increment() {
-			++p_;
-		}
+        void increment() {
+            ++p_;
+        }
 
-		int& dereference() {
-			return *p_;
-		}
+        int& dereference() {
+            return *p_;
+        }
 
-		bool equal(const iterator& other) const
-		{
-			return p_ == other.p_;
-		}
+        bool equal(const iterator& other) const
+        {
+            return p_ == other.p_;
+        }
 
         ~iterator()
         {
             --alive;
         }
 
-	private:
-		int* p_;
+    private:
+        int* p_;
     };
 
     iterator begin()

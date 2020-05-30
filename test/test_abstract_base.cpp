@@ -16,7 +16,7 @@ COUNTER_GUARD(abstract);
 
 struct concrete : abstract
 {
-	luabind::string hello()
+    luabind::string hello()
     {
         return "test string";
     }
@@ -24,7 +24,7 @@ struct concrete : abstract
 
 struct abstract_wrap : abstract, wrap_base
 {
-	luabind::string hello()
+    luabind::string hello()
     {
         return call_member<luabind::string>(this, "hello");
     }
@@ -42,14 +42,14 @@ luabind::string call_hello(abstract& a)
 
 abstract& return_abstract_ref()
 {
-	static concrete c;
-	return c;
+    static concrete c;
+    return c;
 }
 
 abstract const& return_const_abstract_ref()
 {
-	static concrete c;
-	return c;
+    static concrete c;
+    return c;
 }
 
 TEST_CASE("abstract_base")
@@ -59,22 +59,22 @@ TEST_CASE("abstract_base")
         class_<abstract, no_bases, default_holder, abstract_wrap>("abstract")
             .def(constructor<>())
             .def("hello", &abstract::hello),
-		def("call_hello", &call_hello),
-		def("return_abstract_ref", &return_abstract_ref),
-		def("return_const_abstract_ref", &return_const_abstract_ref)
+        def("call_hello", &call_hello),
+        def("return_abstract_ref", &return_abstract_ref),
+        def("return_const_abstract_ref", &return_const_abstract_ref)
     ];
     
-	DOSTRING_EXPECTED(L,
-		"x = abstract()\n"
-		"x:hello()\n",
-		"std::runtime_error: 'Attempt to call nonexistent function: hello'");
-		
-	DOSTRING_EXPECTED(L,
+    DOSTRING_EXPECTED(L,
+        "x = abstract()\n"
+        "x:hello()\n",
+        "std::runtime_error: 'Attempt to call nonexistent function: hello'");
+        
+    DOSTRING_EXPECTED(L,
         "call_hello(x)\n",
-		"std::runtime_error: 'Attempt to call nonexistent function: hello'");
+        "std::runtime_error: 'Attempt to call nonexistent function: hello'");
     
-	DOSTRING(L,
-		"class 'concrete' (abstract)\n"
+    DOSTRING(L,
+        "class 'concrete' (abstract)\n"
         "  function concrete:__init()\n"
         "      abstract.__init(self)\n"
         "  end\n"
@@ -83,16 +83,16 @@ TEST_CASE("abstract_base")
         "      return 'hello from lua'\n"
         "  end\n");
 
-	DOSTRING(L,
+    DOSTRING(L,
         "y = concrete()\n"
         "y:hello()\n");
 
-	DOSTRING(L,"call_hello(y)\n");
+    DOSTRING(L,"call_hello(y)\n");
 
-	DOSTRING(L,
+    DOSTRING(L,
         "x = abstract()\n"
         "x.hello = function(self) return 'hello from instance' end\n"
-		"assert(type(x.hello) == 'function')\n"
+        "assert(type(x.hello) == 'function')\n"
         "assert(x:hello() == 'hello from instance')\n"
         "assert(call_hello(x) == 'hello from instance')\n"
     );

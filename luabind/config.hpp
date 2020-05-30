@@ -90,18 +90,18 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 
 namespace luabind
 {
-	LUABIND_API void disable_super_deprecation();
-	LUABIND_API void set_custom_type_marking(bool enable);
-	LUABIND_API bool is_nil_conversion_allowed();
-	LUABIND_API void allow_nil_conversion(bool allow);
+    LUABIND_API void disable_super_deprecation();
+    LUABIND_API void set_custom_type_marking(bool enable);
+    LUABIND_API bool is_nil_conversion_allowed();
+    LUABIND_API void allow_nil_conversion(bool allow);
 
-	namespace detail
-	{
-		constexpr int max_argument_count = 100;
-		constexpr int max_hierarchy_depth = 100;
-	}
+    namespace detail
+    {
+        constexpr int max_argument_count = 100;
+        constexpr int max_hierarchy_depth = 100;
+    }
 
-	constexpr int no_match = -(detail::max_argument_count*detail::max_hierarchy_depth + 1);
+    constexpr int no_match = -(detail::max_argument_count*detail::max_hierarchy_depth + 1);
 } // namespace luabind
 
 #include <luabind/types.hpp>

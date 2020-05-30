@@ -7,20 +7,20 @@
 template <typename T>
 void test_converter(int value)
 {
-	using namespace luabind;
-	default_converter<T>().to_lua_deferred(L, value);
-	default_converter<T> cv;
-	CHECK(cv.compute_score(L, -1) >= 0);
-	CHECK(cv.to_cpp_deferred(L, -1) == value);
-	lua_pop(L, 1);
+    using namespace luabind;
+    default_converter<T>().to_lua_deferred(L, value);
+    default_converter<T> cv;
+    CHECK(cv.compute_score(L, -1) >= 0);
+    CHECK(cv.to_cpp_deferred(L, -1) == value);
+    lua_pop(L, 1);
 }
 
 TEST_CASE("builtin_converters")
 {
-	test_converter<int>(1);
-	test_converter<int>(-1);
-	test_converter<unsigned int>(1);
-	test_converter<unsigned int>(2);
+    test_converter<int>(1);
+    test_converter<int>(-1);
+    test_converter<unsigned int>(1);
+    test_converter<unsigned int>(2);
 
     test_converter<short>(1);
     test_converter<short>(-1);

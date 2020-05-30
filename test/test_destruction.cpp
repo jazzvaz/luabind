@@ -28,6 +28,6 @@ TEST_CASE("destruction")
         "t = nil\n"
         "collectgarbage()\n",
         "error in __gc metamethod ([string \"t = { }...\"]:3: attempt to index field 'cpp_class' (a userdata value))"
-	);
+    );
 }
 #endif

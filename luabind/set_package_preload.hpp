@@ -9,15 +9,15 @@
 
 namespace luabind
 {
-	LUABIND_API void set_package_preload(lua_State* L, char const* modulename, object const& loader);
+    LUABIND_API void set_package_preload(lua_State* L, char const* modulename, object const& loader);
 
-	template <typename F>
-	void set_package_preload(lua_State* L, char const* modulename, F loader)
-	{
-		object f = make_function(L, loader, false);
-		// Call add_overload to correctly set the name of f.
-		// Inefficiency should not matter here.
-		detail::add_overload(luabind::newtable(L), modulename, f);
-		set_package_preload(L, modulename, f);
-	}
+    template <typename F>
+    void set_package_preload(lua_State* L, char const* modulename, F loader)
+    {
+        object f = make_function(L, loader, false);
+        // Call add_overload to correctly set the name of f.
+        // Inefficiency should not matter here.
+        detail::add_overload(luabind::newtable(L), modulename, f);
+        set_package_preload(L, modulename, f);
+    }
 } // namespace luabind

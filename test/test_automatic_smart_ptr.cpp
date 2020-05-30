@@ -37,13 +37,13 @@ struct ptr
         const_cast<ptr&>(other).p = 0;
     }
 
-	explicit operator bool() const {
-		return p != nullptr;
-	}
+    explicit operator bool() const {
+        return p != nullptr;
+    }
 
     ~ptr()
     {
-		luabind::luabind_delete(p);
+        luabind::luabind_delete(p);
     }
 
     X* p;
@@ -56,29 +56,29 @@ X* get_pointer(ptr const& p)
 
 luabind::unique_ptr<X> make1()
 {
-	return luabind::unique_ptr<X>(luabind::luabind_new<X>(1));
+    return luabind::unique_ptr<X>(luabind::luabind_new<X>(1));
 }
 
 std::shared_ptr<X> make2()
 {
-	return std::shared_ptr<X>(luabind::luabind_new<X>(2), luabind::luabind_delete<X>);
+    return std::shared_ptr<X>(luabind::luabind_new<X>(2), luabind::luabind_delete<X>);
 }
 
 ptr make3()
 {
-	return ptr(luabind::luabind_new<X>(3));
+    return ptr(luabind::luabind_new<X>(3));
 }
 
 TEST_CASE("automatic_smart_ptr")
 {
     using namespace luabind;
 
-	static_assert(detail::has_get_pointer<luabind::unique_ptr<X>>::value,
-		"missing get_pointer function for luabind::unique_ptr<X>");
-	static_assert(detail::has_get_pointer<std::shared_ptr<X>>::value,
-		"missing get_pointer function for std::shared_ptr<X>");
-	static_assert(detail::has_get_pointer<ptr>::value,
-		"missing get_pointer function for ptr");
+    static_assert(detail::has_get_pointer<luabind::unique_ptr<X>>::value,
+        "missing get_pointer function for luabind::unique_ptr<X>");
+    static_assert(detail::has_get_pointer<std::shared_ptr<X>>::value,
+        "missing get_pointer function for std::shared_ptr<X>");
+    static_assert(detail::has_get_pointer<ptr>::value,
+        "missing get_pointer function for ptr");
 
     module(L) [
         class_<X>("X")

@@ -32,14 +32,14 @@ TEST_CASE("table")
         "f(1)\n",
         "No matching overload found, candidates:\n"
         "void f(table const&)\n"
-		"Passed arguments [1]: number (1)\n"
+        "Passed arguments [1]: number (1)\n"
     );
 
     DOSTRING_EXPECTED(L,
         "g(1)\n",
         "No matching overload found, candidates:\n"
         "void g(table const&)\n"
-		"Passed arguments [1]: number (1)\n"
+        "Passed arguments [1]: number (1)\n"
     );
 }
 

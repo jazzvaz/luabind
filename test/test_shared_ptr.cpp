@@ -10,16 +10,16 @@ struct X
     X(int value)
       : value(value)
     {
-		alive++;
-	}
+        alive++;
+    }
 
-	~X()
-	{
-		alive--;
-	}
+    ~X()
+    {
+        alive--;
+    }
 
     int value;
-	static int alive;
+    static int alive;
 };
 
 int X::alive = 0;
@@ -36,7 +36,7 @@ std::shared_ptr<X> filter(std::shared_ptr<X> const& p)
 
 std::shared_ptr<X> make_x()
 {
-	return std::shared_ptr<X>(luabind::luabind_new<X>(0), luabind::luabind_delete<X>);
+    return std::shared_ptr<X>(luabind::luabind_new<X>(0), luabind::luabind_delete<X>);
 }
 
 TEST_CASE("shared_ptr")
@@ -48,7 +48,7 @@ TEST_CASE("shared_ptr")
             .def(constructor<int>()),
         def("get_value", &get_value),
         def("filter", &filter),
-		def("make_x", &make_x)
+        def("make_x", &make_x)
     ];
 
     DOSTRING(L,
@@ -58,25 +58,25 @@ TEST_CASE("shared_ptr")
 
     DOSTRING(L,
         "assert(x == filter(x))\n"
-		"x = nil\n"
-		"collectgarbage()\n"
+        "x = nil\n"
+        "collectgarbage()\n"
     );
-	DOSTRING(L,
-		"sx = make_x()\n"
-		"function get_sx() return sx end"
-	);
-	std::shared_ptr<X> spx = call_function<std::shared_ptr<X>>(L, "get_sx");
-	CHECK(spx.use_count() == 2);
-	DOSTRING(L,
-		"sx = nil\n"
-		"collectgarbage()\n"
-	);
-	CHECK(spx.use_count() == 1);
-	CHECK(X::alive == 1);
-	spx.reset(); // reference to lua object is released here
-	DOSTRING(L,
-		"collectgarbage()\n" // unreferenced object is collected
-	);
-	CHECK(X::alive == 0);
+    DOSTRING(L,
+        "sx = make_x()\n"
+        "function get_sx() return sx end"
+    );
+    std::shared_ptr<X> spx = call_function<std::shared_ptr<X>>(L, "get_sx");
+    CHECK(spx.use_count() == 2);
+    DOSTRING(L,
+        "sx = nil\n"
+        "collectgarbage()\n"
+    );
+    CHECK(spx.use_count() == 1);
+    CHECK(X::alive == 1);
+    spx.reset(); // reference to lua object is released here
+    DOSTRING(L,
+        "collectgarbage()\n" // unreferenced object is collected
+    );
+    CHECK(X::alive == 0);
 }
 

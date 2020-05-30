@@ -86,25 +86,25 @@ std::shared_ptr<base> tester9()
 
 void tester10(std::shared_ptr<base> const& r)
 {
-	if (r->n == 4) feedback = 10;
+    if (r->n == 4) feedback = 10;
 }
 
 void tester11(std::shared_ptr<const base> const& r)
 {
-	if (r->n == 4) feedback = 11;
+    if (r->n == 4) feedback = 11;
 }
 
 void tester12(std::shared_ptr<derived> const& r)
 {
-	if (r->n2 == 7) feedback = 12;
+    if (r->n2 == 7) feedback = 12;
 }
 
 derived tester13()
 {
     feedback = 13;
-	derived d;
-	d.n2 = 13;
-	return d;
+    derived d;
+    d.n2 = 13;
+    return d;
 }
 
 TEST_CASE("held_type")
@@ -124,10 +124,10 @@ TEST_CASE("held_type")
         def("tester6", &tester6),
         def("tester7", &tester7),
         def("tester9", &tester9),
-		def("tester10", &tester10),
-		def("tester11", &tester11),
-		def("tester12", &tester12),
-		def("tester13", &tester13),
+        def("tester10", &tester10),
+        def("tester11", &tester11),
+        def("tester12", &tester12),
+        def("tester13", &tester13),
 
         class_<base, no_bases, std::shared_ptr<base> >("base")
             .def(constructor<>())
@@ -165,17 +165,17 @@ TEST_CASE("held_type")
     CHECK(feedback == 10);
 
 /* this test is messed up, shared_ptr<derived> isn't even registered
-	DOSTRING_EXPECTED(L,
-		L
-		, "tester12(b)"
-		, "no match for function call 'tester12' with the parameters (derived)\n"
-		"candidates are:\n"
-		"tester12(const custom&)\n");
+    DOSTRING_EXPECTED(L,
+        L
+        , "tester12(b)"
+        , "no match for function call 'tester12' with the parameters (derived)\n"
+        "candidates are:\n"
+        "tester12(const custom&)\n");
 */
 #if LUABIND_VERSION != 900
-	object nil = globals(L)["non_existing_variable_is_nil"];
-	CHECK(object_cast<boost::shared_ptr<base> >(nil).get() == 0);
-	CHECK(object_cast<boost::shared_ptr<const base> >(nil).get() == 0);
+    object nil = globals(L)["non_existing_variable_is_nil"];
+    CHECK(object_cast<boost::shared_ptr<base> >(nil).get() == 0);
+    CHECK(object_cast<boost::shared_ptr<const base> >(nil).get() == 0);
 #endif
 
     DOSTRING(L,"tester13()");

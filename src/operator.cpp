@@ -5,6 +5,6 @@
 
 namespace luabind
 {
-	self_type self;
-	const_self_type const_self;
+    self_type self;
+    const_self_type const_self;
 } // namespace luabind

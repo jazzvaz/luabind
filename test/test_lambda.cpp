@@ -6,23 +6,23 @@
 
 TEST_CASE("lambda")
 {
-	using namespace luabind;	
-	std::function<int(int)> func1([](int i) { return i+8; });
-	int loc = 99;
-	auto lambda = [&](int i) { return i+loc; };
+    using namespace luabind;    
+    std::function<int(int)> func1([](int i) { return i+8; });
+    int loc = 99;
+    auto lambda = [&](int i) { return i+loc; };
     module(L)
     [
-		def("func1", func1),
-		def("func2", [](int i) { return i*8; }),
-		def("make_function", [&]() { return func1; }),
-		def("make_lambda", [&]() { return lambda; })
+        def("func1", func1),
+        def("func2", [](int i) { return i*8; }),
+        def("make_function", [&]() { return func1; }),
+        def("make_lambda", [&]() { return lambda; })
     ];
-	DOSTRING(L,"assert(func1(2) == 10)");
-	DOSTRING(L,"assert(func2(2) == 16)");
-	DOSTRING(L,
-		"func = make_function()\n"
-		"assert(func(2) == 10)");
-	DOSTRING(L,
-		"func = make_lambda()\n"
-		"assert(func(1) == 100)");
+    DOSTRING(L,"assert(func1(2) == 10)");
+    DOSTRING(L,"assert(func2(2) == 16)");
+    DOSTRING(L,
+        "func = make_function()\n"
+        "assert(func(2) == 10)");
+    DOSTRING(L,
+        "func = make_lambda()\n"
+        "assert(func(1) == 100)");
 }
