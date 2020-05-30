@@ -36,8 +36,3 @@ LUABIND_STATIC_ASSERT(!luabind::is_lua_proxy_arg<int[4]>::value);
 LUABIND_STATIC_ASSERT(luabind::is_lua_proxy_arg<X const&>::value);
 LUABIND_STATIC_ASSERT(luabind::is_lua_proxy_arg<luabind::object&>::value);
 LUABIND_STATIC_ASSERT(luabind::is_lua_proxy_arg<luabind::object const&>::value);
-
-int main()
-{
-}
-

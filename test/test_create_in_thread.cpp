@@ -28,7 +28,7 @@ struct Y
 struct Y_wrap : Y, luabind::wrap_base
 {};
 
-void test_main(lua_State* L)
+TEST_CASE("create_in_thread")
 {
     using namespace luabind;
 

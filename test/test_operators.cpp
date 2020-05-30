@@ -101,7 +101,7 @@ struct len_tester
 struct B {};
 struct D : B {};
 
-void test_main(lua_State* L)
+TEST_CASE("operators")
 {
 	using namespace luabind;
 
@@ -150,31 +150,31 @@ void test_main(lua_State* L)
 			.def(constructor<>())
 	];
 	
-	DOSTRING(L, "test = operator_tester()");
-	DOSTRING(L, "test2 = operator_tester2()");
-	DOSTRING(L, "test3 = operator_tester3()");
+	DOSTRING(L,"test = operator_tester()");
+	DOSTRING(L,"test2 = operator_tester2()");
+	DOSTRING(L,"test3 = operator_tester3()");
 
-	DOSTRING(L, "assert(tostring(test) == 'operator_tester')");
+	DOSTRING(L,"assert(tostring(test) == 'operator_tester')");
 	
-	DOSTRING(L, "assert(test() == 3.5)");
-	DOSTRING(L, "assert(test(5) == 2.5 + 5)");
+	DOSTRING(L,"assert(test() == 3.5)");
+	DOSTRING(L,"assert(test(5) == 2.5 + 5)");
 
-	DOSTRING(L, "assert(-test == 46)");
-	DOSTRING(L, "assert(test * test == 35)");
-	DOSTRING(L, "assert(test % test == 15)");
-	DOSTRING(L, "assert(test * 3 == '(operator_tester, int) overload')")
-	DOSTRING(L, "assert(test + test2 == 73)");
-	DOSTRING(L, "assert(2 + test == 2 + 2)");
-	DOSTRING(L, "assert(test + 2 == 1 + 2)");
-	DOSTRING(L, "assert(test3 + 6 == 1 + 6)");
-	DOSTRING(L, "assert(test3 + test2 == 73)");
-	DOSTRING(L, "assert(tostring(test) == 'operator_tester')");
+	DOSTRING(L,"assert(-test == 46)");
+	DOSTRING(L,"assert(test * test == 35)");
+	DOSTRING(L,"assert(test % test == 15)");
+	DOSTRING(L,"assert(test * 3 == '(operator_tester, int) overload')");
+	DOSTRING(L,"assert(test + test2 == 73)");
+	DOSTRING(L,"assert(2 + test == 2 + 2)");
+	DOSTRING(L,"assert(test + 2 == 1 + 2)");
+	DOSTRING(L,"assert(test3 + 6 == 1 + 6)");
+	DOSTRING(L,"assert(test3 + test2 == 73)");
+	DOSTRING(L,"assert(tostring(test) == 'operator_tester')");
 	// Default __tostring should be "class NAME: ADDRESS".
-	DOSTRING(L, "assert(tostring(test2):match('"
+	DOSTRING(L,"assert(tostring(test2):match('"
 		// Pointer representation is platform dependent, don't check it.
 		"^operator_tester2 object: "
 		"'))");
-	DOSTRING(L, "print(test2)");
+	DOSTRING(L,"print(test2)");
 
 	DOSTRING_EXPECTED(L,
 		"local d = test2 / test3",
@@ -204,9 +204,9 @@ void test_main(lua_State* L)
 		"d = 10 - d\n"
 		"d = d - b\n";
 
-	DOSTRING(L, prog);
-	DOSTRING(L, "assert(c.val == 10)");
-	DOSTRING(L, "assert(d.val == 2)");
+	DOSTRING(L,prog);
+	DOSTRING(L,"assert(c.val == 10)");
+	DOSTRING(L,"assert(d.val == 2)");
 
     DOSTRING(L,
 		"a = op_test1()\n"

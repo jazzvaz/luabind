@@ -22,26 +22,26 @@ using f_type = int(*)(int, int);
 
 f_type function_test(std::function<int(int)> g)
 {
-	TEST_CHECK(g(3) == 9);
+	CHECK(g(3) == 9);
 	return &f;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("function_converter")
 {
 	using namespace luabind;
 
 	globals(L)["f"] = &f;
-	DOSTRING(L, "assert(f(1, 5) == 6)");
+	DOSTRING(L,"assert(f(1, 5) == 6)");
 
 	X x;
 	globals(L)["f2"] = std::function<int(int, int)>(x);
-	DOSTRING(L, "assert(f2(4, 3) == 7)");
+	DOSTRING(L,"assert(f2(4, 3) == 7)");
 
 	object free_f(L, &f);
 	std::function<int(int, int)> free_f_wrapped =
 		object_cast<std::function<int(int, int)>>(free_f);
 
-	TEST_CHECK(free_f_wrapped(2, 6) == 8);
+	CHECK(free_f_wrapped(2, 6) == 8);
 
 	globals(L)["function_test"] = &function_test;
 	DOSTRING(L,

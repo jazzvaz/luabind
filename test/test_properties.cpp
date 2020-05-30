@@ -10,7 +10,7 @@
 struct Base
 {};
 
-void test_main(lua_State* L)
+TEST_CASE("properties")
 {
     using namespace luabind;
 

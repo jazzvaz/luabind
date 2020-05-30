@@ -52,7 +52,7 @@ int take(X x)
 	return x.x + x.y;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("collapse_converter")
 {
 	using namespace luabind;
 

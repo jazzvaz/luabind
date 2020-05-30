@@ -10,7 +10,7 @@ void raw_function(lua_State* /*L*/)
 void raw_function2(int, lua_State* /*L*/, int)
 {}
 
-void test_main(lua_State* L)
+TEST_CASE("implicit_raw")
 {
     using namespace luabind;
 

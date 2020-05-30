@@ -69,7 +69,7 @@ ptr make3()
 	return ptr(luabind::luabind_new<X>(3));
 }
 
-void test_main(lua_State* L)
+TEST_CASE("automatic_smart_ptr")
 {
     using namespace luabind;
 
@@ -95,7 +95,7 @@ void test_main(lua_State* L)
         "x3 = make3()\n"
     );
 
-    TEST_CHECK(X::alive == 3);
+    CHECK(X::alive == 3);
 
     DOSTRING(L,
         "assert(x1.value == 1)\n"

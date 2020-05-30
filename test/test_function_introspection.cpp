@@ -28,7 +28,7 @@ int f(int x, int y)
 }
 
 
-void test_main(lua_State* L)
+TEST_CASE("function_introspection")
 {
     using namespace luabind;
     bind_function_introspection(L);
@@ -75,23 +75,23 @@ void test_main(lua_State* L)
         "e = create()\n"
         "assert(e:f() == 5)");
 
-    DOSTRING(L, "assert(f(7) == 8)");
+    DOSTRING(L,"assert(f(7) == 8)");
 
-    DOSTRING(L, "assert(f(3, 9) == 12)");
+    DOSTRING(L,"assert(f(3, 9) == 12)");
 
-//    DOSTRING(L, "set_functor(function(x) return x * 10 end)");
+//    DOSTRING(L,"set_functor(function(x) return x * 10 end)");
 
-//    TEST_CHECK(functor_test(20) == 200);
+//    CHECK(functor_test(20) == 200);
 
-//    DOSTRING(L, "set_functor(nil)");
+//    DOSTRING(L,"set_functor(nil)");
 
-    DOSTRING(L, "function lua_create() return create() end");
+    DOSTRING(L,"function lua_create() return create() end");
     base* ptr = call_function<base*>(L, "lua_create") [ adopt(result) ];
     luabind_delete(ptr);
 
 #if !(BOOST_MSVC < 1300)
-    DOSTRING(L, "test_value_converter('converted string')");
-    DOSTRING(L, "test_pointer_converter('converted string')");
+    DOSTRING(L,"test_value_converter('converted string')");
+    DOSTRING(L,"test_pointer_converter('converted string')");
 #endif
 
     DOSTRING_EXPECTED(L, "f('incorrect', 'parameters')",
@@ -101,7 +101,7 @@ void test_main(lua_State* L)
 		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
 
-    DOSTRING(L, "function failing_fun() error('expected error message') end");
+    DOSTRING(L,"function failing_fun() error('expected error message') end");
     try
     {
         call_function<void>(L, "failing_fun");

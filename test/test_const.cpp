@@ -12,7 +12,7 @@ struct A
     int g2() { return 2; }
 };
 
-void test_main(lua_State* L)
+TEST_CASE("const")
 {
     using namespace luabind;
 
@@ -25,10 +25,10 @@ void test_main(lua_State* L)
             .def("g", &A::g2)
     ];
 
-    DOSTRING(L, "a = A()");
-    DOSTRING(L, "assert(a:g() == 2)");
+    DOSTRING(L,"a = A()");
+    DOSTRING(L,"assert(a:g() == 2)");
 
-    DOSTRING(L, "a2 = a:f()");
-    DOSTRING(L, "assert(a2:g() == 1)");
+    DOSTRING(L,"a2 = a:f()");
+    DOSTRING(L,"assert(a2:g() == 1)");
 }
 

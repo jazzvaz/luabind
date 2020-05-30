@@ -114,7 +114,7 @@ struct U : T_
 	int f(int, int) { return 2; }
 };
 
-void test_main(lua_State* L)
+TEST_CASE("lua_classes")
 {
 	module(L)
 	[
@@ -145,7 +145,7 @@ void test_main(lua_State* L)
 			.def("g", &U::g)
 	];
                               
-	DOSTRING(L, 
+	DOSTRING(L,
 		"u = U()\n"
 		"assert(u:f(0) == 1)\n"
 		"assert(u:f(0,0) == 2)\n"
@@ -164,7 +164,7 @@ void test_main(lua_State* L)
 		"ba = base()\n"
 		"assert(ba:fun() == 4)");
 
-    DOSTRING(L, 
+    DOSTRING(L,
         "class 'derived' (base)\n"
         "  function derived:__init() base.__init(self) end\n"
         "  function derived:f()\n"
@@ -220,14 +220,14 @@ void test_main(lua_State* L)
 		{
             bool result(e.what() == luabind::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
-			TEST_CHECK(result);
+			CHECK(result);
 		}
 	}
 
 	{
 		A a;
 
-		DOSTRING(L, "function test_ref(x) end");
+		DOSTRING(L,"function test_ref(x) end");
 		call_function<void>(L, "test_ref", std::ref(a));
 	}
 
@@ -240,7 +240,7 @@ void test_main(lua_State* L)
             bool result(
                 e.what() == luabind::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
-			TEST_CHECK(result);
+			CHECK(result);
 		}
 	}
 
@@ -253,7 +253,7 @@ void test_main(lua_State* L)
             bool result(
                 e.what() == luabind::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
-			TEST_CHECK(result);
+			CHECK(result);
 		}
 	}
 
@@ -263,9 +263,9 @@ void test_main(lua_State* L)
 	{
 		LUABIND_CHECK_STACK(L);
 
-		TEST_NOTHROW(
+		CHECK_NOTHROW(
 			object a = globals(L)["ba"];
-			TEST_CHECK(call_member<int>(a, "fun") == 4);
+			CHECK(call_member<int>(a, "fun") == 4);
 		);
 	}
 
@@ -273,7 +273,7 @@ void test_main(lua_State* L)
 		LUABIND_CHECK_STACK(L);
 
 		object make_derived = globals(L)["make_derived"];
-		TEST_NOTHROW(
+		CHECK_NOTHROW(
 			call_function<void>(make_derived)
 			);
 	}
@@ -282,7 +282,7 @@ void test_main(lua_State* L)
 	{
 		LUABIND_CHECK_STACK(L);
 
-		TEST_NOTHROW(
+		CHECK_NOTHROW(
 		    own_ptr = luabind::unique_ptr<base>(
                 call_function<base*, policy::adopt<0>>(L, "make_derived"))
 			);
@@ -297,31 +297,29 @@ void test_main(lua_State* L)
 		"collectgarbage()\n"
 		"collectgarbage()\n");
 
-    TEST_NOTHROW(
-        TEST_CHECK(own_ptr->f() == "derived:f() : base:f()")
-    );
+	CHECK_NOTHROW(
+		own_ptr->f() == "derived:f() : base:f()"
+	);
 	own_ptr = luabind::unique_ptr<base>();
 
 	// test virtual functions that are not overridden by lua
-    TEST_NOTHROW(
+	CHECK_NOTHROW(
         own_ptr = luabind::unique_ptr<base>(
             call_function<base*, policy::adopt<0>>(L, "make_empty_derived"))
         );
-    TEST_NOTHROW(
-        TEST_CHECK(own_ptr->f() == "base:f()")
-	);
-    TEST_NOTHROW(
+	CHECK_NOTHROW(own_ptr->f() == "base:f()");
+	CHECK_NOTHROW(
         (call_function<void, policy::adopt<1>>(L, "adopt_ptr", own_ptr.get()))
     );
 	own_ptr.release();
 
 	// test virtual functions that are overridden by lua
-    TEST_NOTHROW(
+	CHECK_NOTHROW(
         ptr = call_function<base*>(L, "derived")
     );
 
-    TEST_NOTHROW(
-        TEST_CHECK(ptr->f() == "derived:f() : base:f()")
+	CHECK_NOTHROW(
+        ptr->f() == "derived:f() : base:f()"
     );
 
 	// test virtual function dispatch from within lua

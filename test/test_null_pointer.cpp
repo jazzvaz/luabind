@@ -16,7 +16,7 @@ A* return_pointer()
 
 COUNTER_GUARD(A);
 
-void test_main(lua_State* L)
+TEST_CASE("null_pointer")
 {
 	using namespace luabind;
 

@@ -24,7 +24,7 @@ void take(X* p)
 	luabind::luabind_delete(p);
 }
 
-void test_main(lua_State* L)
+TEST_CASE("adopt_wrapper")
 {
     using namespace luabind;
 

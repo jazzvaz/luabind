@@ -12,7 +12,7 @@ struct CppClass
     }
 };
 
-void test_main(lua_State* L)
+TEST_CASE("extend_class_in_lua")
 {
     using namespace luabind;
 

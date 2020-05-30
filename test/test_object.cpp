@@ -110,12 +110,12 @@ void test_call(lua_State* L)
 
     object sum = globals(L)["sum"];
 
-    TEST_CHECK(object_cast<int>(sum()) == 0);
-    TEST_CHECK(object_cast<int>(sum(1)) == 1);
-    TEST_CHECK(object_cast<int>(sum(1,2)) == 3);
-    TEST_CHECK(object_cast<int>(sum(1,2,3)) == 6);
-    TEST_CHECK(object_cast<int>(sum(1,2,3,4)) == 10);
-    TEST_CHECK(object_cast<int>(sum(1,2,3,4,5)) == 15);
+    CHECK(object_cast<int>(sum()) == 0);
+    CHECK(object_cast<int>(sum(1)) == 1);
+    CHECK(object_cast<int>(sum(1,2)) == 3);
+    CHECK(object_cast<int>(sum(1,2,3)) == 6);
+    CHECK(object_cast<int>(sum(1,2,3,4)) == 10);
+    CHECK(object_cast<int>(sum(1,2,3,4,5)) == 15);
 }
 
 void test_metatable(lua_State* L)
@@ -260,7 +260,15 @@ std::string lexical_cast(const T& val)
 	return os.str();
 }
 
-void test_main(lua_State* L)
+struct test_eq
+{
+	int v = 0;
+
+	bool operator==(test_eq const& that) const
+	{ return v == that.v; }
+};
+
+TEST_CASE("object")
 {
 	using namespace luabind;
 
@@ -280,40 +288,40 @@ void test_main(lua_State* L)
 	];
 
 	object uninitialized;
-	TEST_CHECK(!uninitialized);
-	TEST_CHECK(!uninitialized.is_valid());
+	CHECK(!uninitialized);
+	CHECK(!uninitialized.is_valid());
 
 	test_param temp_object;
 	globals(L)["temp"] = temp_object;
-	TEST_CHECK(object_cast<test_param>(globals(L)["temp"]) == temp_object);
+	(object_cast<test_param>(globals(L)["temp"]) == temp_object);
 	globals(L)["temp"] = &temp_object;
-	TEST_CHECK(object_cast<test_param const*>(globals(L)["temp"]) == &temp_object);
-	TEST_CHECK(globals(L)["temp"] == temp_object);
+	(object_cast<test_param const*>(globals(L)["temp"]) == &temp_object);
+	(globals(L)["temp"] == temp_object);
 
 	// test the registry
 	object reg = registry(L);
 	reg["__a"] = "foobar";
-	TEST_CHECK(object_cast<luabind::string>(registry(L)["__a"]) == "foobar");
+	CHECK(object_cast<luabind::string>(registry(L)["__a"]) == "foobar");
 	
 	DOSTRING(L,
 		"t = 2\n"
 		"assert(test_object_param(t) == 1)");
 
-	DOSTRING(L, "assert(test_object_param(nil) == 2)");
-	DOSTRING(L, "t = { ['oh'] = 4, 3, 5, 7, 13 }");
-	DOSTRING(L, "assert(test_object_param(t) == 0)");
-	DOSTRING(L, "assert(t.sum1 == 4 + 3 + 5 + 7 + 13)");
-	DOSTRING(L, "assert(t.sum2 == 4 + 3 + 5 + 7 + 13)");
-	DOSTRING(L, "assert(t.blurp == 5)");
+	DOSTRING(L,"assert(test_object_param(nil) == 2)");
+	DOSTRING(L,"t = { ['oh'] = 4, 3, 5, 7, 13 }");
+	DOSTRING(L,"assert(test_object_param(t) == 0)");
+	DOSTRING(L,"assert(t.sum1 == 4 + 3 + 5 + 7 + 13)");
+	DOSTRING(L,"assert(t.sum2 == 4 + 3 + 5 + 7 + 13)");
+	DOSTRING(L,"assert(t.blurp == 5)");
 
 	object g = globals(L);
 	object ret = g["test_fun"]();
-	TEST_CHECK(object_cast<int>(ret) == 42);
+	CHECK(object_cast<int>(ret) == 42);
 
-	DOSTRING(L, "function test_param_policies(x, y) end");
+	DOSTRING(L,"function test_param_policies(x, y) end");
 	object test_param_policies = g["test_param_policies"];
 	int a = type(test_param_policies);
-	TEST_CHECK(a == LUA_TFUNCTION);
+	CHECK(a == LUA_TFUNCTION);
 
 	luabind::object obj;
 	obj = luabind::object();
@@ -321,8 +329,8 @@ void test_main(lua_State* L)
 	// call the function and tell lua to adopt the pointer passed as first argument
 	test_param_policies.call<policy::adopt<2>>(5, luabind_new<test_param>());
 
-	DOSTRING(L, "assert(test_match(7) == 1)");
-	DOSTRING(L, "assert(test_match('oo') == 0)");
+	DOSTRING(L,"assert(test_match(7) == 1)");
+	DOSTRING(L,"assert(test_match('oo') == 0)");
 
 	DOSTRING(L,
 		"t = test_param()\n"
@@ -336,51 +344,51 @@ void test_main(lua_State* L)
 		"end");
 	object test_object_policies = g["test_object_policies"];
 	object ret_val = test_object_policies.call<no_policies>("teststring");
-	TEST_CHECK(object_cast<int>(ret_val) == 6);
-	TEST_CHECK(ret_val == 6);
-	TEST_CHECK(6 == ret_val);
+	CHECK(object_cast<int>(ret_val) == 6);
+	CHECK((ret_val == 6));
+	CHECK((6 == ret_val));
 	g["temp_val"] = 6;
-	TEST_CHECK(ret_val == g["temp_val"]);
+	CHECK((ret_val == g["temp_val"]));
 	object temp_val = g["temp_val"];
-	TEST_CHECK(ret_val == temp_val);
+	CHECK((ret_val == temp_val));
 
 	g["temp"] = "test string";
-	TEST_CHECK(to_string(g["temp"]) == "test string");
+	CHECK(to_string(g["temp"]) == "test string");
 	g["temp"] = 6;
-	TEST_CHECK(to_string(g["temp"]) == "6");
+	CHECK(to_string(g["temp"]) == "6");
 
-	TEST_CHECK(object_cast<luabind::string>(g["glob"]) == "teststring");
-	TEST_CHECK(object_cast<luabind::string>(gettable(g, "glob")) == "teststring");
-	TEST_CHECK(object_cast<luabind::string>(rawget(g, "glob")) == "teststring");
+	CHECK(object_cast<luabind::string>(g["glob"]) == "teststring");
+	CHECK(object_cast<luabind::string>(gettable(g, "glob")) == "teststring");
+	CHECK(object_cast<luabind::string>(rawget(g, "glob")) == "teststring");
 
 	object t = newtable(L);
-	TEST_CHECK(iterator(t) == iterator());
-	TEST_CHECK(raw_iterator(t) == raw_iterator());
+	CHECK((iterator(t) == iterator()));
+	CHECK((raw_iterator(t) == raw_iterator()));
 
 	t["foo"] = "bar";
 
-	TEST_CHECK(object_cast<luabind::string>(t["foo"]) == "bar");
-	TEST_CHECK(object_cast<luabind::string>(*iterator(t)) == "bar");
-	TEST_CHECK(object_cast<luabind::string>(*raw_iterator(t)) == "bar");
+	CHECK(object_cast<luabind::string>(t["foo"]) == "bar");
+	CHECK(object_cast<luabind::string>(*iterator(t)) == "bar");
+	CHECK(object_cast<luabind::string>(*raw_iterator(t)) == "bar");
 
 	t["foo"] = nil; // luabind::nil_type
 
-	TEST_CHECK(iterator(t) == iterator());
-	TEST_CHECK(raw_iterator(t) == raw_iterator());
+	CHECK((iterator(t) == iterator()));
+	CHECK((raw_iterator(t) == raw_iterator()));
 
 	t["foo"] = "bar";
 	iterator it1(t);
 	*it1 = nil;
 
-	TEST_CHECK(iterator(t) == iterator());
-	TEST_CHECK(raw_iterator(t) == raw_iterator());
+	CHECK((iterator(t) == iterator()));
+	CHECK((raw_iterator(t) == raw_iterator()));
 
 	t["foo"] = "bar";
 	raw_iterator it2(t);
 	*it2 = nil;
 
-	TEST_CHECK(iterator(t) == iterator());
-	TEST_CHECK(raw_iterator(t) == raw_iterator());
+	CHECK((iterator(t) == iterator()));
+	CHECK((raw_iterator(t) == raw_iterator()));
 
 	DOSTRING(L,
 		"p1 = {}\n"
@@ -394,23 +402,21 @@ void test_main(lua_State* L)
 
 #ifndef LUABIND_NO_EXCEPTIONS
 
-	try
+	CHECK_THROWS_AS(
 	{
 		object not_initialized;
 		int i = object_cast<int>(not_initialized);
 		(void)i;
-		TEST_ERROR("invalid cast succeeded");
-	}
-	catch(luabind::cast_failed&) {}
+	}, luabind::cast_failed const&);
 
 #endif
 
     object not_initialized;
-	TEST_CHECK(!object_cast_nothrow<int>(not_initialized));
-	TEST_CHECK(!not_initialized.is_valid());
-	TEST_CHECK(!not_initialized);
+	CHECK(!object_cast_nothrow<int>(not_initialized));
+	CHECK(!not_initialized.is_valid());
+	CHECK(!not_initialized);
 
-    DOSTRING(L, "t = { {1}, {2}, {3}, {4} }");
+    DOSTRING(L,"t = { {1}, {2}, {3}, {4} }");
 
     int inner_sum = 0;
 
@@ -419,9 +425,9 @@ void test_main(lua_State* L)
         inner_sum += object_cast<int>((*i)[1]);
     }
 
-    TEST_CHECK(inner_sum == 1 + 2 + 3 + 4);
+    CHECK(inner_sum == 1 + 2 + 3 + 4);
 
-    DOSTRING(L, "t = { {1, 2}, {3, 4}, {5, 6}, {7, 8} }");
+    DOSTRING(L,"t = { {1, 2}, {3, 4}, {5, 6}, {7, 8} }");
 
     inner_sum = 0;
 
@@ -433,14 +439,14 @@ void test_main(lua_State* L)
         }
     }
 
-    TEST_CHECK(inner_sum == 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8);
-    TEST_CHECK(object_cast<int>(globals(L)["t"][2][2]) == 4);
+    CHECK(inner_sum == 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8);
+    CHECK(object_cast<int>(globals(L)["t"][2][2]) == 4);
 
 	DOSTRING(L,
 		"obj = setmetatable({}, {\n"
 		"    __tostring = function() return 'custom __tostring' end})");
 	obj = globals(L)["obj"];
-	TEST_CHECK(lexical_cast(obj) == "custom __tostring");
+	CHECK(lexical_cast(obj) == "custom __tostring");
 
     test_call(L);
     test_metatable(L);

@@ -78,22 +78,22 @@ void f4(X*)
 
 void g1(ptr<X> p)
 {
-    TEST_CHECK(ptr_count == (p.p ? 2 : 3));
+    CHECK(ptr_count == (p.p ? 2 : 3));
 }
 
 void g2(ptr<X> const& p)
 {
-    TEST_CHECK(ptr_count == (p.p ? 1 : 2));
+    CHECK(ptr_count == (p.p ? 1 : 2));
 }
 
 void g3(ptr<X>*)
 {
-    TEST_CHECK(ptr_count == 1);
+    CHECK(ptr_count == 1);
 }
 
 void g4(ptr<X> const*)
 {
-    TEST_CHECK(ptr_count == 1);
+    CHECK(ptr_count == 1);
 }
 
 ptr<X> get()
@@ -101,7 +101,7 @@ ptr<X> get()
     return ptr<X>(luabind::luabind_new<X>());
 }
 
-void test_main(lua_State* L)
+TEST_CASE("private_destructors")
 {
     using namespace luabind;
 
@@ -120,38 +120,38 @@ void test_main(lua_State* L)
         def("g4", &g4)
     ];
 
-    DOSTRING(L, "x = get()\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"x = get()\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "f1(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"f1(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "f2(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"f2(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "f3(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"f3(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "f4(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"f4(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "g1(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"g1(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "g2(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"g2(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "g3(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"g3(x)\n");
+    CHECK(ptr_count == 1);
 
-    DOSTRING(L, "g4(x)\n");
-    TEST_CHECK(ptr_count == 1);
+    DOSTRING(L,"g4(x)\n");
+    CHECK(ptr_count == 1);
 
     DOSTRING(L,
         "x = nil\n"
     );
 
     lua_gc(L, LUA_GCCOLLECT, 0);
-    TEST_CHECK(ptr_count == 0);
+    CHECK(ptr_count == 0);
 }
 

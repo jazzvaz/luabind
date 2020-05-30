@@ -33,7 +33,7 @@ int simple_class::feedback = 0;
 	
 COUNTER_GUARD(simple_class);
 
-void test_main(lua_State* L)
+TEST_CASE("simple_class")
 {
 	using namespace luabind;
 
@@ -56,10 +56,10 @@ void test_main(lua_State* L)
         "  function simple_derived:__init() simple.__init(self) end\n"
         "a = simple_derived()\n"
         "a:f()\n");
-    TEST_CHECK(simple_class::feedback == 1);
+    CHECK(simple_class::feedback == 1);
 
-    DOSTRING(L, "a:f('foo\\0bar')");
-    TEST_CHECK(simple_class::feedback == 2);
+    DOSTRING(L,"a:f('foo\\0bar')");
+    CHECK(simple_class::feedback == 2);
 
 	DOSTRING(L,
 		"b = simple_derived()\n"
@@ -80,7 +80,7 @@ void test_main(lua_State* L)
 		"void f(simple&)\n"
 		"Passed arguments [3]: userdata (simple&), string ('incorrect'), string ('parameters')\n");
 
-    DOSTRING(L, "if a:g() == \"foo\\0bar\" then a:f() end");
-    TEST_CHECK(simple_class::feedback == 1);
+    DOSTRING(L,"if a:g() == \"foo\\0bar\" then a:f() end");
+    CHECK(simple_class::feedback == 1);
 }
 

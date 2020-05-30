@@ -23,7 +23,7 @@ luabind::scope test_separate_registration()
            ;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("separation")
 {
     using namespace luabind;
     
@@ -34,7 +34,7 @@ void test_main(lua_State* L)
         ]
     ];
 
-    DOSTRING(L, "x = Z.X()");
-    DOSTRING(L, "y = Z.Y()");
+    DOSTRING(L,"x = Z.X()");
+    DOSTRING(L,"y = Z.Y()");
 }
 

@@ -40,10 +40,10 @@ void take_ownership(Base* p)
 
 void not_null(Base* p)
 {
-    TEST_CHECK(p);
+    CHECK(p != nullptr);
 }
 
-void test_main(lua_State* L)
+TEST_CASE("adopt")
 {
     using namespace luabind;
 
@@ -61,14 +61,14 @@ void test_main(lua_State* L)
         "x = Base()\n"
     );
 
-    TEST_CHECK(Base::count == 1);
+    CHECK(Base::count == 1);
 
     DOSTRING(L,
         "x = nil\n"
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 
     DOSTRING(L,
         "class 'Derived' (Base)\n"
@@ -82,7 +82,7 @@ void test_main(lua_State* L)
         "x = Derived()\n"
     );
 
-    TEST_CHECK(Base::count == 2);
+    CHECK(Base::count == 2);
 
     DOSTRING(L,
         "x = nil\n"
@@ -90,16 +90,16 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 
     DOSTRING(L,
         "x = nil\n"
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 
-     DOSTRING(L,
+    DOSTRING(L,
         "class 'Derived2' (Derived)\n"
         "  function Derived2:__init()\n"
         "      super()\n"
@@ -110,7 +110,7 @@ void test_main(lua_State* L)
         "x = Derived2()\n"
     );
 
-    TEST_CHECK(Base::count == 2);
+    CHECK(Base::count == 2);
 
     DOSTRING(L,
         "x = nil\n"
@@ -118,13 +118,13 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 
     DOSTRING(L,
         "x = Derived()\n"
     );
 
-    TEST_CHECK(Base::count == 2);
+    CHECK(Base::count == 2);
 
     DOSTRING(L,
         "take_ownership(x)\n"
@@ -133,7 +133,7 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 2);
+    CHECK(Base::count == 2);
 
 	luabind_delete(adopted);
 
@@ -142,13 +142,13 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 
     DOSTRING(L,
         "x = Derived2()\n"
     );
 
-    TEST_CHECK(Base::count == 2);
+    CHECK(Base::count == 2);
 
     DOSTRING(L,
         "take_ownership(x)\n"
@@ -157,7 +157,7 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 2);
+    CHECK(Base::count == 2);
 
 	luabind_delete(adopted);
 
@@ -166,7 +166,7 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 
     DOSTRING(L,
         "x = Derived()\n"
@@ -181,5 +181,5 @@ void test_main(lua_State* L)
         "collectgarbage('collect')\n"
     );
 
-    TEST_CHECK(Base::count == 0);
+    CHECK(Base::count == 0);
 }

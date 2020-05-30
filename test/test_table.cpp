@@ -6,15 +6,15 @@
 
 void f(luabind::table<> const& x)
 {
-    TEST_CHECK(luabind::type(x) == LUA_TTABLE);
+    CHECK(luabind::type(x) == LUA_TTABLE);
 }
 
 void g(luabind::table<luabind::argument> const& x)
 {
-    TEST_CHECK(luabind::type(x) == LUA_TTABLE);
+    CHECK(luabind::type(x) == LUA_TTABLE);
 }
 
-void test_main(lua_State* L)
+TEST_CASE("table")
 {
     using namespace luabind;
 

@@ -4,7 +4,7 @@
 #include "test.hpp"
 #include <luabind/luabind.hpp>
 
-void test_main(lua_State* L)
+TEST_CASE("unchecked")
 {
 	DOSTRING(L,
 		"class 'Foo'\n"
@@ -17,7 +17,7 @@ void test_main(lua_State* L)
 		"attempt to index a boolean value"
 	);
 
-	DOSTRING(L, "foo = Foo()");
+	DOSTRING(L,"foo = Foo()");
 
 	DOSTRING_EXPECTED(L, "getmetatable(foo).__index()",
 		"[string \"getmetatable(foo).__index()\"]:1: "

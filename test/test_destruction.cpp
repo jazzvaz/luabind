@@ -9,7 +9,7 @@ struct cpp_class
     void method() {}
 };
 
-void test_main(lua_State* L)
+TEST_CASE("destruction")
 {
     using namespace luabind;
     module(L)
@@ -26,5 +26,6 @@ void test_main(lua_State* L)
         "t.cpp_class = cpp_class()\n"
         "t = nil\n"
         "collectgarbage()\n",
-        "error in __gc metamethod ([string \"t = { }...\"]:3: attempt to index field 'cpp_class' (a userdata value))")
+        "error in __gc metamethod ([string \"t = { }...\"]:3: attempt to index field 'cpp_class' (a userdata value))"
+	);
 }

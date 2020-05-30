@@ -128,6 +128,7 @@ set(LUABIND_SRC
 	src/link_compatibility.cpp
 	src/lua_extensions.cpp
 	src/memory.cpp
+    src/nil_conversion.cpp
 	src/object_rep.cpp
 	src/open.cpp
 	src/operator.cpp
@@ -147,6 +148,13 @@ if(LUABIND_BUILD_SHARED)
     set_property(TARGET luabind APPEND PROPERTY PREFIX "")
 else()
     add_library(luabind STATIC)
+endif()
+
+if(WIN32)
+    add_custom_command(
+        TARGET luabind POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CONAN_BIN_DIRS_LUAJIT}/lua.dll" $<TARGET_FILE_DIR:luabind>
+    )
 endif()
 
 set_target_properties(luabind PROPERTIES
@@ -170,15 +178,7 @@ target_sources(luabind PRIVATE
     ${LUABIND_INC_USER_POLICIES}
     ${LUABIND_SRC}
 )
-conan_add_remote(
-    NAME charliejiang
-    URL https://api.bintray.com/conan/charliejiang/conan
-)
-conan_cmake_run(REQUIRES
-    luajit/2.0.5@charliejiang/stable
-    BASIC_SETUP CMAKE_TARGETS
-    BUILD missing
-)
+
 set(LUABIND_LIBS
     CONAN_PKG::luajit
 )

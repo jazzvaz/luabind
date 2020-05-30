@@ -21,7 +21,7 @@ struct Bar
     std::shared_ptr<Foo> m_foo;
 };
 
-void test_main(lua_State* L)
+TEST_CASE("smart_ptr_attributes")
 {
     using namespace luabind;
 

@@ -51,7 +51,7 @@ COUNTER_GUARD(B);
 COUNTER_GUARD(test_implicit);
 COUNTER_GUARD(char_pointer_convertable);
 
-void test_main(lua_State* L)
+TEST_CASE("implicit_cast")
 {
 	using namespace luabind;
 
@@ -88,23 +88,23 @@ void test_main(lua_State* L)
 		def("f", &f)
 		];
 
-	DOSTRING(L, "a = A()");
-	DOSTRING(L, "b = B()");
-	DOSTRING(L, "t = test()");
+	DOSTRING(L,"a = A()");
+	DOSTRING(L,"b = B()");
+	DOSTRING(L,"t = test()");
 
-	DOSTRING(L, "assert(t:f(a) == 'f(A*)')");
-	DOSTRING(L, "assert(t:f(b) == 'f(B*)')");
+	DOSTRING(L,"assert(t:f(a) == 'f(A*)')");
+	DOSTRING(L,"assert(t:f(b) == 'f(B*)')");
 
 	DOSTRING(L,
 		"a = char_ptr()\n"
 		"func(a)");
 
-	DOSTRING(L, "assert(LBENUM.VAL1 == 1)");
-	DOSTRING(L, "assert(LBENUM.VAL2 == 2)");
-	DOSTRING(L, "assert(enum_by_val(LBENUM.VAL1) == LBENUM.VAL1)");
-	DOSTRING(L, "assert(enum_by_val(LBENUM.VAL2) == LBENUM.VAL2)");
-	DOSTRING(L, "assert(enum_by_const_ref(LBENUM.VAL1) == LBENUM.VAL1)");
-	DOSTRING(L, "assert(enum_by_const_ref(LBENUM.VAL2) == LBENUM.VAL2)");
+	DOSTRING(L,"assert(LBENUM.VAL1 == 1)");
+	DOSTRING(L,"assert(LBENUM.VAL2 == 2)");
+	DOSTRING(L,"assert(enum_by_val(LBENUM.VAL1) == LBENUM.VAL1)");
+	DOSTRING(L,"assert(enum_by_val(LBENUM.VAL2) == LBENUM.VAL2)");
+	DOSTRING(L,"assert(enum_by_const_ref(LBENUM.VAL1) == LBENUM.VAL1)");
+	DOSTRING(L,"assert(enum_by_const_ref(LBENUM.VAL2) == LBENUM.VAL2)");
 
 	DOSTRING(L,
 		"a = A()\n"

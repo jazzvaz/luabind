@@ -10,14 +10,10 @@
 #include <luabind/discard_result_policy.hpp>
 #include <luabind/dependency_policy.hpp>
 
-
 struct test_copy {};
-
-
 struct secret_type {};
 
 secret_type sec_;
-
 
 struct policies_test_class
 {
@@ -116,7 +112,7 @@ std::function<int(int, int)> function_test2()
 	return std::function<int(int, int)>(function_test2_impl);
 }
 
-void test_main(lua_State* L)
+TEST_CASE("policies")
 {
 	using namespace luabind;
 
@@ -156,15 +152,15 @@ void test_main(lua_State* L)
 	];
 
 	// test copy
-	DOSTRING(L,	"a = secret()\n");
+	DOSTRING(L,"a = secret()\n");
 
-	TEST_CHECK(policies_test_class::count == 1);
+	CHECK(policies_test_class::count == 1);
 
-	DOSTRING(L, "a = copy_val()\n");
-	TEST_CHECK(policies_test_class::count == 2);
+	DOSTRING(L,"a = copy_val()\n");
+	CHECK(policies_test_class::count == 2);
 
-	DOSTRING(L, "b = copy_val_const()\n");
-	TEST_CHECK(policies_test_class::count == 3);
+	DOSTRING(L,"b = copy_val_const()\n");
+	CHECK(policies_test_class::count == 3);
 
 	DOSTRING(L,
 		"a = nil\n"
@@ -172,7 +168,7 @@ void test_main(lua_State* L)
 		"collectgarbage()\n");
 
 	// only the global variable left here
-	TEST_CHECK(policies_test_class::count == 1);
+	CHECK(policies_test_class::count == 1);
 
 	// out_value
 	DOSTRING(L,
@@ -188,17 +184,17 @@ void test_main(lua_State* L)
 
 	// This one goes wrong
 	// a is kept alive as long as b is alive
-	TEST_CHECK(policies_test_class::count == 2);
+	CHECK(policies_test_class::count == 2);
 
 	DOSTRING(L,
 		"b = nil\n"
 		"collectgarbage()");
 
-	TEST_CHECK(policies_test_class::count == 1);
+	CHECK(policies_test_class::count == 1);
 
-	DOSTRING(L, "a = test()");
+	DOSTRING(L,"a = test()");
 
-	TEST_CHECK(policies_test_class::count == 2);
+	CHECK(policies_test_class::count == 2);
 
 	DOSTRING(L,
 		"b = a:internal_ref()\n"
@@ -206,7 +202,7 @@ void test_main(lua_State* L)
 		"collectgarbage()");
 
 	// a is kept alive as long as b is alive
-	TEST_CHECK(policies_test_class::count == 2);
+	CHECK(policies_test_class::count == 2);
 
 	// two gc-cycles because dependency-table won't be collected in the
 	// same cycle as the object_rep
@@ -215,33 +211,33 @@ void test_main(lua_State* L)
 		"collectgarbage()\n"
 		"collectgarbage()");
 
-	TEST_CHECK(policies_test_class::count == 1);
+	CHECK(policies_test_class::count == 1);
 
 	// adopt
-	DOSTRING(L, "a = test()");
+	DOSTRING(L,"a = test()");
 
-	TEST_CHECK(policies_test_class::count == 2);
+	CHECK(policies_test_class::count == 2);
 
-	DOSTRING(L, "b = a:make('tjosan')");
-	DOSTRING(L, "assert(a:member_pure_out_val(3) == 6)");
-	DOSTRING(L, "assert(a:member_out_val(3,2) == 6)");
-	DOSTRING(L, "a:member_secret()");
+	DOSTRING(L,"b = a:make('tjosan')");
+	DOSTRING(L,"assert(a:member_pure_out_val(3) == 6)");
+	DOSTRING(L,"assert(a:member_out_val(3,2) == 6)");
+	DOSTRING(L,"a:member_secret()");
 
 	// make instantiated a new policies_test_class
-	TEST_CHECK(policies_test_class::count == 3);
+	CHECK(policies_test_class::count == 3);
 
-	DOSTRING(L, "a:f(b)\n");
+	DOSTRING(L,"a:f(b)\n");
 
 	// b was adopted by c++ and deleted the object
-	TEST_CHECK(policies_test_class::count == 2);
+	CHECK(policies_test_class::count == 2);
 
-	DOSTRING(L, "a = nil\n"
+	DOSTRING(L,"a = nil\n"
 		"collectgarbage()");
 
-	TEST_CHECK(policies_test_class::count == 1);
+	CHECK(policies_test_class::count == 1);
 
 	// adopt with wrappers
-	DOSTRING(L, "mi1():add(mi2())");
+	DOSTRING(L,"mi1():add(mi2())");
 
 	// function converter
 	DOSTRING(L,

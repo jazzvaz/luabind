@@ -54,7 +54,7 @@ X get(int value)
 	return X(value);
 }
 
-void test_main(lua_State* L)
+TEST_CASE("user_defined_converter")
 {
 	using namespace luabind;
 

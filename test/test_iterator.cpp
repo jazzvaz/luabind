@@ -73,7 +73,7 @@ struct cls
     container iterable;
 };
 
-void test_main(lua_State* L)
+TEST_CASE("iterator")
 {
     using namespace luabind;
 

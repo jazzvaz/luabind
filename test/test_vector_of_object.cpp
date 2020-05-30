@@ -7,7 +7,7 @@
 
 using namespace luabind;
 
-void test_main(lua_State* L)
+TEST_CASE("vector_of_object")
 {
     std::vector<object> v;
     v.push_back(object(L, 0));

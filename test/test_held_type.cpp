@@ -107,7 +107,7 @@ derived tester13()
 	return d;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("held_type")
 {
     std::shared_ptr<base> base_ptr(new base());
 
@@ -141,31 +141,31 @@ void test_main(lua_State* L)
     object g = globals(L);
     g["ptr"] = base_ptr;
 
-    DOSTRING(L, "tester(ptr)");
-    TEST_CHECK(feedback == 1);
+    DOSTRING(L,"tester(ptr)");
+    CHECK(feedback == 1);
 
-    DOSTRING(L, 
+    DOSTRING(L,
         "a = base()\n"
         "b = derived()\n");
 
 #if LUABIND_VERSION != 900
-    DOSTRING(L, "tester(b)");
-    TEST_CHECK(feedback == 2);
+    DOSTRING(L,"tester(b)");
+    CHECK(feedback == 2);
 #endif
 
-    DOSTRING(L, "tester(a)");
-    TEST_CHECK(feedback == 1);
+    DOSTRING(L,"tester(a)");
+    CHECK(feedback == 1);
 
-    DOSTRING(L, "tester2(b)");
-    TEST_CHECK(feedback == 3);
+    DOSTRING(L,"tester2(b)");
+    CHECK(feedback == 3);
 
     feedback = 0;
 
-    DOSTRING(L, "tester10(b)");
-    TEST_CHECK(feedback == 10);
+    DOSTRING(L,"tester10(b)");
+    CHECK(feedback == 10);
 
 /* this test is messed up, shared_ptr<derived> isn't even registered
-	DOSTRING_EXPECTED(
+	DOSTRING_EXPECTED(L,
 		L
 		, "tester12(b)"
 		, "no match for function call 'tester12' with the parameters (derived)\n"
@@ -174,11 +174,11 @@ void test_main(lua_State* L)
 */
 #if LUABIND_VERSION != 900
 	object nil = globals(L)["non_existing_variable_is_nil"];
-	TEST_CHECK(object_cast<boost::shared_ptr<base> >(nil).get() == 0);
-	TEST_CHECK(object_cast<boost::shared_ptr<const base> >(nil).get() == 0);
+	CHECK(object_cast<boost::shared_ptr<base> >(nil).get() == 0);
+	CHECK(object_cast<boost::shared_ptr<const base> >(nil).get() == 0);
 #endif
 
-    DOSTRING(L, "tester13()");
-    TEST_CHECK(feedback == 13);
+    DOSTRING(L,"tester13()");
+    CHECK(feedback == 13);
 }
 

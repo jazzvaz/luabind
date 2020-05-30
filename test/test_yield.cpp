@@ -28,7 +28,7 @@ void f() {}
 
 COUNTER_GUARD(test_class);
 
-void test_main(lua_State* L)
+TEST_CASE("yield")
 {
 	using namespace luabind;
 
@@ -46,7 +46,7 @@ void test_main(lua_State* L)
 
 	{
 		lua_State* thread = lua_newthread(L);
-        TEST_CHECK(resume_function<int>(thread, "h") == 4);
+        CHECK(resume_function<int>(thread, "h") == 4);
         lua_pop(L, 1); // pop thread
     }
 
@@ -62,10 +62,10 @@ void test_main(lua_State* L)
 	{
         lua_State* thread = lua_newthread(L);
 
-        TEST_CHECK(resume_function<int>(thread, "g", "foobar") == 5);
+        CHECK(resume_function<int>(thread, "g", "foobar") == 5);
 		for (int i = 1; i < 10; ++i)
 		{
-			TEST_CHECK(resume<int>(thread, i + 4) == 5);
+			CHECK(resume<int>(thread, i + 4) == 5);
 		}
 		lua_pop(L, 1); // pop thread
 	}
@@ -75,10 +75,10 @@ void test_main(lua_State* L)
         lua_State* thread = lua_newthread(L);
 		object g = globals(thread)["g"];
 
-        TEST_CHECK(resume_function<int>(g, "foobar") == 5);
+        CHECK(resume_function<int>(g, "foobar") == 5);
 		for (int i = 1; i < 10; ++i)
 		{
-			TEST_CHECK(resume<int>(thread, i + 4) == 5);
+			CHECK(resume<int>(thread, i + 4) == 5);
 		}
 		lua_pop(L, 1); // pop thread
 	}

@@ -67,7 +67,7 @@ struct attribute_holder : counted_type<attribute_holder>
     borrowed_attribute* borrowed;
 };
 
-void test_main(lua_State* L)
+TEST_CASE("attributes")
 {
     using namespace luabind;
 
@@ -104,17 +104,16 @@ void test_main(lua_State* L)
 
         class_<attribute_holder>("attribute_holder")
             .def(constructor<borrowed_attribute*>())
-            .def_readwrite(
-                "borrowed", &attribute_holder::borrowed, no_dependency())
+            .def_readwrite("borrowed", &attribute_holder::borrowed, policy::no_dependency())
     ];
 
-	DOSTRING(L, "test = property()\n");
+	DOSTRING(L,"test = property()\n");
 
 	DOSTRING(L,
 		"test.a = 5\n"
 		"assert(test.a == 5)");
 
-	DOSTRING(L, "assert(test.o == 6)");
+	DOSTRING(L,"assert(test.o == 6)");
 
 	DOSTRING(L,
 		"test.new_member = 'foo'\n"
@@ -140,11 +139,11 @@ void test_main(lua_State* L)
         "test.b = 3\n"
         "assert(test.b == 3)\n");
 
-	DOSTRING(L, "test.c.a = 1\n"
+	DOSTRING(L,"test.c.a = 1\n"
 		"assert(test.c.a == 1)\n"
 		"assert(test.c_ref.a == 1)");
 
-	DOSTRING(L, "t1 = property()\n"
+	DOSTRING(L,"t1 = property()\n"
 		"c = t1.c\n"
 		"c2 = t1.c_ref\n"
 		"c.a = 1\n"
@@ -168,8 +167,8 @@ void test_main(lua_State* L)
         "holder = attribute_holder(borrowed)\n"
     );
 
-    TEST_CHECK(borrowed_attribute::count == 1);
-    TEST_CHECK(attribute_holder::count == 1);
+    CHECK(borrowed_attribute::count == 1);
+    CHECK(attribute_holder::count == 1);
 
     DOSTRING(L,
         "holder.borrowed = borrowed\n"
@@ -178,7 +177,6 @@ void test_main(lua_State* L)
         "collectgarbage()\n"
     );
 
-    TEST_CHECK(borrowed_attribute::count == 1);
-    TEST_CHECK(attribute_holder::count == 0);
+    CHECK(borrowed_attribute::count == 1);
+    CHECK(attribute_holder::count == 0);
 }
-

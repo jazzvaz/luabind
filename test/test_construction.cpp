@@ -48,7 +48,7 @@ COUNTER_GUARD(base1);
 COUNTER_GUARD(deriv_1);
 COUNTER_GUARD(deriv_2);
 
-void test_main(lua_State* L)
+TEST_CASE("construction")
 {
 	using namespace luabind;
 
@@ -83,11 +83,11 @@ void test_main(lua_State* L)
 	DOSTRING(L,
 		"b = B(6)\n"
 		"assert(b.test2 == 6)\n");
-	DOSTRING(L, "assert(b.test == 6)");
+	DOSTRING(L,"assert(b.test == 6)");
 
 	DOSTRING(L,
 		"b2 = B()\n"
 		"assert(b2.test2 == 3)\n");
-	DOSTRING(L, "assert(b2.test == 2)");
+	DOSTRING(L,"assert(b2.test == 2)");
 }
 

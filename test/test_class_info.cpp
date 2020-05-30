@@ -28,7 +28,7 @@ unnamed make_unnamed()
 	return unnamed();
 }
 
-void test_main(lua_State* L)
+TEST_CASE("class_info")
 {
     using namespace luabind;
 
@@ -95,6 +95,6 @@ void test_main(lua_State* L)
 		"s = tostring(X)\n"
 		"assert(s:match('^class X (.+)$'))"
 	);
-	DOSTRING(L, "print(X)");
+	DOSTRING(L,"print(X)");
 }
 

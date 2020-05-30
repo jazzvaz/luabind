@@ -39,7 +39,7 @@ indexable* get()
 	return &instance;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("index")
 {
 	using namespace luabind;
 
@@ -52,27 +52,27 @@ void test_main(lua_State* L)
 
 		def("get", &get)
 	];
-	DOSTRING(L, "x = get()\n");
-	TEST_CHECK(instance.val1 == 1);
-	TEST_CHECK(instance.val2 == 2);
-	TEST_CHECK(instance.prop == 0);
+	DOSTRING(L,"x = get()\n");
+	CHECK(instance.val1 == 1);
+	CHECK(instance.val2 == 2);
+	CHECK(instance.prop == 0);
 
-	DOSTRING(L, "assert(x.a == 1)\n");
-	DOSTRING(L, "assert(x.b == 2)\n");
+	DOSTRING(L,"assert(x.a == 1)\n");
+	DOSTRING(L,"assert(x.b == 2)\n");
 
-	DOSTRING(L, "x.a = 5\n");
-	TEST_CHECK(instance.val1 == 5);
-	TEST_CHECK(instance.val2 == 2);
-	TEST_CHECK(instance.prop == 0);
+	DOSTRING(L,"x.a = 5\n");
+	CHECK(instance.val1 == 5);
+	CHECK(instance.val2 == 2);
+	CHECK(instance.prop == 0);
 
-	DOSTRING(L, "x.b = 10\n");
-	TEST_CHECK(instance.val1 == 5);
-	TEST_CHECK(instance.val2 == 10);
-	TEST_CHECK(instance.prop == 0);
+	DOSTRING(L,"x.b = 10\n");
+	CHECK(instance.val1 == 5);
+	CHECK(instance.val2 == 10);
+	CHECK(instance.prop == 0);
 
 	// Check if properties work
-	DOSTRING(L, "x.prop = 20\n");
-	TEST_CHECK(instance.val1 == 5);
-	TEST_CHECK(instance.val2 == 10);
-	TEST_CHECK(instance.prop == 20);
+	DOSTRING(L,"x.prop = 20\n");
+	CHECK(instance.val1 == 5);
+	CHECK(instance.val2 == 10);
+	CHECK(instance.prop == 20);
 }

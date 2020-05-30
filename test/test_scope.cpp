@@ -42,7 +42,7 @@ COUNTER_GUARD(test_class);
 COUNTER_GUARD(test_class2);
 COUNTER_GUARD(test_class_unnamed);
 
-void test_main(lua_State* L)
+TEST_CASE("scope")
 {
 	using namespace luabind;
 
@@ -107,26 +107,26 @@ void test_main(lua_State* L)
 		]
 	];
 
-	DOSTRING(L, "assert(test.f() == 1)");
-	DOSTRING(L, "assert(test.f(3) == 2)");
-	DOSTRING(L, "assert(test.test_class.inner_fun() == 1)");
+	DOSTRING(L,"assert(test.f() == 1)");
+	DOSTRING(L,"assert(test.f(3) == 2)");
+	DOSTRING(L,"assert(test.test_class.inner_fun() == 1)");
     DOSTRING(L,
 		"a = test.test_class()\n"
 		"assert(a.test == 1)");
-	DOSTRING(L, "assert(a.inner_fun2() == 1)"); // free function
+	DOSTRING(L,"assert(a.inner_fun2() == 1)"); // free function
     DOSTRING(L,
 		"b = test.test_class.val2\n"
 		"assert(b == 2)");
-	DOSTRING(L, "assert(test.inner.g() == 4)");
-	DOSTRING(L, "assert(test.inner.g(7) == 5)");
-	DOSTRING(L, "assert(test.inner.f(4) == 3)");
-	DOSTRING(L, "assert(test.inner.h() == 6)");
+	DOSTRING(L,"assert(test.inner.g() == 4)");
+	DOSTRING(L,"assert(test.inner.g(7) == 5)");
+	DOSTRING(L,"assert(test.inner.f(4) == 3)");
+	DOSTRING(L,"assert(test.inner.h() == 6)");
 
 	globals(L)["test_object"] = test_obj;
-	DOSTRING(L, "assert(not inner)");
-	DOSTRING(L, "assert(test_object.inner.h() == 6)");
+	DOSTRING(L,"assert(not inner)");
+	DOSTRING(L,"assert(test_object.inner.h() == 6)");
 
-	DOSTRING(L, "assert(not test_class_unnamed)");
+	DOSTRING(L,"assert(not test_class_unnamed)");
 	DOSTRING(L,
 		"u = test.create_unnamed()\n"
 		"assert(u:f() == 42)");

@@ -37,12 +37,12 @@ base* create_base()
 
 void test_value_converter(const luabind::string str)
 {
-    TEST_CHECK(str == "converted string");
+    CHECK(str == "converted string");
 }
 
 void test_pointer_converter(const char* const str)
 {
-    TEST_CHECK(std::strcmp(str, "converted string") == 0);
+    CHECK(std::strcmp(str, "converted string") == 0);
 }
 
 struct copy_me
@@ -59,14 +59,14 @@ int function_should_never_be_called(lua_State* L)
     return 1;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("free_functions")
 {
     using namespace luabind;
 
     lua_pushcclosure(L, &function_should_never_be_called, 0);
     lua_setglobal(L, "f");
 
-    DOSTRING(L, "assert(f() == 10)");
+    DOSTRING(L,"assert(f() == 10)");
 
     module(L)
     [
@@ -92,31 +92,31 @@ void test_main(lua_State* L)
         "e = create()\n"
         "assert(e:f() == 5)");
 
-    DOSTRING(L, "assert(f(7) == 8)");
+    DOSTRING(L,"assert(f(7) == 8)");
 
-    DOSTRING(L, "assert(f(3, 9) == 12)");
+    DOSTRING(L,"assert(f(3, 9) == 12)");
 
-//    DOSTRING(L, "set_functor(function(x) return x * 10 end)");
+//    DOSTRING(L,"set_functor(function(x) return x * 10 end)");
 
-//    TEST_CHECK(functor_test(20) == 200);
+//    CHECK(functor_test(20) == 200);
 
-//    DOSTRING(L, "set_functor(nil)");
+//    DOSTRING(L,"set_functor(nil)");
 
-    DOSTRING(L, "function lua_create() return create() end");
+    DOSTRING(L,"function lua_create() return create() end");
     base* ptr = call_function<base*, policy::adopt<0>>(L, "lua_create");
     luabind_delete(ptr);
 
 	int Arg0=1;
-	TEST_CHECK(call_function<int>(L, "f", Arg0)==2);
+	CHECK(call_function<int>(L, "f", Arg0)==2);
 
 	luabind::string Arg1="lua means moon";
-	TEST_CHECK(call_function<int>(L, "string_length", Arg1)==14);
+	CHECK(call_function<int>(L, "string_length", Arg1)==14);
 
 	double Arg2=2;
-	TEST_CHECK(call_function<int>(L, "f", Arg2)==3);
+	CHECK(call_function<int>(L, "f", Arg2)==3);
 	
-    DOSTRING(L, "test_value_converter('converted string')");
-    DOSTRING(L, "test_pointer_converter('converted string')");
+    DOSTRING(L,"test_value_converter('converted string')");
+    DOSTRING(L,"test_pointer_converter('converted string')");
 
     DOSTRING_EXPECTED(L, "f('incorrect', 'parameters')",
         "No matching overload found, candidates:\n"
@@ -125,26 +125,18 @@ void test_main(lua_State* L)
 		"Passed arguments [2]: string ('incorrect'), string ('parameters')\n");
 
 
-	DOSTRING(L, "function failing_fun() error('expected error message') end");
+	DOSTRING(L,"function failing_fun() error('expected error message') end");
 
-    try
-    {
-        call_function<void>(L, "failing_fun");
-        TEST_ERROR("function didn't fail when it was expected to");
-    }
-    catch(luabind::error const& e)
-    {
-        if (luabind::string("[string \"function failing_fun() error('expected error ...\"]:1: expected error message") != e.what())
-        if (luabind::string("[string \"function failing_fun() error('expected "
+	char const* expected_msg =
 #if LUA_VERSION_NUM >= 502
-            "error ..."
+	"[string \"function failing_fun() error('expected error ...\"]:1: expected error message";
 #else
-            "erro..."
+	"[string \"function failing_fun() error('expected erro...\"]:1: expected error message";
 #endif
-            "\"]:1: expected error message") != e.what())
-        {
-            TEST_ERROR("function failed with unexpected error message");
-        }
-    }
+
+	CHECK_THROWS_WITH_AS(
+		call_function<void>(L, "failing_fun"),
+		expected_msg,
+		luabind::error const&);
 }
 

@@ -1,10 +1,9 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2005 The Luabind Authors
 
+#define DOCTEST_CONFIG_IMPLEMENT
 #include "test.hpp"
-
 #include <luabind/lua_include.hpp>
-
 #ifndef LUABIND_CPLUSPLUS_LUA
 extern "C"
 {
@@ -14,27 +13,31 @@ extern "C"
 }
 #endif
 
-#include <luabind/open.hpp>             // for open
+#include <luabind/open.hpp> // for open
+#include <cstring> // for strlen
+#include <exception> // for exception
+#include <iostream> // for operator<<, basic_ostream, etc
+#include <string> // for string
 
-#include <cstring>                      // for strlen
-#include <exception>                    // for exception
-#include <iostream>                     // for operator<<, basic_ostream, etc
-#include <string>                       // for string
+#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+# define LUABIND_TEST_DEMANGLE_TYPENAMES
+# include <cxxabi.h>
+#endif
 
-void test_main(lua_State*);
-
-struct lua_state
+std::string demangle(std::type_info const& id)
 {
-	lua_state();
-	~lua_state();
-
-	operator lua_State*() const;
-	void check() const;
-
-private:
-	lua_State* m_state;
-	int m_top;
-};
+#ifdef LUABIND_TEST_DEMANGLE_TYPENAMES
+	int status;
+	char* buf = abi::__cxa_demangle(id.name(), 0, 0, &status);
+	if (buf)
+	{
+		std::string name(buf);
+		std::free(buf);
+		return name;
+	}
+#endif
+	return id.name();
+}
 
 #ifdef LUABIND_CUSTOM_ALLOCATOR
 #include <algorithm>
@@ -42,7 +45,7 @@ private:
 
 struct la_tag
 {
-	static const char ref_data[16];
+	inline static const char ref_data[16] = " [luabind_mem] ";
 	char data[16];
 
 	void init()
@@ -56,9 +59,7 @@ struct la_tag
 	}
 };
 
-const char la_tag::ref_data[16] = " [luabind_mem] ";
-
-static void* __cdecl luabind_allocator(void* context, const void* pointer, size_t const size)
+static void* luabind_allocator(void* context, const void* pointer, size_t const size)
 {
 	if (!size)
 	{
@@ -83,9 +84,11 @@ static void* __cdecl luabind_allocator(void* context, const void* pointer, size_
 }
 #endif
 
-lua_state::lua_state()
-	: m_state(luaL_newstate())
+void lua_state::initialize()
 {
+	if (m_state)
+		return;
+	m_state = luaL_newstate();
 #ifdef LUABIND_CUSTOM_ALLOCATOR
 	luabind::allocator = &luabind_allocator;
 	luabind::allocator_context = nullptr;
@@ -102,77 +105,47 @@ lua_state::lua_state()
 	luabind::open(m_state);
 }
 
-lua_state::~lua_state()
-{
-	lua_close(m_state);
-}
+lua_state::~lua_state() { lua_close(m_state); }
 
 void lua_state::check() const
-{
-	TEST_CHECK(lua_gettop(m_state) == m_top);
-}
+{ REQUIRE(lua_gettop(m_state) == m_top); }
 
-lua_state::operator lua_State*() const
-{
-	return m_state;
-}
+static int pcall_handler(lua_State*)
+{ return 1; }
 
-int pcall_handler(lua_State* /*L*/)
+void dostring(lua_State* L, char const* str)
 {
-	return 1;
-}
-
-void dostring(lua_State* state, char const* str)
-{
-	lua_pushcclosure(state, &pcall_handler, 0);
-
-	if(luaL_loadbuffer(state, str, std::strlen(str), str))
+	lua_pushcclosure(L, &pcall_handler, 0);
+	if (luaL_loadbuffer(L, str, std::strlen(str), str))
 	{
-		luabind::string err(lua_tostring(state, -1));
-		lua_pop(state, 2);
-		throw err;
+		std::string err(lua_tostring(L, -1));
+		lua_pop(L, 2);
+		throw std::runtime_error(err);
 	}
-
-	if(lua_pcall(state, 0, 0, -2))
+	if (lua_pcall(L, 0, 0, -2))
 	{
-		luabind::string err(lua_tostring(state, -1));
-		lua_pop(state, 2);
-		throw err;
+		std::string err(lua_tostring(L, -1));
+		lua_pop(L, 2);
+		throw std::runtime_error(err);
 	}
-
-	lua_pop(state, 1);
+	lua_pop(L, 1);
 }
 
-bool tests_failure = false;
-
-void report_failure(char const* err, char const* file, int line)
+int main(int argc, char** argv)
 {
-	std::cout << file << ":" << line << "\"" << err << "\"\n";
-	tests_failure = true;
+	doctest::Context context;
+	context.setOption("abort-after", 5);
+	context.setOption("order-by", "name");
+	context.applyCommandLine(argc, argv);
+	context.setOption("no-breaks", true);
+	context.setAsDefaultForAssertsOutOfTestCases();
+	int ret = 0;
+	{
+		lua_state state;
+		state.initialize();
+		L = state;
+		ret = context.run();
+		state.check();
+	}
+	return ret;
 }
-
-int main()
-{
-	lua_state L;
-#ifndef LUABIND_NO_EXCEPTIONS
-	try
-#endif
-	{
-		test_main(L);
-		L.check();
-		return tests_failure ? 1 : 0;
-	}
-#ifndef LUABIND_NO_EXCEPTIONS
-	catch(std::exception const& e)
-	{
-		std::cerr << "Terminated with exception: \"" << e.what() << "\"\n";
-		return 1;
-	}
-	catch(...)
-	{
-		std::cerr << "Terminated with unknown exception\n";
-		return 1;
-	}
-#endif
-}
-

@@ -4,7 +4,7 @@
 #include "test.hpp"
 #include <luabind/luabind.hpp>
 
-void test_main(lua_State* L)
+TEST_CASE("set_instance_value")
 {
     DOSTRING(L,
         "class 'X'\n"

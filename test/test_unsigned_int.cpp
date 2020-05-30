@@ -4,15 +4,15 @@
 #include "test.hpp"
 #include <luabind/luabind.hpp>
 
-void test_main(lua_State* L)
+TEST_CASE("unsigned int")
 {
-    DOSTRING(L, "x = 4294967295");
+    DOSTRING(L,"x = 4294967295");
 
     unsigned int x = luabind::object_cast<unsigned int>(
         luabind::globals(L)["x"]);
 
     unsigned int y = 4294967295UL;
 
-    TEST_CHECK(x == y);
+    CHECK(x == y);
 }
 

@@ -21,7 +21,7 @@ struct Foo
 
 std::size_t Foo::count = 0;
 
-void test_main(lua_State* L)
+TEST_CASE("super_leak")
 {
     using namespace luabind;
 

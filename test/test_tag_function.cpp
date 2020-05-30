@@ -19,7 +19,7 @@ struct X
     }
 };
 
-void test_main(lua_State* L)
+TEST_CASE("tag_function")
 {
     using namespace luabind;
 	

@@ -13,8 +13,8 @@ int f(int x)
 
 static void loader(lua_State* L, char const* modname)
 {
-	TEST_CHECK(modname);
-	TEST_CHECK(modname && !std::strcmp(modname, "testmod"));
+	REQUIRE(modname);
+	CHECK(!std::strcmp(modname, "testmod"));
     using namespace luabind;
     module(L)
     [
@@ -24,8 +24,8 @@ static void loader(lua_State* L, char const* modname)
 
 static luabind::object local_loader(lua_State* L, char const* modname)
 {
-	TEST_CHECK(modname);
-	TEST_CHECK(modname && !std::strcmp(modname, "testmod_l"));
+	REQUIRE(modname);
+	CHECK(!std::strcmp(modname, "testmod_l"));
 	using namespace luabind;
 	object modtable = newtable(L);
 	module(modtable)
@@ -35,31 +35,25 @@ static luabind::object local_loader(lua_State* L, char const* modname)
 	return modtable;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("package_preload")
 {
     using namespace luabind;
     
     set_package_preload(L, "testmod", &loader);
-	DOSTRING(L, "assert(require('testmod') == true)");
+	DOSTRING(L,"assert(require('testmod') == true)");
     
-    DOSTRING(L, "assert(f(7) == 8)");
+    DOSTRING(L,"assert(f(7) == 8)");
 
 	set_package_preload(L, "testmod_l", &local_loader);
-	DOSTRING(L, "mod = require('testmod_l')");
+	DOSTRING(L,"mod = require('testmod_l')");
 	DOSTRING(L,
 		"assert(not testmod_l)\n" // No global should be created.
 		"assert(mod.f(41) == 42)\n"); // Module should be returned.
 
-	DOSTRING(L, "package.preload = nil");
-	try
-	{
-		set_package_preload(L, "failmod", &loader);
-	}
-	catch (luabind::error const& e)
-	{
-		TEST_CHECK(!std::strcmp("attempt to index a nil value", e.what()));
-		return;
-	}
-	TEST_ERROR("set_package_preload() should have thrown.");
+	DOSTRING(L,"package.preload = nil");
+	CHECK_THROWS_WITH_AS(
+		set_package_preload(L, "failmod", &loader),
+		"attempt to index a nil value",
+		luabind::error const&);
 }
 

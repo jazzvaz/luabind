@@ -4,7 +4,7 @@
 #include "test.hpp"
 #include <luabind/luabind.hpp>
 
-void test_main(lua_State* L)
+TEST_CASE("lambda")
 {
 	using namespace luabind;	
 	std::function<int(int)> func1([](int i) { return i+8; });
@@ -17,8 +17,8 @@ void test_main(lua_State* L)
 		def("make_function", [&]() { return func1; }),
 		def("make_lambda", [&]() { return lambda; })
     ];
-	DOSTRING(L, "assert(func1(2) == 10)");
-	DOSTRING(L, "assert(func2(2) == 16)");
+	DOSTRING(L,"assert(func1(2) == 10)");
+	DOSTRING(L,"assert(func2(2) == 16)");
 	DOSTRING(L,
 		"func = make_function()\n"
 		"assert(func(2) == 10)");

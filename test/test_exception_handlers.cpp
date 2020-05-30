@@ -35,7 +35,7 @@ void raise_derived()
     throw derived_std_exception();
 }
 
-void test_main(lua_State* L)
+TEST_CASE("exception_handlers")
 {
     using namespace luabind;
 

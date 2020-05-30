@@ -18,7 +18,7 @@ struct Y : X
     {}
 };
 
-void test_main(lua_State* L)
+TEST_CASE("shadow")
 {
     module(L) [
         class_<X>("X")

@@ -15,7 +15,7 @@ struct V
 struct W : V
 {};
 
-void test_main(lua_State* L)
+TEST_CASE("def_from_base")
 {
     using namespace luabind;
 

@@ -25,7 +25,7 @@ struct exception_thrower : counted_type<exception_thrower>
 
 COUNTER_GUARD(exception_thrower);
 
-void test_main(lua_State* L)
+TEST_CASE("exceptions")
 {
     using namespace luabind;
 
@@ -48,7 +48,7 @@ void test_main(lua_State* L)
     DOSTRING_EXPECTED(L, "a = throw(1)", "std::exception: 'exception description'");
     DOSTRING_EXPECTED(L, "a = throw(1,1)", "c-string: 'a string exception'");
     DOSTRING_EXPECTED(L, "a = throw(1,1,1)", "Unknown C++ exception");
-    DOSTRING(L, "a = throw()");
+    DOSTRING(L,"a = throw()");
     DOSTRING_EXPECTED(L, "a:f()", "std::exception: 'exception from a member function'");
     DOSTRING_EXPECTED(L, "a:g()", "c-string: 'a string exception'");
 
@@ -63,7 +63,7 @@ void test_main(lua_State* L)
 		"Passed arguments [3]: string ('incorrect'), string ('parameters'), string ('constructor')\n");
 
     const int end_count = ex::count;
-    TEST_CHECK( start_count == end_count );
+    CHECK( start_count == end_count );
 
 #endif
 }

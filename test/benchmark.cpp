@@ -1,6 +1,7 @@
 // Boost Software License http://www.boost.org/LICENSE_1_0.txt
 // Copyright (c) 2003 The Luabind Authors
 
+#include "test.hpp"
 #include <iostream>
 #include <ctime>
 
@@ -37,16 +38,13 @@ int f2(lua_State* L)
 }
 
 
-int main()
+TEST_CASE("benchmark")
 {
 	const int num_calls = 100000;
 	const int loops = 10;
 
 	using namespace luabind;
-
-	lua_State* L = luaL_newstate();
-	open(L);
-	
+		
     module(L)
     [
         class_<A>("A")
@@ -94,7 +92,5 @@ int main()
 	std::cout << "luabind:\t" << time1 * 1000000 / num_calls / loops << " microseconds per call\n"
 		<< "empty:\t" << time2 * 1000000 / num_calls / loops << " microseconds per call\n"
 		<< "diff:\t" << ((time1 - time2) * 1000000 / num_calls / loops) << " microseconds\n\n";
-
-	lua_close(L);
 }
 

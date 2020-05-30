@@ -4,46 +4,47 @@
 #include "test.hpp"
 #include <luabind/luabind.hpp>
 
-#define LUABIND_TEST_BUILTIN(type, value) \
-    default_converter<type>().to_lua_deferred(L, value); \
-    default_converter<type> CAT(cv, __LINE__); \
-    TEST_CHECK(CAT(cv, __LINE__).compute_score(L, -1) >= 0); \
-    TEST_CHECK(CAT(cv, __LINE__).to_cpp_deferred(L, -1) == value); \
-    lua_pop(L, 1)
-
-void test_main(lua_State* L)
+template <typename T>
+void test_converter(int value)
 {
-    using namespace luabind;
-
-    LUABIND_TEST_BUILTIN(int, 1);
-    LUABIND_TEST_BUILTIN(int, -1);
-    LUABIND_TEST_BUILTIN(unsigned int, 1);
-    LUABIND_TEST_BUILTIN(unsigned int, 2);
-
-    LUABIND_TEST_BUILTIN(short, 1);
-    LUABIND_TEST_BUILTIN(short, -1);
-    LUABIND_TEST_BUILTIN(unsigned short, 1);
-    LUABIND_TEST_BUILTIN(unsigned short, 2);
-
-    LUABIND_TEST_BUILTIN(long, 1);
-    LUABIND_TEST_BUILTIN(long, -1);
-    LUABIND_TEST_BUILTIN(unsigned long, 1);
-    LUABIND_TEST_BUILTIN(unsigned long, 2);
-
-    LUABIND_TEST_BUILTIN(char, 1);
-    LUABIND_TEST_BUILTIN(char, 2);
-    LUABIND_TEST_BUILTIN(unsigned char, 1);
-    LUABIND_TEST_BUILTIN(unsigned char, 2);
-    LUABIND_TEST_BUILTIN(signed char, -1);
-    LUABIND_TEST_BUILTIN(signed char, 1);
-
-    LUABIND_TEST_BUILTIN(float, 1.5);
-    LUABIND_TEST_BUILTIN(float, -1.5);
-
-    LUABIND_TEST_BUILTIN(double, 1.5);
-    LUABIND_TEST_BUILTIN(double, -1.5);
-
-    LUABIND_TEST_BUILTIN(bool, true);
-    LUABIND_TEST_BUILTIN(bool, false);
+	using namespace luabind;
+	default_converter<T>().to_lua_deferred(L, value);
+	default_converter<T> cv;
+	CHECK(cv.compute_score(L, -1) >= 0);
+	CHECK(cv.to_cpp_deferred(L, -1) == value);
+	lua_pop(L, 1);
 }
 
+TEST_CASE("builtin_converters")
+{
+	test_converter<int>(1);
+	test_converter<int>(-1);
+	test_converter<unsigned int>(1);
+	test_converter<unsigned int>(2);
+
+    test_converter<short>(1);
+    test_converter<short>(-1);
+    test_converter<unsigned short>(1);
+    test_converter<unsigned short>(2);
+
+    test_converter<long>(1);
+    test_converter<long>(-1);
+    test_converter<unsigned long>(1);
+    test_converter<unsigned long>(2);
+
+    test_converter<char>(1);
+    test_converter<char>(2);
+    test_converter<unsigned char>(1);
+    test_converter<unsigned char>(2);
+    test_converter<signed char>(-1);
+    test_converter<signed char>(1);
+
+    test_converter<float>(1.5);
+    test_converter<float>(-1.5);
+
+    test_converter<double>(1.5);
+    test_converter<double>(-1.5);
+
+    test_converter<bool>(true);
+    test_converter<bool>(false);
+}

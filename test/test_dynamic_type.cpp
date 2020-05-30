@@ -50,7 +50,7 @@ luabind::unique_ptr<Base> make_unregistered()
     return luabind::unique_ptr<Base>(luabind::luabind_new<Unregistered>());
 }
 
-void test_main(lua_State* L)
+TEST_CASE("dynamic_type")
 {
     using namespace luabind;
 

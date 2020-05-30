@@ -3,8 +3,10 @@
 
 cmake_minimum_required(VERSION 3.16)
 project(luabind)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-option(LUABIND_BUILD_TESTING "Build tests" OFF)
+option(LUABIND_HEADER_TEST "Compile-test header files" OFF)
+option(LUABIND_BUILD_TESTS "Build executable tests" OFF)
 option(LUABIND_BUILD_SHARED "Build shared library" ON)
 option(LUABIND_BUILD_EXAMPLES "Build examples" OFF)
 option(LUABIND_BUILD_DOC "Build documentation" OFF)
@@ -31,13 +33,31 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 include("${CMAKE_BINARY_DIR}/conan.cmake")
 
+if (WIN32)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
+endif()
+
+conan_add_remote(
+    NAME charliejiang
+    URL https://api.bintray.com/conan/charliejiang/conan
+)
+conan_cmake_run(
+    REQUIRES
+        luajit/2.0.5@charliejiang/stable
+        doctest/2.3.8
+    OPTIONS
+        luajit:shared=True
+    BASIC_SETUP CMAKE_TARGETS
+    BUILD missing
+)
+
 include(GNUInstallDirs)
+include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 
 include(luabind.cmake)
 
-if(LUABIND_BUILD_TESTING)
-    add_subdirectory(test)
-endif()
+add_subdirectory(test)
 
 if(LUABIND_BUILD_EXAMPLES)
     add_subdirectory(examples)

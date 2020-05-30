@@ -32,7 +32,7 @@ std::shared_ptr<base1> filter1(std::shared_ptr<base1> const& p)
     return p;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("back_reference")
 {
     module(L)
     [

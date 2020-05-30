@@ -147,7 +147,7 @@ Base* right(Right* p)
     return p;
 }
 
-void test_main(lua_State* L)
+TEST_CASE("virtual_inheritance")
 {
     using namespace luabind;
 

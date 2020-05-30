@@ -7,7 +7,7 @@
 
 static void f() {}
 
-void test_main(lua_State* L)
+TEST_CASE("function_overload_overflow")
 {
 	using namespace luabind;
 	module(L)
