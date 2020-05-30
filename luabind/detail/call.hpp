@@ -204,22 +204,23 @@ namespace luabind {
 			{
 				auto& converter = std::get<Index>(cvt);
 				using decorated_type = meta::get_t<decorated_list, Index>;
-				auto i = meta::get_v<stack_indices, Index>;
-				return converter.match(L, decorated_type(), i);
+				constexpr auto stackIndex = meta::get_v<stack_indices, Index>;
+				return converter.match(L, decorated_type(), stackIndex);
 			}
 
 			template <uint32_t... Indices>
 			static int match_args(lua_State* L, meta::index_list<Indices...>, converter_tuple& cvt)
 			{
-				return (match_arg<Indices-1>(L, cvt) + ... + 0);
+				return (match_arg<Indices>(L, cvt) + ... + 0);
 			}
 
-			static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f) {
+			static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f)
+			{
 				int const arguments = lua_gettop(L);
 				if (get_permissive_mode() && !self.next)
 				{
 					converter_tuple cvt;
-					ctx.best_score = match_args(L, stack_indices(), cvt);
+					ctx.best_score = match_args(L, arg_index_list(), cvt);
 					ctx.candidates[0] = &self;
 					ctx.candidate_index = 1;
 					ctx.extra_candidates = 0;
@@ -259,7 +260,7 @@ namespace luabind {
 					// is the total distance of all arguments to their given types (graph distance).
 					// This is why we can say MaxArguments = 100, MaxDerivationDepth = 100, so no match will be > 100*100=10k and -10k1 absorbs every match.
 					// This gets rid of the awkward checks during converter match traversal.
-					score = match_args(L, stack_indices(), cvt);
+					score = match_args(L, arg_index_list(), cvt);
 				}
 
 				if(score >= 0 && score < ctx.best_score) {
