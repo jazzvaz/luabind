@@ -46,19 +46,6 @@ std::string demangle(std::type_info const& id);
     } CAT(type, _guard)
 #endif
 
-//#undef CAT
-//#undef CAT2
-
-//#define TEST_NOTHROW(x) \
-//    try \
-//    { \
-//        x; \
-//    } \
-//    catch (...) \
-//    { \
-//        TEST_ERROR("Exception thrown: " #x); \
-//    }
-
 void dostring(lua_State* L, char const* str);
 
 template <class T>
@@ -71,22 +58,3 @@ struct counted_type
     ~counted_type()
     { CHECK_MESSAGE(--count >= 0, demangle(typeid(T)) << ": double destruction"); }
 };
-
-//inline void DOSTRING_EXPECTED_X(char const* str, char const* expected)
-//{
-//    try
-//    {
-//        dostring(L, str);
-//    }
-//    catch (luabind::error const& e)
-//    {
-//        using namespace std;
-//        if (std::strcmp(e.what(), expected))
-//            TEST_ERROR(e.what());
-//    }
-//    catch (luabind::string const& s)
-//    {
-//        if (s != expected)
-//            TEST_ERROR(s.c_str());
-//    }
-//}
