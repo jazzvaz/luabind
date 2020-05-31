@@ -11,11 +11,11 @@ option(LUABIND_BUILD_SHARED "Build shared library" ON)
 option(LUABIND_BUILD_EXAMPLES "Build examples" OFF)
 option(LUABIND_BUILD_DOC "Build documentation" OFF)
 
-add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
-add_compile_options("$<$<CONFIG:RELEASE>:-DNDEBUG>")
+add_compile_definitions($<$<CONFIG:Debug>:DEBUG>)
+add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 if(LUABIND_BUILD_SHARED)
-    add_definitions(-DLUABIND_DYNAMIC_LINK)
+    add_compile_definitions(LUABIND_DYNAMIC_LINK)
 endif()
 
 if(MSVC)
