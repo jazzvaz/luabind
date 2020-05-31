@@ -72,8 +72,11 @@ namespace luabind
         auto const& classes = reg->get_classes();
         object result = newtable(L);
         std::size_t index = 1;
-        for (const auto& cl : classes)
-            result[index++] = cl.second->name();
+        for (auto const& [type, crep] : classes)
+        {
+            if (crep->name())
+                result[index++] = crep->name();
+        }
         return result;
     }
 
