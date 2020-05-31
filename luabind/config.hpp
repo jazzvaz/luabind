@@ -59,28 +59,22 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 // will use this custom allocator to deallocate adopted C++ objects, unless
 // they are referenced by a smart pointer with a custom deleter.
 
-#ifdef LUABIND_DYNAMIC_LINK
-# if defined (_WIN32)
-#  ifdef LUABIND_BUILDING
-#   define LUABIND_API __declspec(dllexport)
-#  else
-#   define LUABIND_API __declspec(dllimport)
-#  endif
-# elif defined (__CYGWIN__)
-#  ifdef LUABIND_BUILDING
-#   define LUABIND_API __attribute__ ((dllexport))
-#  else
-#   define LUABIND_API __attribute__ ((dllimport))
-#  endif
+#if defined (_WIN32)
+# ifdef LUABIND_BUILDING
+#  define LUABIND_API __declspec(dllexport)
 # else
-#  if defined(_GNUC_) && _GNUC_ >=4
-#   define LUABIND_API __attribute__ ((visibility("default")))
-#  endif
+#  define LUABIND_API __declspec(dllimport)
 # endif
-#endif
-
-#ifndef LUABIND_API
-# define LUABIND_API
+#elif defined (__CYGWIN__)
+# ifdef LUABIND_BUILDING
+#  define LUABIND_API __attribute__ ((dllexport))
+# else
+#  define LUABIND_API __attribute__ ((dllimport))
+# endif
+#elif defined(__GNUC__)
+# define LUABIND_API __attribute__ ((visibility("default")))
+#else
+# error "Unsupported compiler"
 #endif
 
 #ifndef _WIN32
