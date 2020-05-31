@@ -79,7 +79,7 @@ TEST_CASE("class_info")
         "assert(info.attributes[1] == 'y')\n"
         "assert(info.attributes[2] == 'x')\n"
     );
-
+#ifdef _MSC_VER
     DOSTRING_EXPECTED(L,
         "x:take_private(nil)\n",
         "No matching overload found, candidates:\n"
@@ -90,7 +90,20 @@ TEST_CASE("class_info")
         "u = make_unnamed()\n"
         "info = class_info(u)\n"
         "assert(info.name == 'unnamed [struct unnamed]')");
-
+#elif defined(__GNUC__) && (defined(__GLIBCXX__) || defined(__GLIBCPP__))
+    DOSTRING_EXPECTED(L,
+        "x:take_private(nil)\n",
+        "No matching overload found, candidates:\n"
+        "void take_private(X&,custom [private_struct])\n"
+        "Passed arguments [2]: userdata (X&), nil (nil)\n");
+    DOSTRING(L,
+        "u = make_unnamed()\n"
+        "info = class_info(u)\n"
+        "assert(info.name == 'unnamed [unnamed]')");
+#else
+    // skipping implementation dependent type name tests
+    // XXX: emit warning?
+#endif
     DOSTRING(L,
         "s = tostring(X)\n"
         "assert(s:match('^class X (.+)$'))"
