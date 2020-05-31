@@ -27,8 +27,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/master/conan.cmake"
+    message(STATUS "Downloading conan.cmake from https://github.com/nitrocaster/cmake-conan")
+    file(DOWNLOAD "https://github.com/nitrocaster/cmake-conan/raw/master/conan.cmake"
         "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 include("${CMAKE_BINARY_DIR}/conan.cmake")
