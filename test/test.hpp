@@ -6,6 +6,7 @@
 #include <luabind/error.hpp>
 #include <luabind/lua_include.hpp>
 #include <string>
+#include <iostream>
 #include <doctest/doctest.h>
 
 #define DOSTRING_EXPECTED(state, str, expected) \
@@ -31,30 +32,29 @@ std::string demangle(std::type_info const& id);
 #define CAT2(a,b) a##b
 #define CAT(a,b) CAT2(a,b)
 
-#ifdef _MSC_VER
-// There seem to be lifetime issues with global variables on VC
-#define COUNTER_GUARD(type)
-#else
-#define COUNTER_GUARD(type) \
-    struct CAT(type, _counter_guard) \
-    { \
-        ~CAT(type, _counter_guard()) \
-        { \
-            CHECK_MESSAGE(counted_type<type>::count == 0, \
-                demangle(typeid(type)) << ": live object"); \
-        } \
-    } CAT(type, _guard)
-#endif
-
-void dostring(lua_State* L, char const* str);
-
 template <class T>
 struct counted_type
 {
     inline static int count = 0;
-    
+
     counted_type() { ++count; }
     counted_type(counted_type const&) { ++count; }
     ~counted_type()
     { CHECK_MESSAGE(--count >= 0, demangle(typeid(T)) << ": double destruction"); }
 };
+
+template <typename T>
+struct counter_guard
+{
+    ~counter_guard()
+    {
+        if (!counted_type<T>::count)
+            return;
+        std::cout << demangle(typeid(T)) + ": live object\n";
+        exit(1);
+    }
+};
+
+#define COUNTER_GUARD(type) counter_guard<type> CAT(type, _guard)
+
+void dostring(lua_State* L, char const* str);
