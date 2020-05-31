@@ -26,7 +26,7 @@ namespace luabind::detail
         return 0;
     }
 
-    static char classrep_tag;
+    char classrep_tag;
 
     class_rep::class_rep(type_id const& type, const char* name, lua_State* L) :
         m_type(type),

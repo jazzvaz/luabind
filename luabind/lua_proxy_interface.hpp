@@ -57,7 +57,7 @@ namespace luabind::adl
         else if constexpr (is_lua_proxy_type_v<U>)
             L = lua_proxy_traits<U>::interpreter(y);
         else
-            static_assert(false, "both types must be lua proxy types");
+            static_assert(!sizeof(T*), "both types must be lua proxy types");
         return 0;
     }
 
