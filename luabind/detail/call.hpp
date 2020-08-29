@@ -43,8 +43,8 @@ namespace luabind::detail
         int best_score = std::numeric_limits<int>::max();
         static constexpr size_t max_candidates = 10;
         function_object const* candidates[max_candidates] = {};
-        int extra_candidates = 0;
-        int candidate_index = 0;
+        size_t extra_candidates = 0;
+        size_t candidate_index = 0;
     };
 
     // Compute Stack Indices
@@ -215,7 +215,7 @@ namespace luabind::detail
         template <typename ConvTuple>
         static int invoke(lua_State* L, invoke_context& ctx, F& f, int args, ConvTuple& conv_tuple)
         {
-            int results = 0;            
+            int results = 0;
             if constexpr (std::is_member_function_pointer_v<F>)
                 call_member(L, f, arg_index_list(), conv_tuple);
             else

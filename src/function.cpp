@@ -41,7 +41,7 @@ namespace luabind::detail
         if (!lua_getupvalue(L, index, 2))
             return false;
         void* tag = lua_touserdata(L, -1);
-        bool result = tag == &function_tag && allow_default || tag == &function_tag_ndef;
+        bool result = (tag == &function_tag && allow_default) || tag == &function_tag_ndef;
         lua_pop(L, 1);
         return result;
     }
@@ -87,7 +87,6 @@ namespace luabind::detail
         char const* function_name =
             overloads->name.empty() ? "<unknown>" : overloads->name.c_str();
         int stacksize = lua_gettop(L);
-        int cs = lua_gettop(L);
         if (candidate_index == 0)
         {
             lua_pushliteral(L, "No matching overload found, candidates:\n");
@@ -103,7 +102,7 @@ namespace luabind::detail
         else
         {
             lua_pushliteral(L, "Ambiguous, candidates:\n");
-            for (int i = 0; i < candidate_index; i++)
+            for (size_t i = 0; i < candidate_index; i++)
             {
                 if (i)
                     lua_pushliteral(L, "\n");
