@@ -39,12 +39,12 @@ if (WIN32)
 endif()
 
 conan_add_remote(
-    NAME charliejiang
-    URL https://api.bintray.com/conan/charliejiang/conan
+    NAME nitrocaster
+    URL https://api.bintray.com/conan/nitrocaster/conan
 )
 conan_cmake_run(
     REQUIRES
-        luajit/2.0.5@charliejiang/stable
+        luajit/2.0.5@nitrocaster/stable
         doctest/2.3.8
     OPTIONS
         luajit:shared=True
