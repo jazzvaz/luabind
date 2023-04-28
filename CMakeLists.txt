@@ -10,6 +10,7 @@ option(LUABIND_NO_EXCEPTIONS "Disable exeptions" ON)
 option(LUABIND_CUSTOM_ALLOCATOR "Use user provided allocator" OFF)
 option(LUABIND_NUMBER_TO_STRING_CONVERSION "Allow native converter from number to string\\char*" ON)
 option(LUABIND_ALLOW_MISSING_ARGUMENTS "Function calls with missing arguments are not treated as errors" OFF)
+option(LUABIND_CLASS_IN_NAMESPACE "Try to add class to the namespace if local "this" exists" ON)
 
 if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /permissive-")
@@ -175,6 +176,10 @@ endif()
 
 if(LUABIND_NUMBER_TO_STRING_CONVERSION)
 	add_compile_definitions(LUABIND_NUMBER_TO_STRING_CONVERSION)
+endif()
+
+if(LUABIND_CLASS_IN_NAMESPACE)
+	add_compile_definitions(LUABIND_CLASS_IN_NAMESPACE)
 endif()
 
 if(LUABIND_ALLOW_MISSING_ARGUMENTS)
