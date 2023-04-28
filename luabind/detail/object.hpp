@@ -11,7 +11,6 @@
 #include <luabind/detail/stack_utils.hpp>
 #include <luabind/lua_stack.hpp>
 #include <luabind/typeid.hpp>
-#include <luabind/detail/crtp_iterator.hpp>
 #include <luabind/lua_proxy_interface.hpp>
 #include <luabind/lua_index_proxy.hpp>
 #include <luabind/lua_iterator_proxy.hpp>
@@ -294,7 +293,7 @@ namespace luabind
         if constexpr (!is_null_type_v<SetValueWrapper>)
             lua_proxy_traits<SetValueWrapper>::unwrap(L, set);
         else
-            lua_pushnil(L);        
+            lua_pushnil(L);
         lua_pushcclosure(L, &detail::property_tag, 2);
         detail::stack_pop pop(L, 1);
         return object(from_stack(L, -1));

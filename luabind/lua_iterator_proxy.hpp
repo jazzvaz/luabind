@@ -8,7 +8,8 @@
 #include <luabind/handle.hpp>
 #include <luabind/nil.hpp>
 #include <luabind/lua_include.hpp>
-#include <luabind/detail/crtp_iterator.hpp>
+
+#include <iterator>
 
 namespace luabind::adl
 {
@@ -137,14 +138,15 @@ namespace luabind::detail
     };
 
     template <class AccessPolicy>
-    class basic_iterator :
-        public detail::crtp_iterator<
-        basic_iterator<AccessPolicy>,
-        adl::iterator_proxy<AccessPolicy>,
-        std::forward_iterator_tag,
-        adl::iterator_proxy<AccessPolicy>>
+    class basic_iterator
     {
     public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = basic_iterator<AccessPolicy>;
+        using difference_type = ptrdiff_t;
+        using pointer = basic_iterator<AccessPolicy>*;
+        using reference = adl::iterator_proxy<AccessPolicy>;
+
         basic_iterator() = default;
 
         template <class ValueWrapper>
@@ -170,10 +172,17 @@ namespace luabind::detail
         // defined in luabind/detail/object.hpp
         adl::object key() const;
 
-    private:
-        template <typename, typename, typename, typename, typename>
-        friend class detail::crtp_iterator;
+    public:
+        basic_iterator& operator++() { increment(); return *this; }
+        basic_iterator operator++(int) { basic_iterator tmp(*this); operator++(); return tmp; }
 
+        bool operator==(const basic_iterator& rhs) const { return equal(rhs); }
+        bool operator!=(const basic_iterator& rhs) const { return !equal(rhs); }
+
+        adl::iterator_proxy<AccessPolicy> operator*() { return dereference(); }
+        adl::iterator_proxy<AccessPolicy> operator->() { return dereference(); }
+
+    private:
         void increment()
         {
             m_table.push(m_interpreter);

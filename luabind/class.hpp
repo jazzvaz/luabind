@@ -351,6 +351,8 @@ namespace luabind
     {
         using self_t = class_<T, BaseOrBases, Holder, Wrapper>;
         using BaseList = make_bases<BaseOrBases>;
+        using wrapper_type = Wrapper;
+        using class_type = T;
 
     public:
         class_(const char* name = nullptr) :
