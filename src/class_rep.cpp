@@ -241,7 +241,7 @@ namespace luabind::detail
         lua_pushfstring(L, "class %s", crep->m_name ? crep->m_name : "<unnamed>");
         if (crep->m_type != type_id())
         {
-            lua_pushfstring(L, " (%s)", crep->m_type.name().c_str());
+            lua_pushfstring(L, " (%s)", crep->m_type.name());
             lua_concat(L, 2);
         }
         return 1;
