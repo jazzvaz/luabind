@@ -58,8 +58,10 @@ namespace luabind::lua_stack
         using value_type = unwrapped_t<T>;
         stack_pop pop(L, 1);
         specialized_converter_policy_n<PolicyIndex, Policies, value_type, lua_to_cpp> cv;
-        if (cv.match(L, decorate_type_t<T>(), -1) < 0 && !get_permissive_mode())
+#ifndef LUABIND_ALLOW_MISSING_ARGUMENTS
+        if (cv.match(L, decorate_type_t<T>(), -1) < 0)
             cast_error<T>(L);
+#endif // !LUABIND_ALLOW_MISSING_ARGUMENTS
         return cv.to_cpp(L, decorate_type_t<T>(), -1);
     }
 

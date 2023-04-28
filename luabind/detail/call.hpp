@@ -203,7 +203,8 @@ namespace luabind::detail
         static int invoke(lua_State* L, function_object const& self, invoke_context& ctx, F& f)
         {
             int const argc = lua_gettop(L);
-            if (get_permissive_mode() && !self.next)
+#ifdef LUABIND_ALLOW_MISSING_ARGUMENTS
+            if (!self.next)
             {
                 converter_tuple cvt;
                 ctx.best_score = match_args(L, arg_index_list(), cvt);
@@ -212,6 +213,7 @@ namespace luabind::detail
                 ctx.extra_candidates = 0;
                 return invoke(L, ctx, f, argc, cvt);
             }
+#endif // LUABIND_ALLOW_MISSING_ARGUMENTS
             return invoke_best_match(L, self, ctx, f, argc);
         }
 
@@ -265,6 +267,7 @@ namespace luabind::detail
                 results = self.next->call(L, ctx, args);
             if (score == ctx.best_score && ctx.candidate_index == 1)
                 results = invoke(L, ctx, f, args, cvt);
+
             return results;
         }
     };

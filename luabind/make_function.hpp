@@ -52,11 +52,13 @@ namespace luabind::detail
             {
                 invoke_context ctx;
                 results = invoke<PolicyList, RArgList>(L, *impl, ctx, impl->f);
-                if (!get_permissive_mode() && !ctx)
+#ifndef LUABIND_ALLOW_MISSING_ARGUMENTS
+                if (!ctx)
                 {
                     error = true;
                     ctx.format_error(L, impl);
                 }
+#endif // !LUABIND_ALLOW_MISSING_ARGUMENTS
             }
 #ifndef LUABIND_NO_EXCEPTIONS
             catch (...)

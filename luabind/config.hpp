@@ -59,6 +59,14 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 // will use this custom allocator to deallocate adopted C++ objects, unless
 // they are referenced by a smart pointer with a custom deleter.
 
+// LUABIND_NUMBER_TO_STRING_CONVERSION
+// this define allow native converter from number to string\char*
+
+// LUABIND_ALLOW_MISSING_ARGUMENTS
+// This will enable the following features:
+// - function calls with missing arguments are not treated as errors
+// - return value of lua function is converted to cpp without converter match check
+
 #if defined (_WIN32)
 # ifdef LUABIND_BUILDING
 #  define LUABIND_API __declspec(dllexport)

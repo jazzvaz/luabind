@@ -10,6 +10,8 @@ option(LUABIND_BUILD_TESTS "Build executable tests" OFF)
 option(LUABIND_BUILD_SHARED "Build shared library" ON)
 option(LUABIND_BUILD_EXAMPLES "Build examples" OFF)
 option(LUABIND_BUILD_DOC "Build documentation" OFF)
+option(LUABIND_NUMBER_TO_STRING_CONVERSION "Allow native converter from number to string\\char*" ON)
+option(LUABIND_ALLOW_MISSING_ARGUMENTS "Function calls with missing arguments are not treated as errors" OFF)
 
 add_compile_definitions($<$<CONFIG:Debug>:DEBUG>)
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
@@ -52,10 +54,13 @@ conan_cmake_run(
     BUILD missing
 )
 
-include(GNUInstallDirs)
-include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+if(LUABIND_NUMBER_TO_STRING_CONVERSION)
+	add_compile_definitions(LUABIND_NUMBER_TO_STRING_CONVERSION)
+endif()
 
-include(luabind.cmake)
+if(LUABIND_ALLOW_MISSING_ARGUMENTS)
+	add_compile_definitions(LUABIND_ALLOW_MISSING_ARGUMENTS)
+endif()
 
 add_subdirectory(test)
 

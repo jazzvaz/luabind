@@ -53,8 +53,10 @@ namespace luabind::detail
         if constexpr (!std::is_void_v<Ret>)
         {
             specialized_converter_policy_n<0, PolicyList, Ret, lua_to_cpp> converter;
-            if (converter.match(L, decorate_type_t<Ret>(), -1) < 0 && !get_permissive_mode())
+#ifndef LUABIND_ALLOW_MISSING_ARGUMENTS
+            if (converter.match(L, decorate_type_t<Ret>(), -1) < 0)
                 cast_error<Ret>(L);
+#endif // !LUABIND_ALLOW_MISSING_ARGUMENTS
             return converter.to_cpp(L, decorate_type_t<Ret>(), -1);
         }
     }

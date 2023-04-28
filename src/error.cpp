@@ -38,7 +38,7 @@ namespace luabind
     {
         return break_on_call_error;
     }
-    
+
     void set_cast_error_break(bool enable)
     {
         break_on_cast_error = enable;
@@ -83,15 +83,4 @@ namespace luabind
     unresolved_name::unresolved_name(const char* desc, const char* name) :
         std::runtime_error((luabind::string(desc) + ": " + name).c_str())
     {}
-
-    namespace detail
-    {
-        static bool permissive = false;
-    } // namespace detail
-
-    void set_permissive_mode(bool enable)
-    { detail::permissive = enable; }
-
-    bool get_permissive_mode()
-    { return detail::permissive; }
 } // namespace luabind
