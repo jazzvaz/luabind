@@ -69,7 +69,6 @@
 #include <luabind/detail/call_member.hpp>
 #include <luabind/detail/enum_maker.hpp>
 #include <luabind/detail/operator_id.hpp>
-#include <luabind/detail/link_compatibility.hpp>
 #include <luabind/detail/inheritance.hpp>
 #include <luabind/no_dependency.hpp>
 #include <luabind/typeid.hpp>
@@ -358,7 +357,6 @@ namespace luabind
             class_base(name),
             scope(*this)
         {
-            detail::check_link_compatibility();
             init();
         }
 
