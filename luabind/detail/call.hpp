@@ -12,6 +12,9 @@
 #include <luabind/detail/object.hpp>
 #include <tuple>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind::detail
 {
     struct invoke_context;
@@ -278,3 +281,5 @@ namespace luabind::detail
         return invoke_struct<PolicyList, RArgList, F>::invoke(L, self, ctx, f);
     }
 } // namespace luabind::detail
+
+#pragma warning(pop) 

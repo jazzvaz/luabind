@@ -9,6 +9,9 @@
 #include <luabind/open.hpp>
 #include <luabind/typeid.hpp>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind::detail
 {
     class class_rep;
@@ -59,3 +62,5 @@ namespace luabind::detail
         int m_lua_function_metatable;
     };
 } // namespace luabind::detail
+
+#pragma warning(pop) 

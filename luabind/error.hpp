@@ -76,9 +76,12 @@ namespace luabind
     LUABIND_API bool get_permissive_mode();
 
     // thrown when trying to use unregistered class or call nonexistent function
+#pragma warning(push)
+#pragma warning(disable : 4275)
     class LUABIND_API unresolved_name : public std::runtime_error
     {
     public:
         unresolved_name(const char* desc, const char* name);
     };
+#pragma warning(pop) 
 } // namespace luabind

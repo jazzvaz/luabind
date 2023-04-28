@@ -9,6 +9,9 @@
 #include <type_traits>    // std::aligned_storage
 #include <cstdlib>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind::detail
 {
     void finalize(lua_State* L, class_rep* crep);
@@ -104,3 +107,5 @@ namespace luabind::detail
     LUABIND_API void push_instance_metatable(lua_State* L);
     LUABIND_API object_rep* push_new_instance(lua_State* L, class_rep* cls);
 }    // namespace luabind::detail
+
+#pragma warning(pop) 

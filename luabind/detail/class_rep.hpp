@@ -17,6 +17,9 @@
 #include <luabind/detail/primitives.hpp>
 #include <luabind/typeid.hpp>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind::detail
 {
     LUABIND_API luabind::string stack_content_by_name(lua_State* L, int start_index);
@@ -163,3 +166,5 @@ namespace luabind::detail
 
     LUABIND_API bool is_class_rep(lua_State* L, int index);
 } // namespace luabind::detail
+
+#pragma warning(pop) 

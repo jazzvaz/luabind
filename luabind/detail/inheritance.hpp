@@ -11,6 +11,9 @@
 #include <vector>
 #include <luabind/typeid.hpp>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind::detail
 {
     LUABIND_API extern char class_id_map_tag;
@@ -150,3 +153,5 @@ namespace luabind::detail
         registered_class<T>
     {};
 } // namespace luabind::detail
+
+#pragma warning(pop) 

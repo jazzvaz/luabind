@@ -9,6 +9,9 @@
 #include <luabind/lua_state_fwd.hpp>
 #include <memory>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind
 {
     struct scope;
@@ -81,3 +84,5 @@ namespace luabind
     }
 
 } // namespace luabind
+
+#pragma warning(pop) 

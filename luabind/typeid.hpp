@@ -8,10 +8,8 @@
 #include <luabind/types.hpp>
 #include <luabind/detail/type_traits.hpp>
 
-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
-# define LUABIND_DEMANGLE_TYPENAMES
-# include <cxxabi.h>
-#endif
+#pragma warning(push)
+#pragma warning(disable : 4275)
 
 namespace luabind
 {
@@ -57,3 +55,5 @@ namespace luabind
         std::type_info const* id;
     };
 } // namespace luabind
+
+#pragma warning(pop) 

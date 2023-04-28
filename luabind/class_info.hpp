@@ -8,6 +8,9 @@
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace luabind
 {
     struct LUABIND_API class_info
@@ -22,3 +25,5 @@ namespace luabind
     LUABIND_API object get_class_names(lua_State* L);
     LUABIND_API void bind_class_info(lua_State*);
 } // namespace luabind
+
+#pragma warning(pop) 
