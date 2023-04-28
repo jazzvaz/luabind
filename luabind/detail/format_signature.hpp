@@ -132,6 +132,6 @@ namespace luabind::detail
             lua_concat(L, static_cast<int>(ncat));
             ncat = 1;
         }
-        return ncat;
+        return static_cast<int>(ncat);
     }
 } // namespace luabind::detail
