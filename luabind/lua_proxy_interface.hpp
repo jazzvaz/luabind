@@ -125,19 +125,27 @@ namespace luabind::adl
 
     template <class LHS, class RHS>
     enable_binary_t<bool, LHS, RHS> operator>(LHS const& lhs, RHS const& rhs)
-    { return !(lhs < rhs || lhs == rhs); }
+    {
+        return !(lhs < rhs || lhs == rhs);
+    }
 
     template <class LHS, class RHS>
     enable_binary_t<bool, LHS, RHS> operator<=(LHS const& lhs, RHS const& rhs)
-    { return lhs < rhs || lhs == rhs; }
+    {
+        return lhs < rhs || lhs == rhs;
+    }
 
     template <class LHS, class RHS>
     enable_binary_t<bool, LHS, RHS> operator>=(LHS const& lhs, RHS const& rhs)
-    { return !(lhs < rhs); }
+    {
+        return !(lhs < rhs);
+    }
 
     template <class LHS, class RHS>
     enable_binary_t<bool, LHS, RHS> operator!=(LHS const& lhs, RHS const& rhs)
-    { return !(lhs == rhs); }
+    {
+        return !(lhs == rhs);
+    }
 
     template <class Derived>
     class lua_proxy_interface
@@ -165,9 +173,13 @@ namespace luabind::adl
 
     private:
         Derived& derived()
-        { return *static_cast<Derived*>(this); }
+        {
+            return *static_cast<Derived*>(this);
+        }
         Derived const& derived() const
-        { return *static_cast<Derived const*>(this); }
+        {
+            return *static_cast<Derived const*>(this);
+        }
     };
 } // namespace luabind::adl
 
@@ -229,7 +241,9 @@ namespace luabind
             {}
 
             T handle_error(lua_State*, type_id const&)
-            { return value; }
+            {
+                return value;
+            }
         private:
             T value;
         };

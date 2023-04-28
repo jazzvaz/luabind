@@ -16,7 +16,9 @@ namespace luabind
     static bool mark_custom_types = true;
 
     void set_custom_type_marking(bool enable)
-    { mark_custom_types = enable; }
+    {
+        mark_custom_types = enable;
+    }
 } // namespace luabind
 
 namespace luabind::detail
@@ -37,7 +39,9 @@ namespace luabind::detail
     struct class_registration : registration
     {
         class_registration(char const* name)
-        { m_name = name; }
+        {
+            m_name = name;
+        }
 
         void register_(lua_State* L, bool default_scope = false) const;
 
@@ -78,13 +82,13 @@ namespace luabind::detail
         new (crep) detail::class_rep(m_type, m_name, L);
         // register this new type in the class registry
         r->add_class(m_type, crep);
-        
+
         lua_rawgetp(L, LUA_REGISTRYINDEX, &class_map_tag);
-        class_map& classes = *static_cast<class_map*>(lua_touserdata(L, -1));
+        auto& classes = *static_cast<class_map*>(lua_touserdata(L, -1));
         lua_pop(L, 1);
 
         classes.put(m_id, crep);
-        bool const has_wrapper = m_wrapper_id != registered_class<null_type>::id;
+        bool const has_wrapper = m_wrapper_id != registered_class<null_type>::id();
         if (has_wrapper)
             classes.put(m_wrapper_id, crep);
         crep->m_static_constants.swap(m_static_constants);
@@ -100,11 +104,11 @@ namespace luabind::detail
         lua_pop(L, 1);
 
         lua_rawgetp(L, LUA_REGISTRYINDEX, &cast_graph_tag);
-        cast_graph* const casts = static_cast<cast_graph*>(lua_touserdata(L, -1));
+        auto* const casts = static_cast<cast_graph*>(lua_touserdata(L, -1));
         lua_pop(L, 1);
 
         lua_rawgetp(L, LUA_REGISTRYINDEX, &class_id_map_tag);
-        class_id_map* const class_ids = static_cast<class_id_map*>(lua_touserdata(L, -1));
+        auto* const class_ids = static_cast<class_id_map*>(lua_touserdata(L, -1));
         lua_pop(L, 1);
 
         class_ids->put(m_id, m_type);
@@ -178,7 +182,9 @@ namespace luabind::detail
     }
 
     void class_base::add_base(type_id const& base)
-    { m_registration->m_bases.push_back(base); }
+    {
+        m_registration->m_bases.push_back(base);
+    }
 
     void class_base::add_member(registration* member)
     {
@@ -193,16 +199,24 @@ namespace luabind::detail
     }
 
     const char* class_base::name() const
-    { return m_registration->m_name; }
+    {
+        return m_registration->m_name;
+    }
 
     void class_base::add_static_constant(const char* name, int val)
-    { m_registration->m_static_constants[name] = val; }
+    {
+        m_registration->m_static_constants[name] = val;
+    }
 
     void class_base::add_inner_scope(scope& s)
-    { m_registration->m_scope.operator,(s); }
+    {
+        m_registration->m_scope.operator,(s);
+    }
 
     void class_base::add_cast(class_id src, class_id target, cast_function cast)
-    { m_registration->m_casts.push_back(cast_entry(src, target, cast)); }
+    {
+        m_registration->m_casts.push_back(cast_entry(src, target, cast));
+    }
 
     luabind::string get_class_name(lua_State* L, type_id const& i)
     {

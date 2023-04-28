@@ -25,7 +25,7 @@ namespace luabind::detail
         // and all the parameters
         (specialized_converter_policy_n<Indices, PolicyList, unwrapped_t<Args>, cpp_to_lua>().to_lua(
             L, unwrapped<Args>::get(std::forward<Args>(args))), ...);
-        if (pcall(L, sizeof...(Args)+1, std::is_void_v<R> ? 0 : 1))
+        if (pcall(L, sizeof...(Args) + 1, std::is_void_v<R> ? 0 : 1))
         {
             assert(lua_gettop(L) == top + 1);
             call_error(L);
@@ -60,7 +60,7 @@ namespace luabind
         // now the function and self objects are on the stack.
         // These will both be popped by pcall
         return detail::call_member_impl<R, PolicyList>(
-            obj.interpreter(), meta::index_range<1, sizeof...(Args)+1>(), std::forward<Args>(args)...);
+            obj.interpreter(), meta::index_range<1, sizeof...(Args) + 1>(), std::forward<Args>(args)...);
     }
 
     template <class R, typename... Args>

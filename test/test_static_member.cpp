@@ -18,7 +18,7 @@ const A A::a;
 
 std::ostream& operator<<(std::ostream& os, const A&)
 {
-	os << "A"; return os;
+    os << "A"; return os;
 }
 
 void test_main(lua_State* L)

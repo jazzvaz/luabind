@@ -21,7 +21,9 @@ namespace luabind
             {}
 
             void operator()(void const*)
-            { handle().swap(life_support); }
+            {
+                handle().swap(life_support);
+            }
 
             handle life_support;
         };
@@ -45,8 +47,7 @@ namespace luabind
             T* raw_ptr = default_converter<T*>::to_cpp(L, decorate_type_t<T*>(), index);
             if (!raw_ptr)
                 return std::shared_ptr<T>();
-            else
-                return std::shared_ptr<T>(raw_ptr, detail::shared_ptr_deleter(L, index));
+            return std::shared_ptr<T>(raw_ptr, detail::shared_ptr_deleter(L, index));
         }
 
         void to_lua(lua_State* L, std::shared_ptr<T> const& p)

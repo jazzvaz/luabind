@@ -48,10 +48,14 @@ namespace luabind::adl
 
         template <class T>
         index_proxy<object> operator[](T const& key) const
-        { return index_proxy<object>(*this, m_handle.interpreter(), key); }
+        {
+            return index_proxy<object>(*this, m_handle.interpreter(), key);
+        }
 
         void swap(object& other)
-        { m_handle.swap(other.m_handle); }
+        {
+            m_handle.swap(other.m_handle);
+        }
 
     private:
         handle m_handle;
@@ -68,13 +72,19 @@ namespace luabind
         using is_specialized = std::true_type;
 
         static lua_State* interpreter(object const& value)
-        { return value.interpreter(); }
+        {
+            return value.interpreter();
+        }
 
         static void unwrap(lua_State* L, object const& value)
-        { value.push(L); }
+        {
+            value.push(L);
+        }
 
         static bool check(...)
-        { return true; }
+        {
+            return true;
+        }
     };
 
     template <class R, typename PolicyList = no_policies, typename... Args>
@@ -129,7 +139,9 @@ namespace luabind
     // declared in luabind/lua_iterator_proxy.hpp
     template <class AccessPolicy>
     object detail::basic_iterator<AccessPolicy>::key() const
-    { return object(m_key); }
+    {
+        return object(m_key);
+    }
 
     namespace adl
     {
@@ -261,7 +273,7 @@ namespace luabind
         lua_proxy_traits<ValueWrapper>::unwrap(L, value);
         detail::stack_pop pop(L, 2);
         const char* name = lua_getupvalue(L, -1, index);
-        return {name, object(from_stack(L, -1))};
+        return { name, object(from_stack(L, -1)) };
     }
 
     template <class ValueWrapper1, class ValueWrapper2>

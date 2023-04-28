@@ -10,15 +10,22 @@ namespace luabind
 {
     template <typename T>
     T* get_pointer(T* pointer)
-    { return pointer; }
+    {
+
+        return pointer;
+    }
 
     template <typename T>
     T* get_pointer(const luabind::unique_ptr<T>& pointer)
-    { return pointer.get(); }
+    {
+        return pointer.get();
+    }
 
     template <typename T>
     T* get_pointer(const std::shared_ptr<T>& pointer)
-    { return pointer.get(); }
+    {
+        return pointer.get();
+    }
 } // namespace luabind
 
 namespace luabind::detail

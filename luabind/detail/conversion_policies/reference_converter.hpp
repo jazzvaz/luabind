@@ -41,11 +41,15 @@ namespace luabind::detail
 
         template <class T>
         int match(lua_State* L, by_reference<T>, int index)
-        { return pointer_converter::match(L, by_pointer<T>(), index); }
+        {
+            return pointer_converter::match(L, by_pointer<T>(), index);
+        }
 
         template <class T>
         int match(lua_State* L, by_const_reference<T>, int index)
-        { return pointer_converter::match(L, by_const_pointer<T>(), index); }
+        {
+            return pointer_converter::match(L, by_const_pointer<T>(), index);
+        }
 
         template <class T>
         void converter_postcall(lua_State*, T, int /*index*/) {}

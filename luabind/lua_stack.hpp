@@ -19,7 +19,9 @@ namespace luabind::detail
         using type = T;
 
         static const T& get(const T& t)
-        { return t; }
+        {
+            return t;
+        }
     };
 
     template <typename T>
@@ -29,7 +31,9 @@ namespace luabind::detail
         using type = T&;
 
         static T& get(const std::reference_wrapper<T>& refwrap)
-        { return refwrap.get(); }
+        {
+            return refwrap.get();
+        }
     };
 
     template <typename T>
@@ -61,9 +65,13 @@ namespace luabind::lua_stack
 
     template <>
     inline void pop<void, no_policies, 1>(lua_State* L)
-    { detail::stack_pop pop(L, 1); }
+    {
+        detail::stack_pop pop(L, 1);
+    }
 
     inline void pop(lua_State* L, int n = 1)
-    { detail::stack_pop pop(L, n); }
+    {
+        detail::stack_pop pop(L, n);
+    }
 
 } // namespace luabind::lua_stack

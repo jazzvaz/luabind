@@ -79,12 +79,16 @@ namespace luabind::adl
 
         template <class T>
         index_proxy<this_type> operator[](T const& key)
-        { return index_proxy<this_type>(*this, m_interpreter, key); }
+        {
+            return index_proxy<this_type>(*this, m_interpreter, key);
+        }
 
         void push(lua_State* interpreter);
 
         lua_State* interpreter() const
-        { return m_interpreter; }
+        {
+            return m_interpreter;
+        }
 
     private:
         struct hidden_type {};
@@ -113,10 +117,14 @@ namespace luabind
 
         template <class Next>
         static lua_State* interpreter(adl::index_proxy<Next> const& proxy)
-        { return proxy.interpreter(); }
+        {
+            return proxy.interpreter();
+        }
 
         template <class Next>
         static void unwrap(lua_State* interpreter, adl::index_proxy<Next> const& proxy)
-        { const_cast<adl::index_proxy<Next>&>(proxy).push(interpreter); }
+        {
+            const_cast<adl::index_proxy<Next>&>(proxy).push(interpreter);
+        }
     };
 } // namespace luabind

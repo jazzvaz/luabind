@@ -7,7 +7,7 @@
 
 namespace luabind::detail
 {
-    int pcall(lua_State *L, int nargs, int nresults)
+    int pcall(lua_State* L, int nargs, int nresults)
     {
         pcall_callback_fun e = get_pcall_callback();
         int en = 0;
@@ -24,7 +24,7 @@ namespace luabind::detail
         return result;
     }
 
-    int resume_impl(lua_State *L, int nargs, int)
+    int resume_impl(lua_State* L, int nargs, int)
     {
 #if LUA_VERSION_NUM >= 502
         int res = lua_resume(L, NULL, nargs);

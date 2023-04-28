@@ -43,7 +43,7 @@ namespace luabind::detail
         static std::tuple<bool, int> safe_entry_point(lua_State* L)
         {
             void* ud = lua_touserdata(L, lua_upvalueindex(1));
-            function_object_impl* impl = *static_cast<function_object_impl**>(ud);
+            auto* impl = *static_cast<function_object_impl**>(ud);
             int results = 0;
             bool error = false;
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -67,7 +67,7 @@ namespace luabind::detail
 #endif
             if (error)
                 assert(results >= 0);
-            return {error, results};
+            return { error, results };
         }
 
         static int entry_point(lua_State* L)

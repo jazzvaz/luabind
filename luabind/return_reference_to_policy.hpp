@@ -18,7 +18,9 @@ namespace luabind::detail
     {
         template <class T>
         void to_lua(lua_State* L, const T&)
-        { lua_pushnil(L); }
+        {
+            lua_pushnil(L);
+        }
     };
 
     template <uint32_t N>

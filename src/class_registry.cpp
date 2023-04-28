@@ -48,7 +48,9 @@ namespace luabind::detail
     }
 
     static int create_lua_class_metatable(lua_State* L)
-    { return create_cpp_class_metatable(L); }
+    {
+        return create_cpp_class_metatable(L);
+    }
 
     class class_rep;
 
@@ -72,7 +74,7 @@ namespace luabind::detail
             return registry_cache;
 #endif
         lua_rawgetp(L, LUA_REGISTRYINDEX, &class_registry_tag);
-        class_registry* p = static_cast<class_registry*>(lua_touserdata(L, -1));
+        auto* p = static_cast<class_registry*>(lua_touserdata(L, -1));
         lua_pop(L, 1);
 #ifdef LUABIND_NOT_THREADSAFE
         cache_key = L;

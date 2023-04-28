@@ -14,10 +14,14 @@ namespace luabind::detail
         static constexpr int consumed_args = 0;
 
         inline lua_State* to_cpp(lua_State* L, by_pointer<lua_State>, int)
-        { return L; }
+        {
+            return L;
+        }
 
         inline static int match(...)
-        { return 0; }
+        {
+            return 0;
+        }
 
         inline void converter_postcall(lua_State*, by_pointer<lua_State>, int) {}
     };

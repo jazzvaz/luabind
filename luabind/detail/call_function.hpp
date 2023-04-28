@@ -65,7 +65,7 @@ namespace luabind
     template <class R, typename PolicyList = no_policies, typename... Args>
     R call_pushed_function(lua_State* L, Args&&... args)
     {
-        using index_list = meta::index_range<1, sizeof...(Args)+1>;
+        using index_list = meta::index_range<1, sizeof...(Args) + 1>;
         return detail::call_function<PolicyList, index_list, 1, R>(
             L, &detail::pcall, std::forward<Args>(args)...);
     }
@@ -81,7 +81,7 @@ namespace luabind
     template <class R, typename PolicyList = no_policies, typename... Args>
     R resume_pushed_function(lua_State* L, Args&&... args)
     {
-        using index_list = meta::index_range<1, sizeof...(Args)+1>;
+        using index_list = meta::index_range<1, sizeof...(Args) + 1>;
         return detail::call_function<PolicyList, index_list, 1, R>(
             L, &detail::resume_impl, std::forward<Args>(args)...);
     }
@@ -97,7 +97,7 @@ namespace luabind
     template <class R, typename PolicyList = no_policies, typename... Args>
     R resume(lua_State* L, Args&&... args)
     {
-        using index_list = meta::index_range<1, sizeof...(Args)+1>;
+        using index_list = meta::index_range<1, sizeof...(Args) + 1>;
         return detail::call_function<PolicyList, index_list, 0, R>(
             L, &detail::resume_impl, std::forward<Args>(args)...);
     }

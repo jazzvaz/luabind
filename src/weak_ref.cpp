@@ -97,7 +97,9 @@ namespace luabind
     }
 
     void weak_ref::swap(weak_ref& other)
-    { std::swap(m_impl, other.m_impl); }
+    {
+        std::swap(m_impl, other.m_impl);
+    }
 
     int weak_ref::id() const
     {

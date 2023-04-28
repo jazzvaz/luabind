@@ -25,7 +25,9 @@ namespace luabind::detail
     };
 
     static bool operator<(edge const& x, edge const& y)
-    { return x.target < y.target; }
+    {
+        return x.target < y.target;
+    }
 
     struct vertex
     {
@@ -57,7 +59,9 @@ namespace luabind::detail
         }
 
         void invalidate()
-        { m_cache.clear(); }
+        {
+            m_cache.clear();
+        }
 
     private:
         using key_type = std::tuple<class_id, class_id, class_id, ptrdiff_t>;
@@ -83,16 +87,16 @@ namespace luabind::detail
         std::pair<void*, int> cast(void* p, class_id src, class_id tgt, class_id d_id, void const* d_ptr) const
         {
             if (src == tgt)
-                return {p, 0};
+                return { p, 0 };
             if (src >= m_vertices.size() || tgt >= m_vertices.size())
-                return {nullptr, -1};
+                return { nullptr, -1 };
             ptrdiff_t const obj_offset = (char const*)d_ptr - (char const*)p;
             cache_entry cached = m_cache.get(src, tgt, d_id, obj_offset);
             if (cached.first != cache::unknown)
             {
                 if (cached.first == cache::invalid)
-                    return {nullptr, -1};
-                return {(char*)p + cached.first, cached.second};
+                    return { nullptr, -1 };
+                return { (char*)p + cached.first, cached.second };
             }
             luabind::queue<queue_entry> q;
             q.push(queue_entry(p, src, 0));
@@ -109,7 +113,7 @@ namespace luabind::detail
                 if (v.id == tgt)
                 {
                     m_cache.put(src, tgt, d_id, obj_offset, (char*)qe.p - (char*)p, qe.distance);
-                    return {qe.p, qe.distance};
+                    return { qe.p, qe.distance };
                 }
                 for (auto const& e : v.edges)
                 {
@@ -120,7 +124,7 @@ namespace luabind::detail
                 }
             }
             m_cache.put(src, tgt, d_id, obj_offset, cache::invalid, -1);
-            return {nullptr, -1};
+            return { nullptr, -1 };
         }
 
         void insert(class_id src, class_id tgt, cast_function cast)
@@ -153,7 +157,9 @@ namespace luabind::detail
     }
 
     void cast_graph::insert(class_id src, class_id tgt, cast_function cast)
-    { m_impl->insert(src, tgt, cast); }
+    {
+        m_impl->insert(src, tgt, cast);
+    }
 
     cast_graph::cast_graph() :
         m_impl(luabind_new<impl>())

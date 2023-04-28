@@ -99,7 +99,9 @@ namespace luabind::detail
     struct type_to_string<table<Base>>
     {
         static void get(lua_State* L)
-        { lua_pushliteral(L, "table"); }
+        {
+            lua_pushliteral(L, "table");
+        }
     };
 
     inline void format_signature_aux(lua_State*, bool, meta::type_list<>)
@@ -124,7 +126,7 @@ namespace luabind::detail
         lua_pushliteral(L, "(");
         format_signature_aux(L, true, meta::pop_front_t<Signature>());
         lua_pushliteral(L, ")");
-        size_t ncat = meta::size_v<Signature> * 2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
+        size_t ncat = meta::size_v<Signature> *2 + 2 + (meta::size<Signature>::value == 1 ? 1 : 0);
         if (concat)
         {
             lua_concat(L, static_cast<int>(ncat));

@@ -23,7 +23,9 @@ namespace luabind
 
         template <typename... Args>
         R operator() (Args&&... args)
-        { return call_function<R>(m_func, std::forward<Args>(args)...); }
+        {
+            return call_function<R>(m_func, std::forward<Args>(args)...);
+        }
 
     private:
         object m_func;
@@ -88,6 +90,8 @@ namespace luabind
         }
 
         void to_lua(lua_State* L, F value)
-        { make_function(L, value, false).push(L); }
+        {
+            make_function(L, value, false).push(L);
+        }
     };
 } // namespace luabind

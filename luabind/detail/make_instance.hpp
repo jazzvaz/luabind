@@ -14,24 +14,26 @@ namespace luabind::detail
         if constexpr (std::is_polymorphic_v<T>)
         {
             lua_rawgetp(L, LUA_REGISTRYINDEX, &class_id_map_tag);
-            class_id_map& class_ids = *static_cast<class_id_map*>(lua_touserdata(L, -1));
+            auto& class_ids = *static_cast<class_id_map*>(lua_touserdata(L, -1));
             lua_pop(L, 1);
             using nonconst_type = std::remove_const_t<T>;
-            return {class_ids.get_local(typeid(*p)), dynamic_cast<void*>(const_cast<nonconst_type*>(p))};
+            return { class_ids.get_local(typeid(*p)), dynamic_cast<void*>(const_cast<nonconst_type*>(p)) };
         }
         else
-            return {registered_class<T>::id, (void*)p};
+            return { registered_class<T>::id(), (void*)p };
     }
 
     template <class T>
     class_rep* get_pointee_class(class_map const& classes, T*)
-    { return classes.get(registered_class<T>::id); }
+    {
+        return classes.get(registered_class<T>::id);
+    }
 
     template <typename Pointee, class P>
     class_rep* get_pointee_class(lua_State* L, P const& p, class_id dynamic_id)
     {
         lua_rawgetp(L, LUA_REGISTRYINDEX, &class_map_tag);
-        class_map const& classes = *static_cast<class_map*>(lua_touserdata(L, -1));
+        auto const& classes = *static_cast<class_map*>(lua_touserdata(L, -1));
         lua_pop(L, 1);
         class_rep* cls = classes.get(dynamic_id);
         if (!cls)

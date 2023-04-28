@@ -26,7 +26,7 @@ namespace luabind
         using reference = T&;
         using const_reference = T const&;
         using value_type = T;
-        
+
         memory_allocator() {}
         memory_allocator(memory_allocator<T> const&) {}
         template <class T2>
@@ -34,13 +34,19 @@ namespace luabind
 
         template <class T2>
         memory_allocator<T>& operator=(memory_allocator<T2> const&)
-        { return *this; }
+        {
+            return *this;
+        }
 
         pointer address(reference value) const
-        { return &value; }
+        {
+            return &value;
+        }
 
         const_pointer address(const_reference value) const
-        { return &value; }
+        {
+            return &value;
+        }
 
         pointer allocate(size_type n, void const* p = nullptr) const
         {
@@ -51,16 +57,24 @@ namespace luabind
         }
 
         void deallocate(pointer p, size_type) const
-        { detail::call_allocator(p, 0); }
+        {
+            detail::call_allocator(p, 0);
+        }
 
         void deallocate(void* p, size_type) const
-        { detail::call_allocator(p, 0); }
+        {
+            detail::call_allocator(p, 0);
+        }
 
         void construct(pointer p, T const& value)
-        { new(p) T(value); }
+        {
+            new(p) T(value);
+        }
 
         void destroy(pointer p)
-        { p->~T(); }
+        {
+            p->~T();
+        }
 
         size_type max_size() const
         {
@@ -70,13 +84,17 @@ namespace luabind
             return 1;
         }
     };
-    
+
     template <class T1, class T2>
     bool operator==(memory_allocator<T1> const&, memory_allocator<T2> const&)
-    { return true; }
+    {
+        return true;
+    }
 
     template <class T1, class T2>
     bool operator!=(memory_allocator<T1> const&, memory_allocator<T2> const&)
-    { return false; }
+    {
+        return false;
+    }
 #endif
 } // namespace luabind

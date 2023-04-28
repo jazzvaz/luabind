@@ -25,11 +25,15 @@ namespace luabind
 
         template <class U>
         lua_State* to_cpp(lua_State* L, U, int /*index*/)
-        { return L; }
+        {
+            return L;
+        }
 
         template <class U>
         int match(lua_State*, U, int /*index*/)
-        { return 0; }
+        {
+            return 0;
+        }
 
         template <class U>
         void converter_postcall(lua_State*, U, int) {}

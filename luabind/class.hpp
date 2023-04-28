@@ -119,20 +119,28 @@ namespace luabind
     // XXX: add to doc
     // helpers for overloaded methods
     template <typename Class, typename Ret, typename... Args>
-    auto use_nonconst(Ret(Class::*fn)(Args...)) -> decltype(fn)
-    { return fn; }
+    auto use_nonconst(Ret(Class::* fn)(Args...)) -> decltype(fn)
+    {
+        return fn;
+    }
 
     template <typename Class, typename Ret, typename... Args>
-    auto use_const(Ret(Class::*fn)(Args...) const) -> decltype(fn)
-    { return fn; }
+    auto use_const(Ret(Class::* fn)(Args...) const) -> decltype(fn)
+    {
+        return fn;
+    }
 
     template <typename Class, typename Ret, typename... Args>
-    auto use_auto(Ret(Class::*fn)(Args...) const) -> decltype(fn)
-    { return fn; }
+    auto use_auto(Ret(Class::* fn)(Args...) const) -> decltype(fn)
+    {
+        return fn;
+    }
 
     template <typename Class, typename Ret, typename... Args>
-    auto use_auto(Ret(Class::*fn)(Args...)) -> decltype(fn)
-    { return fn; }
+    auto use_auto(Ret(Class::* fn)(Args...)) -> decltype(fn)
+    {
+        return fn;
+    }
 
     // TODO: Could specialize for certain base classes to make the interface "type safe".
     template <typename T, typename BaseOrBases = no_bases, typename Holder = null_type, typename Wrapper = null_type>
@@ -363,14 +371,14 @@ namespace luabind
 
         // IntelliSense bug squiggles the code, but it does compile!
         template <typename Ret, typename C, typename... Args, typename... Injectors>
-        class_& def_nonconst(char const* name, Ret(C::*fn)(Args...), policy_list<Injectors...> policies = {})
+        class_& def_nonconst(char const* name, Ret(C::* fn)(Args...), policy_list<Injectors...> policies = {})
         {
             return def(name, fn, policies);
         }
 
         // IntelliSense bug squiggles the code, but it does compile!
         template <typename Ret, typename C, typename... Args, typename... Injectors>
-        class_& def_const(char const* name, Ret(C::*fn)(Args...) const, policy_list<Injectors...> policies = {})
+        class_& def_const(char const* name, Ret(C::* fn)(Args...) const, policy_list<Injectors...> policies = {})
         {
             return def(name, fn, policies);
         }
@@ -406,13 +414,13 @@ namespace luabind
         }
 
         template <class C, class D, typename... Injectors>
-        class_& def_readonly(const char* name, D C::*mem_ptr, policy_list<Injectors...> policies = {})
+        class_& def_readonly(const char* name, D C::* mem_ptr, policy_list<Injectors...> policies = {})
         {
             return property(name, mem_ptr, policies);
         }
 
         template <class C, class D, typename... GetInjectors, typename... SetInjectors>
-        class_& def_readwrite(const char* name, D C::*mem_ptr,
+        class_& def_readwrite(const char* name, D C::* mem_ptr,
             policy_list<GetInjectors...> get_injectors = {},
             policy_list<SetInjectors...> set_injectors = {})
         {

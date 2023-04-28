@@ -10,7 +10,9 @@
 namespace luabind::detail
 {
     registration::~registration()
-    { luabind_delete(m_next); }
+    {
+        luabind_delete(m_next);
+    }
 } // namespace luabind::detail
 
 namespace luabind
@@ -38,7 +40,9 @@ namespace luabind
     }
 
     scope::~scope()
-    { luabind_delete(m_chain); }
+    {
+        luabind_delete(m_chain);
+    }
 
     scope& scope::operator,(scope s)
     {

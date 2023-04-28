@@ -11,7 +11,7 @@ namespace luabind::detail
 {
     template <typename T>
     using is_const_reference =
-        std::bool_constant<std::is_reference_v<T> && std::is_const_v<std::remove_reference_t<T>>>;
+        std::bool_constant<std::is_reference_v<T>&& std::is_const_v<std::remove_reference_t<T>>>;
 
     template <typename T>
     constexpr bool is_const_reference_v = is_const_reference<T>::value;
@@ -25,7 +25,7 @@ namespace luabind::detail
 
     template <typename T>
     using is_const_pointer =
-        std::bool_constant<std::is_pointer_v<T> && std::is_const_v<std::remove_pointer_t<T>>>;
+        std::bool_constant<std::is_pointer_v<T>&& std::is_const_v<std::remove_pointer_t<T>>>;
 
     template <typename T>
     constexpr bool is_const_pointer_v = is_const_pointer<T>::value;
@@ -146,18 +146,24 @@ namespace luabind
 
     template <typename T>
     struct apply_reference_wrapper
-    { using type = T; };
+    {
+        using type = T;
+    };
 
     template <typename T>
     struct apply_reference_wrapper<std::reference_wrapper<T>>
-    { using type = T&; };
+    {
+        using type = T&;
+    };
 
     template <typename T>
     using apply_reference_wrapper_t = typename apply_reference_wrapper<T>::type;
 
     template <typename T>
     struct identity
-    { using type = T; };
+    {
+        using type = T;
+    };
 
     template <typename T>
     using identity_t = typename identity<T>::type;

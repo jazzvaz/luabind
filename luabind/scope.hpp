@@ -71,9 +71,13 @@ namespace luabind
     };
 
     inline module_ module(object const& table)
-    { return module_(table); }
+    {
+        return module_(table);
+    }
 
     inline module_ module(lua_State* L, char const* name = nullptr)
-    { return module_(L, name); }
+    {
+        return module_(L, name);
+    }
 
 } // namespace luabind

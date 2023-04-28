@@ -32,12 +32,14 @@ namespace luabind::detail
         std::pair<void*, int> get_instance(class_id target) const
         {
             if (!m_instance)
-                return {nullptr, -1};
+                return { nullptr, -1 };
             return m_instance->get(m_classrep->casts(), target);
         }
 
         bool is_const() const
-        { return m_instance && m_instance->pointee_const(); }
+        {
+            return m_instance && m_instance->pointee_const();
+        }
 
         void release()
         {

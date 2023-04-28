@@ -76,10 +76,14 @@ namespace luabind
     }
 
     inline void handle::push(lua_State* interpreter) const
-    { lua_rawgeti(interpreter, LUA_REGISTRYINDEX, m_index); }
+    {
+        lua_rawgeti(interpreter, LUA_REGISTRYINDEX, m_index);
+    }
 
     inline lua_State* handle::interpreter() const
-    { return m_interpreter; }
+    {
+        return m_interpreter;
+    }
 
     inline bool handle::is_valid() const
     {
@@ -123,12 +127,18 @@ namespace luabind
         using is_specialized = std::true_type;
 
         static lua_State* interpreter(handle const& value)
-        { return value.interpreter(); }
+        {
+            return value.interpreter();
+        }
 
         static void unwrap(lua_State* interpreter, handle const& value)
-        { value.push(interpreter); }
+        {
+            value.push(interpreter);
+        }
 
         static bool check(...)
-        { return true; }
+        {
+            return true;
+        }
     };
 } // namespace luabind

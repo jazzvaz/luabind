@@ -41,7 +41,7 @@ namespace luabind::adl
         }
 
         // this will set the value to nil
-        iterator_proxy & operator=(luabind::detail::nil_type)
+        iterator_proxy& operator=(luabind::detail::nil_type)
         {
             lua_pushvalue(m_interpreter, m_key_index);
             lua_pushnil(m_interpreter);
@@ -69,7 +69,9 @@ namespace luabind::adl
         operator object();
 
         lua_State* interpreter() const
-        { return m_interpreter; }
+        {
+            return m_interpreter;
+        }
 
         void push(lua_State* interpreter) const
         {
@@ -94,11 +96,15 @@ namespace luabind
 
         template <class Proxy>
         static lua_State* interpreter(Proxy const& p)
-        { return p.interpreter(); }
+        {
+            return p.interpreter();
+        }
 
         template <class Proxy>
         static void unwrap(lua_State* interpreter, Proxy const& p)
-        { p.push(interpreter); }
+        {
+            p.push(interpreter);
+        }
     };
 } // namespace luabind
 
@@ -107,19 +113,27 @@ namespace luabind::detail
     struct basic_access
     {
         static void set(lua_State* interpreter, int table)
-        { lua_settable(interpreter, table); }
+        {
+            lua_settable(interpreter, table);
+        }
 
         static void get(lua_State* interpreter, int table)
-        { lua_gettable(interpreter, table); }
+        {
+            lua_gettable(interpreter, table);
+        }
     };
 
     struct raw_access
     {
         static void set(lua_State* interpreter, int table)
-        { lua_rawset(interpreter, table); }
+        {
+            lua_rawset(interpreter, table);
+        }
 
         static void get(lua_State* interpreter, int table)
-        { lua_rawget(interpreter, table); }
+        {
+            lua_rawget(interpreter, table);
+        }
     };
 
     template <class AccessPolicy>

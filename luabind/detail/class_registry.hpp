@@ -33,7 +33,9 @@ namespace luabind::detail
         class_rep* find_class(type_id const& info) const;
 
         luabind::map<type_id, class_rep*> const& get_classes() const
-        { return m_classes; }
+        {
+            return m_classes;
+        }
 
     private:
 

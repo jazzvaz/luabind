@@ -11,7 +11,9 @@ namespace luabind::detail
     {
         template <class T>
         void to_lua(lua_State* L, T const& x)
-        { value_converter().to_lua(L, x); }
+        {
+            value_converter().to_lua(L, x);
+        }
 
         template <class T>
         void to_lua(lua_State* L, T* x)

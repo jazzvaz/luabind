@@ -37,7 +37,7 @@ namespace luabind::detail
 
     static int destroy_instance(lua_State* L)
     {
-        object_rep* instance = static_cast<object_rep*>(lua_touserdata(L, 1));
+        auto* instance = static_cast<object_rep*>(lua_touserdata(L, 1));
         lua_pushliteral(L, "__finalize");
         lua_gettable(L, 1);
         if (lua_isnil(L, -1))
@@ -264,7 +264,7 @@ namespace luabind::detail
 
     object_rep* get_instance(lua_State* L, int index)
     {
-        object_rep* result = static_cast<object_rep*>(lua_touserdata(L, index));
+        auto* result = static_cast<object_rep*>(lua_touserdata(L, index));
         if (!result || !lua_getmetatable(L, index))
             return 0;
         lua_rawgeti(L, -1, 1);

@@ -44,7 +44,9 @@ namespace luabind::detail
 
     template <class Policies, class T>
     void operator_result(lua_State* L, T const& x)
-    { specialized_converter_policy_n<0, Policies, T, cpp_to_lua>().to_lua(L, x); }
+    {
+        specialized_converter_policy_n<0, Policies, T, cpp_to_lua>().to_lua(L, x);
+    }
 } // namespace luabind::detail
 
 namespace luabind::operators
@@ -77,7 +79,9 @@ namespace luabind
     {
         template <typename... Args>
         operators::call_operator<Derived, Args...> operator()(const Args&...) const
-        { return 0; }
+        {
+            return 0;
+        }
     };
 
     struct self_type : self_base<self_type>
@@ -175,16 +179,16 @@ namespace luabind
     { return 0; }
 
     LUABIND_BINARY_OPERATOR(add, +)
-    LUABIND_BINARY_OPERATOR(sub, -)
-    LUABIND_BINARY_OPERATOR(mul, *)
-    LUABIND_BINARY_OPERATOR(div, / )
-    LUABIND_BINARY_OPERATOR(mod, %)
-    LUABIND_BINARY_OPERATOR(pow, ^)
-    LUABIND_BINARY_OPERATOR(lt, < )
-    LUABIND_BINARY_OPERATOR(le, <= )
-    LUABIND_BINARY_OPERATOR(gt, >)
-    LUABIND_BINARY_OPERATOR(ge, >=)
-    LUABIND_BINARY_OPERATOR(eq, == )
+        LUABIND_BINARY_OPERATOR(sub, -)
+        LUABIND_BINARY_OPERATOR(mul, *)
+        LUABIND_BINARY_OPERATOR(div, /)
+        LUABIND_BINARY_OPERATOR(mod, %)
+        LUABIND_BINARY_OPERATOR(pow, ^)
+        LUABIND_BINARY_OPERATOR(lt, <)
+        LUABIND_BINARY_OPERATOR(le, <=)
+        LUABIND_BINARY_OPERATOR(gt, >)
+        LUABIND_BINARY_OPERATOR(ge, >=)
+        LUABIND_BINARY_OPERATOR(eq, ==)
 
 #undef LUABIND_BINARY_OPERATOR
 
@@ -205,7 +209,7 @@ namespace luabind
     inline detail::unary_operator<operators::name_, T> fn(self_base<T>) \
     { return 0; }
 
-    template <class T>
+        template <class T>
     luabind::string tostring_operator(T const& x)
     {
 #ifdef LUABIND_NO_STRINGSTREAM
@@ -219,9 +223,9 @@ namespace luabind
     }
 
     LUABIND_UNARY_OPERATOR(tostring, tostring_operator, tostring)
-    LUABIND_UNARY_OPERATOR(unm, -, operator-)
+        LUABIND_UNARY_OPERATOR(unm, -, operator-)
 #undef LUABIND_UNARY_OPERATOR
 
-    extern LUABIND_API self_type self;
+        extern LUABIND_API self_type self;
     extern LUABIND_API const_self_type const_self;
 } // namespace luabind

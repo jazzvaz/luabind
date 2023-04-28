@@ -40,7 +40,7 @@ namespace luabind
     template <class T>
     bool get_back_reference(lua_State* L, T const& x)
     {
-        if (wrap_base const* w = detail::get_back_reference(x))
+        if (auto* w = detail::get_back_reference(x))
         {
             detail::wrap_access::ref(*w).get(L);
             return true;
@@ -51,7 +51,7 @@ namespace luabind
     template <class T>
     bool move_back_reference(lua_State* L, T const& x)
     {
-        if (wrap_base* w = const_cast<wrap_base*>(detail::get_back_reference(x)))
+        if (auto* w = const_cast<wrap_base*>(detail::get_back_reference(x)))
         {
             assert(detail::wrap_access::ref(*w).m_strong_ref.is_valid());
             detail::wrap_access::ref(*w).get(L);

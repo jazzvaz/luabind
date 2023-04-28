@@ -15,7 +15,9 @@ namespace luabind::detail
     struct ltstr
     {
         bool operator()(char const* s1, char const* s2) const
-        { return std::strcmp(s1, s2) < 0; }
+        {
+            return std::strcmp(s1, s2) < 0;
+        }
     };
 
     template <int N>

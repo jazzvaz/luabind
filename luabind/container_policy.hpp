@@ -32,20 +32,23 @@ namespace luabind::detail
 
         template <class T>
         T to_cpp(lua_State* L, by_value<T>, int index)
-        { return to_cpp(L, by_const_reference<T>(), index); }
+        {
+            return to_cpp(L, by_const_reference<T>(), index);
+        }
 
         template <class T>
         int match(lua_State* L, by_const_reference<T>, int index)
         {
             if (lua_istable(L, index))
                 return 0;
-            else
-                return no_match;
+            return no_match;
         }
 
         template <class T>
         int match(lua_State* L, by_value<T>, int index)
-        { return match(L, by_const_reference<T>(), index); }
+        {
+            return match(L, by_const_reference<T>(), index);
+        }
 
         template <class T>
         void converter_postcall(lua_State*, T, int) {}

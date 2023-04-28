@@ -23,13 +23,19 @@ namespace luabind::adl
 
         template <class T>
         index_proxy<argument> operator[](T const& key) const
-        { return index_proxy<argument>(*this, m_interpreter, key); }
+        {
+            return index_proxy<argument>(*this, m_interpreter, key);
+        }
 
         void push(lua_State* L) const
-        { lua_pushvalue(L, m_index); }
+        {
+            lua_pushvalue(L, m_index);
+        }
 
         lua_State* interpreter() const
-        { return m_interpreter; }
+        {
+            return m_interpreter;
+        }
 
     private:
         lua_State* m_interpreter;
@@ -47,12 +53,18 @@ namespace luabind
         using is_specialized = std::true_type;
 
         static lua_State* interpreter(argument const& value)
-        { return value.interpreter(); }
+        {
+            return value.interpreter();
+        }
 
         static void unwrap(lua_State* interpreter, argument const& value)
-        { value.push(interpreter); }
+        {
+            value.push(interpreter);
+        }
 
         static bool check(...)
-        { return true; }
+        {
+            return true;
+        }
     };
 } // namespace luabind

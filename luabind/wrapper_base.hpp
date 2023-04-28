@@ -62,7 +62,7 @@ namespace luabind
             // now the function and self objects
             // are on the stack. These will both
             // be popped by pcall
-            using index_list = meta::index_range<1, sizeof...(Args)+1>;
+            using index_list = meta::index_range<1, sizeof...(Args) + 1>;
             return detail::call_member_impl<R>(L, index_list(), std::forward<Args>(args)...);
         }
 
@@ -76,9 +76,13 @@ namespace luabind::detail
     struct wrap_access
     {
         static wrapped_self_t const& ref(wrap_base const& b)
-        { return b.m_self; }
+        {
+            return b.m_self;
+        }
 
         static wrapped_self_t& ref(wrap_base& b)
-        { return b.m_self; }
+        {
+            return b.m_self;
+        }
     };
 } // namespace luabind::detail

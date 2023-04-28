@@ -14,7 +14,9 @@ namespace luabind
     static bool super_deprecation_disabled = false;
 
     void disable_super_deprecation()
-    { super_deprecation_disabled = true; }
+    {
+        super_deprecation_disabled = true;
+    }
 } // namespace luabind
 
 namespace luabind::detail
@@ -37,7 +39,7 @@ namespace luabind::detail
         shared_init(L);
     }
 
-    void class_rep::shared_init(lua_State * L)
+    void class_rep::shared_init(lua_State* L)
     {
         lua_newtable(L);
         handle(L, -1).swap(m_table);
@@ -73,13 +75,13 @@ namespace luabind::detail
     {
         const int size = sizeof(object_rep);
         char* mem = static_cast<char*>(lua_newuserdata(L, size));
-        return {mem, nullptr};
+        return { mem, nullptr };
     }
 
     // this is called as metamethod __call on the class_rep.
     int class_rep::constructor_dispatcher(lua_State* L)
     {
-        class_rep* cls = static_cast<class_rep*>(lua_touserdata(L, 1));
+        auto* cls = static_cast<class_rep*>(lua_touserdata(L, 1));
         int args = lua_gettop(L);
         push_new_instance(L, cls);
         if (super_deprecation_disabled
@@ -129,7 +131,7 @@ namespace luabind::detail
     int class_rep::super_callback(lua_State* L)
     {
         int args = lua_gettop(L);
-        class_rep* crep = static_cast<class_rep*>(lua_touserdata(L, lua_upvalueindex(1)));
+        auto* crep = static_cast<class_rep*>(lua_touserdata(L, lua_upvalueindex(1)));
         class_rep* base = crep->bases()[0];
         if (base->bases().empty())
         {
@@ -161,7 +163,7 @@ namespace luabind::detail
 
     int class_rep::lua_settable_dispatcher(lua_State* L)
     {
-        class_rep* crep = static_cast<class_rep*>(lua_touserdata(L, 1));
+        auto* crep = static_cast<class_rep*>(lua_touserdata(L, 1));
         // get first table
         crep->get_table(L);
         // copy key, value
@@ -185,14 +187,14 @@ namespace luabind::detail
     */
     int class_rep::static_class_gettable(lua_State* L)
     {
-        class_rep* crep = static_cast<class_rep*>(lua_touserdata(L, 1));
+        auto* crep = static_cast<class_rep*>(lua_touserdata(L, 1));
         // look in the static function table
         crep->get_default_table(L);
         lua_pushvalue(L, 2);
         lua_gettable(L, -2);
         if (!lua_isnil(L, -1))
             return 1;
-        else
+
             lua_pop(L, 2);
         const char* key = lua_tostring(L, 2);
         if (!key)
@@ -235,7 +237,7 @@ namespace luabind::detail
 
     int class_rep::tostring(lua_State* L)
     {
-        class_rep* crep = static_cast<class_rep*>(lua_touserdata(L, 1));
+        auto* crep = static_cast<class_rep*>(lua_touserdata(L, 1));
         lua_pushfstring(L, "class %s", crep->m_name ? crep->m_name : "<unnamed>");
         if (crep->m_type != type_id())
         {

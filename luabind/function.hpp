@@ -42,5 +42,7 @@ namespace luabind
 
     template <class F>
     scope def(char const* name, F f)
-    { return def(name, f, no_policies()); }
+    {
+        return def(name, f, no_policies());
+    }
 } // namespace luabind

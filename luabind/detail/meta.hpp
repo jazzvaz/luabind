@@ -24,7 +24,9 @@ namespace luabind::meta
     // Use this to unpack a parameter pack into a list of T's
     template <typename T, typename DontCare>
     struct unpack_helper
-    { using type = T; };
+    {
+        using type = T;
+    };
 
     template <typename T>
     struct size;
@@ -131,7 +133,9 @@ namespace luabind::meta
 
     template <typename... Types1, typename... Types2>
     type_list<Types1..., Types2...> operator|(const type_list<Types1...>&, const type_list<Types2...>&)
-    { return type_list<Types1..., Types2...>(); }
+    {
+        return type_list<Types1..., Types2...>();
+    }
 
     template <typename T>
     struct is_typelist : public std::false_type
@@ -307,11 +311,15 @@ namespace luabind::meta
     // Type selection
     template <typename ConvertibleToTrueFalse, typename Result>
     struct case_ : public ConvertibleToTrueFalse
-    { using type = Result; };
+    {
+        using type = Result;
+    };
 
     template <typename Result>
     struct default_
-    { using type = Result; };
+    {
+        using type = Result;
+    };
 
     template <typename Case, typename... CaseList>
     struct select_
@@ -362,7 +370,7 @@ namespace luabind::meta
     template <uint32_t... Values, uint32_t Index>
     struct get<index_list<Values...>, Index>
     {
-        static_assert(sizeof...(Values)> Index, "Bad Index");
+        static_assert(sizeof...(Values) > Index, "Bad Index");
         static constexpr uint32_t value = detail::get_iterate<Index, Values...>::value;
     };
 
@@ -419,7 +427,7 @@ namespace luabind::meta
     template <uint32_t start, uint32_t end>
     struct make_index_range
     {
-        static_assert(end>= start, "end must be greater than or equal to start");
+        static_assert(end >= start, "end must be greater than or equal to start");
         using type = typename detail::make_index_range<start, end>::type;
     };
 
@@ -451,14 +459,14 @@ namespace luabind::meta
     template <uint32_t start, uint32_t end, uint32_t... Indices>
     struct make_sub_range<index_list<Indices...>, start, end>
     {
-        static_assert(end>= start, "end must be greater or equal to start");
+        static_assert(end >= start, "end must be greater or equal to start");
         using type = typename detail::sub_range_index<index_list<Indices...>, index_range<start, end>>::type;
     };
 
     template <uint32_t start, uint32_t end, typename... Types>
     struct make_sub_range<type_list<Types...>, start, end>
     {
-        static_assert(end>= start, "end must be greater or equal to start");
+        static_assert(end >= start, "end must be greater or equal to start");
         using type = typename detail::sub_range_type<type_list<Types...>, index_range<start, end>>::type;
     };
 

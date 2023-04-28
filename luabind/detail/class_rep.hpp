@@ -101,11 +101,13 @@ namespace luabind::detail
         class_id_map const& classes() const { return *m_classes; }
 
         luabind::map<const char*, int, ltstr> const& static_constants() const
-        { return m_static_constants; }
+        {
+            return m_static_constants;
+        }
 
     private:
         // Code common to both constructors
-        void shared_init(lua_State * L);
+        void shared_init(lua_State* L);
         void cache_operators(lua_State*);
 
         // this is a pointer to the type_info structure for

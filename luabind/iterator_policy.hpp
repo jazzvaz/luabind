@@ -15,7 +15,7 @@ namespace luabind::detail
     {
         static int next(lua_State* L)
         {
-            iterator* self = static_cast<iterator*>(lua_touserdata(L, lua_upvalueindex(1)));
+            auto* self = static_cast<iterator*>(lua_touserdata(L, lua_upvalueindex(1)));
             if (self->first != self->last)
             {
                 lua_stack::push(L, *self->first);
@@ -28,7 +28,7 @@ namespace luabind::detail
 
         static int destroy(lua_State* L)
         {
-            iterator* self = static_cast<iterator*>(lua_touserdata(L, 1));
+            auto* self = static_cast<iterator*>(lua_touserdata(L, 1));
             self->~iterator();
             return 0;
         }
@@ -57,7 +57,9 @@ namespace luabind::detail
 
     template <class Container>
     int make_range(lua_State* L, Container& container)
-    { return make_range(L, container.begin(), container.end()); }
+    {
+        return make_range(L, container.begin(), container.end());
+    }
 
     struct iterator_converter
     {
@@ -65,11 +67,15 @@ namespace luabind::detail
 
         template <class Container>
         void to_lua(lua_State* L, Container& container)
-        { make_range(L, container); }
+        {
+            make_range(L, container);
+        }
 
         template <class Container>
         void to_lua(lua_State* L, Container const& container)
-        { make_range(L, container); }
+        {
+            make_range(L, container);
+        }
     };
 
     struct iterator_policy
@@ -87,7 +93,7 @@ namespace luabind::detail
     {
         static int next(lua_State* L)
         {
-            iterator_pair* self = static_cast<iterator_pair*>(lua_touserdata(L, lua_upvalueindex(1)));
+            auto* self = static_cast<iterator_pair*>(lua_touserdata(L, lua_upvalueindex(1)));
             if (self->first != self->last)
             {
                 lua_stack::push(L, (*self->first).first);
@@ -104,7 +110,7 @@ namespace luabind::detail
 
         static int destroy(lua_State* L)
         {
-            iterator_pair* self = static_cast<iterator_pair*>(lua_touserdata(L, 1));
+            auto* self = static_cast<iterator_pair*>(lua_touserdata(L, 1));
             self->~iterator_pair();
             return 0;
         }
@@ -133,7 +139,9 @@ namespace luabind::detail
 
     template <class Container>
     int make_range_pair(lua_State* L, Container& container)
-    { return make_range_pair(L, container.begin(), container.end()); }
+    {
+        return make_range_pair(L, container.begin(), container.end());
+    }
 
     struct iterator_pair_converter
     {
@@ -141,11 +149,15 @@ namespace luabind::detail
 
         template <class Container>
         void to_lua(lua_State* L, Container& container)
-        { make_range_pair(L, container); }
+        {
+            make_range_pair(L, container);
+        }
 
         template <class Container>
         void to_lua(lua_State* L, Container const& container)
-        { make_range_pair(L, container); }
+        {
+            make_range_pair(L, container);
+        }
     };
 
     struct iterator_pair_policy

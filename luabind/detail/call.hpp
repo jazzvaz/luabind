@@ -240,8 +240,9 @@ namespace luabind::detail
             int score = no_match;
             // Even match needs the tuple, since pointer_converters buffer the cast result
             converter_tuple cvt;
-            if (traits::arity == args)
+            if (traits::arity == args) {
                 score = match_args(L, arg_index_list(), cvt);
+            }
             if (score >= 0 && score < ctx.best_score)
             {
                 ctx.best_score = score;

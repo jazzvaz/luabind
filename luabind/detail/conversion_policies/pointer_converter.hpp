@@ -34,11 +34,15 @@ namespace luabind::detail
 
         template <class T>
         T* to_cpp(lua_State*, by_pointer<T>, int /*index*/)
-        { return static_cast<T*>(result); }
+        {
+            return static_cast<T*>(result);
+        }
 
         template <class T>
         T const* to_cpp(lua_State*, by_const_pointer<T>, int /*index*/)
-        { return static_cast<T const*>(result); }
+        {
+            return static_cast<T const*>(result);
+        }
 
         template <class T, template <class> typename Decorator>
         int match(lua_State* L, Decorator<T>, int index)

@@ -35,7 +35,7 @@ namespace luabind::detail
         T* to_cpp(lua_State* L, by_pointer<T>, int index)
         {
             T* ptr = pointer_converter::to_cpp(L, decorate_type_t<T*>(), index);
-            object_rep* obj = static_cast<object_rep*>(lua_touserdata(L, index));
+            auto* obj = static_cast<object_rep*>(lua_touserdata(L, index));
             if (obj)
                 obj->release();
             adjust_backref_ownership(ptr);
@@ -44,7 +44,9 @@ namespace luabind::detail
 
         template <class T>
         int match(lua_State* L, by_pointer<T>, int index)
-        { return pointer_converter::match(L, decorate_type_t<T*>(), index); }
+        {
+            return pointer_converter::match(L, decorate_type_t<T*>(), index);
+        }
 
         template <class T>
         void converter_postcall(lua_State*, T, int) {}

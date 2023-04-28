@@ -29,7 +29,9 @@ namespace luabind::detail
 
         template <class T>
         T to_cpp(lua_State*, by_value<T>, int)
-        { return *static_cast<T*>(result); }
+        {
+            return *static_cast<T*>(result);
+        }
 
         template <class T>
         int match(lua_State* L, by_value<T>, int index)

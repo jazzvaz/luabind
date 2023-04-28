@@ -17,7 +17,7 @@ namespace luabind::detail
     LUABIND_API extern char class_map_tag;
     extern char cast_graph_tag;
 
-    using cast_function = void*(*)(void*);
+    using cast_function = void* (*)(void*);
     using class_id = size_t;
 
     constexpr class_id unknown_class = std::numeric_limits<class_id>::max();
@@ -119,14 +119,18 @@ namespace luabind::detail
     struct static_cast_
     {
         static void* execute(void* p)
-        { return static_cast<T*>(static_cast<S*>(p)); }
+        {
+            return static_cast<T*>(static_cast<S*>(p));
+        }
     };
 
     template <class S, class T>
     struct dynamic_cast_
     {
         static void* execute(void* p)
-        { return dynamic_cast<T*>(static_cast<S*>(p)); }
+        {
+            return dynamic_cast<T*>(static_cast<S*>(p));
+        }
     };
 
     // Thread safe class_id allocation.

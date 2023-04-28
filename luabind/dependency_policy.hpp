@@ -19,7 +19,7 @@ namespace luabind::detail
         static void postcall(lua_State* L, int results, meta::index_list<StackIndices...>)
         {
             void* ud = lua_touserdata(L, meta::get_v<meta::index_list<StackIndices...>, A>);
-            object_rep* nurse = static_cast<object_rep*>(ud);
+            auto* nurse = static_cast<object_rep*>(ud);
             // If the nurse isn't an object_rep, just make this a nop.
             // XXX: this will crash if nurse is not object_rep pointer (same as below postcalls)
             if (nurse)
@@ -33,8 +33,8 @@ namespace luabind::detail
         template <uint32_t... StackIndices>
         static void postcall(lua_State* L, int results, meta::index_list<StackIndices...>)
         {
-            void* ud = lua_touserdata(L, meta::get_v<meta::index_list<StackIndices...>, 0> + results);
-            object_rep* nurse = static_cast<object_rep*>(ud);
+            void* ud = lua_touserdata(L, meta::get_v<meta::index_list<StackIndices...>, 0> +results);
+            auto* nurse = static_cast<object_rep*>(ud);
             if (nurse)
                 nurse->add_dependency(L, meta::get_v<meta::index_list<StackIndices...>, B>);
         }
@@ -47,9 +47,9 @@ namespace luabind::detail
         static void postcall(lua_State* L, int results, meta::index_list<StackIndices...>)
         {
             void* ud = lua_touserdata(L, meta::get_v<meta::index_list<StackIndices...>, A>);
-            object_rep* nurse = static_cast<object_rep*>(ud);
+            auto* nurse = static_cast<object_rep*>(ud);
             if (nurse)
-                nurse->add_dependency(L, meta::get_v<meta::index_list<StackIndices...>, 0> + results);
+                nurse->add_dependency(L, meta::get_v<meta::index_list<StackIndices...>, 0> +results);
         }
     };
 } // namespace luabind::detail

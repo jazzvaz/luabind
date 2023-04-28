@@ -43,7 +43,9 @@ namespace luabind::detail
         {
             template <typename T, typename... Args>
             void construct(Args&&... args)
-            { new (&m_storage) T(std::forward<Args>(args)...); }
+            {
+                new (&m_storage) T(std::forward<Args>(args)...);
+            }
 
             template <typename T>
             T& get() { return *reinterpret_cast<T*>(&m_storage); }
@@ -62,7 +64,9 @@ namespace luabind::detail
         {
             template <typename... Args>
             void construct(Args&&... args)
-            { new (&m_storage) T(std::forward<Args>(args)...); }
+            {
+                new (&m_storage) T(std::forward<Args>(args)...);
+            }
 
             T& get() { return *reinterpret_cast<T*>(&m_storage); }
 
@@ -153,7 +157,9 @@ namespace luabind::detail
 
         template <class T>
         static int match(lua_State*, by_reference<T>, int)
-        { return 0; }
+        {
+            return 0;
+        }
 
         template <class T>
         void converter_postcall(lua_State* L, by_reference<T>, int)
@@ -172,7 +178,9 @@ namespace luabind::detail
 
         template <class T>
         static int match(lua_State*, by_pointer<T>, int)
-        { return 0; }
+        {
+            return 0;
+        }
 
         template <class T>
         void converter_postcall(lua_State* L, by_pointer<T>, int)

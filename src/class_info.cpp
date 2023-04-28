@@ -18,7 +18,7 @@ namespace luabind
         if (detail::is_class_rep(L, -1))
         {
             // OK, o is a class rep, now at the top of the stack
-            crep = static_cast<detail::class_rep *>(lua_touserdata(L, -1));
+            crep = static_cast<detail::class_rep*>(lua_touserdata(L, -1));
             lua_pop(L, 1);
         }
         else // not a class rep

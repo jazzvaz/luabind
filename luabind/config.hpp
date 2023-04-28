@@ -95,7 +95,7 @@ namespace luabind
         constexpr int max_hierarchy_depth = 100;
     }
 
-    constexpr int no_match = -(detail::max_argument_count*detail::max_hierarchy_depth + 1);
+    constexpr int no_match = -(detail::max_argument_count * detail::max_hierarchy_depth + 1);
 } // namespace luabind
 
 #include <luabind/types.hpp>

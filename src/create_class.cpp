@@ -38,7 +38,7 @@ namespace luabind::detail
 
     int create_class::stage2(lua_State* L)
     {
-        class_rep* crep = static_cast<class_rep*>(lua_touserdata(L, lua_upvalueindex(1)));
+        auto* crep = static_cast<class_rep*>(lua_touserdata(L, lua_upvalueindex(1)));
         assert(crep != nullptr && "internal error, please report");
         assert(is_class_rep(L, lua_upvalueindex(1)) && "internal error, please report");
 #ifndef LUABIND_NO_ERROR_CHECKING
@@ -48,7 +48,7 @@ namespace luabind::detail
             lua_error(L);
         }
 #endif
-        class_rep* base = static_cast<class_rep*>(lua_touserdata(L, 1));
+        auto* base = static_cast<class_rep*>(lua_touserdata(L, 1));
         crep->add_base_class(base);
         // copy base class members
         crep->get_table(L);

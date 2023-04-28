@@ -11,7 +11,7 @@ namespace luabind::detail
     template <class T>
     int garbage_collector(lua_State* L)
     {
-        T* obj = static_cast<T*>(lua_touserdata(L, -1));
+        auto* obj = static_cast<T*>(lua_touserdata(L, -1));
         obj->~T();
         return 0;
     }

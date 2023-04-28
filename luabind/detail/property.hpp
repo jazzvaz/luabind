@@ -13,10 +13,14 @@ namespace luabind::detail
         {}
 
         Result operator()(Class const& x) const
-        { return const_cast<Class&>(x).*mem_ptr; }
+        {
+            return const_cast<Class&>(x).*mem_ptr;
+        }
 
         void operator()(Class& x, T const& value) const
-        { x.*mem_ptr = value; }
+        {
+            x.*mem_ptr = value;
+        }
 
         T Class::* mem_ptr;
     };
