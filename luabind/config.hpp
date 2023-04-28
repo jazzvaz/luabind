@@ -3,10 +3,6 @@
 
 #pragma once
 
-#if defined(DEBUG) && defined(NDEBUG)
-static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
-#endif
-
 // the maximum number of arguments of functions that's
 // registered. Must at least be 2
 #ifndef LUABIND_MAX_ARITY
@@ -67,6 +63,7 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 // - function calls with missing arguments are not treated as errors
 // - return value of lua function is converted to cpp without converter match check
 
+#ifdef LUABIND_DYNAMIC_LINK
 #if defined (_WIN32)
 # ifdef LUABIND_BUILDING
 #  define LUABIND_API __declspec(dllexport)
@@ -83,6 +80,11 @@ static_assert(false, "Do not define NDEBUG macro in DEBUG configuration");
 # define LUABIND_API __attribute__ ((visibility("default")))
 #else
 # error "Unsupported compiler"
+#endif
+#endif
+
+#ifndef LUABIND_API
+# define LUABIND_API
 #endif
 
 #ifndef _WIN32
