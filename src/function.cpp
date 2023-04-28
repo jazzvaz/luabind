@@ -87,6 +87,10 @@ namespace luabind::detail
         char const* function_name =
             overloads->name.empty() ? "<unknown>" : overloads->name.c_str();
         int stacksize = lua_gettop(L);
+        lua_pushliteral(L, "script: ");
+        luaL_where(L, 1);
+        lua_pushliteral(L, "\n");
+
         if (candidate_index == 0)
         {
             lua_pushliteral(L, "No matching overload found, candidates:\n");
