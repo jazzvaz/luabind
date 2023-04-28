@@ -56,7 +56,7 @@ namespace luabind::detail
             template <typename T>
             void destroy() { get<T>().~T(); }
 
-            std::aligned_storage_t<Size> m_storage;
+            alignas(std::max_align_t) std::byte m_storage[Size];
         };
 
         template <typename T>
@@ -74,7 +74,7 @@ namespace luabind::detail
 
             void destroy() { get().~T(); }
 
-            std::aligned_storage_t<sizeof(T), alignof(T)> m_storage;
+            alignas(T) std::byte m_storage[sizeof(T)];
         };
     } // namespace luabind::detail::out_value_detail
 
