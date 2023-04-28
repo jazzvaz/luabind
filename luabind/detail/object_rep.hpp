@@ -83,26 +83,6 @@ namespace luabind::detail
         handle m_dependency_ref; // reference to lua table holding dependency references
     };
 
-    template <class T>
-    struct delete_s
-    {
-        static void apply(void* ptr)
-        { luabind_delete(static_cast<T*>(ptr)); }
-    };
-
-    template <class T>
-    struct destruct_only_s
-    {
-        static void apply(void* ptr)
-        {
-#ifdef DEBUG
-            int completeness_check[sizeof(T)]; // XXX: move to type_traits?
-            (void)completeness_check;
-#endif
-            static_cast<T*>(ptr)->~T();
-        }
-    };
-
     LUABIND_API object_rep* get_instance(lua_State* L, int index);
     LUABIND_API void push_instance_metatable(lua_State* L);
     LUABIND_API object_rep* push_new_instance(lua_State* L, class_rep* cls);
