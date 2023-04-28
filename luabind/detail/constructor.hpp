@@ -34,7 +34,7 @@ namespace luabind::detail
             void* naked_ptr = instance.get();
             Pointer ptr(instance.release());
             void* storage = self->allocate(sizeof(holder_type));
-            self->set_instance(new (storage) holder_type(std::move(ptr), registered_class<T>::id, naked_ptr));
+            self->set_instance(new (storage) holder_type(std::move(ptr), registered_class<T>::id(), naked_ptr));
         }
     };
 

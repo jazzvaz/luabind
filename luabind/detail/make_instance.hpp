@@ -26,7 +26,7 @@ namespace luabind::detail
     template <class T>
     class_rep* get_pointee_class(class_map const& classes, T*)
     {
-        return classes.get(registered_class<T>::id);
+        return classes.get(registered_class<T>::id());
     }
 
     template <typename Pointee, class P>
@@ -89,7 +89,7 @@ namespace luabind::detail
     template <typename ValueType>
     void make_value_instance_val(lua_State* L, ValueType&& v)
     {
-        auto const value_type_id = detail::registered_class<ValueType>::id;
+        auto const value_type_id = detail::registered_class<ValueType>::id();
         class_rep* cls = get_pointee_class<ValueType>(L, &v, value_type_id);
         using holder_type = value_holder<std::remove_reference_t<ValueType>>;
         make_instance_internal<holder_type>(L, cls, L, std::forward<ValueType>(v));

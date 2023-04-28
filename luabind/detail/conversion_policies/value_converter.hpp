@@ -42,7 +42,7 @@ namespace luabind::detail
             object_rep* obj = get_instance(L, index);
             if (!obj)
                 return no_match;
-            auto [ptr, score] = obj->get_instance(registered_class<T>::id);
+            auto [ptr, score] = obj->get_instance(registered_class<T>::id());
             result = ptr;
             return score;
         }

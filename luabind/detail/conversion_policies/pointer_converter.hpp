@@ -61,7 +61,7 @@ namespace luabind::detail
                 if (obj->is_const())
                     return no_match;
             }
-            auto [ptr, score] = obj->get_instance(registered_class<T>::id);
+            auto [ptr, score] = obj->get_instance(registered_class<T>::id());
             if constexpr (std::is_same_v<Decorator<T>, by_const_pointer<T>>)
             {
                 if (score >= 0 && !obj->is_const())

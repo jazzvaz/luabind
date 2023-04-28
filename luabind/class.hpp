@@ -442,7 +442,7 @@ namespace luabind
         {
             return virtual_def("__index", f, policies, null_type());
         }
-        
+
         // virtual functions
         template <class F, class Default, typename... Injectors>
         class_& index(F fn, Default default_, policy_list<Injectors...> policies = {},
@@ -482,8 +482,8 @@ namespace luabind
     private:
         void init()
         {
-            auto const& id = detail::registered_class<T>::id;
-            auto const& w_id = detail::registered_class<Wrapper>::id;
+            auto const& id = detail::registered_class<T>::id();
+            auto const& w_id = detail::registered_class<Wrapper>::id();
             class_base::init(typeid(T), id, typeid(Wrapper), w_id);
             add_wrapper_cast<Wrapper>();
             generate_baseclass_list();
@@ -497,8 +497,8 @@ namespace luabind
         {
             if constexpr (std::is_polymorphic_v<Src>)
             {
-                auto const& src = detail::registered_class<Src>::id;
-                auto const& target = detail::registered_class<Target>::id;
+                auto const& src = detail::registered_class<Src>::id();
+                auto const& target = detail::registered_class<Target>::id();
                 add_cast(src, target, detail::dynamic_cast_<Src, Target>::execute);
             }
         }
@@ -507,8 +507,8 @@ namespace luabind
         void gen_base_info()
         {
             add_base(typeid(Class));
-            auto const& src = detail::registered_class<T>::id;
-            auto const& target = detail::registered_class<Class>::id;
+            auto const& src = detail::registered_class<T>::id();
+            auto const& target = detail::registered_class<Class>::id();
             add_cast(src, target, detail::static_cast_<T, Class>::execute);
             add_downcast<Class, T>();
         }
@@ -534,8 +534,8 @@ namespace luabind
         {
             if constexpr (!is_null_type_v<U>)
             {
-                auto const& src = detail::registered_class<U>::id;
-                auto const& target = detail::registered_class<T>::id;
+                auto const& src = detail::registered_class<U>::id();
+                auto const& target = detail::registered_class<T>::id();
                 add_cast(src, target, detail::static_cast_<U, T>::execute);
                 add_downcast<T, U>();
             }

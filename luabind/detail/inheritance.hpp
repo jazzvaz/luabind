@@ -23,8 +23,6 @@ namespace luabind::detail
     using cast_function = void* (*)(void*);
     using class_id = size_t;
 
-    constexpr class_id unknown_class = std::numeric_limits<class_id>::max();
-
     class class_rep;
 
     class LUABIND_API cast_graph
@@ -65,36 +63,7 @@ namespace luabind::detail
         static class_id const local_id_base;
     };
 
-    inline class_id_map::class_id_map() :
-        m_local_id(local_id_base)
-    {}
-
-    inline class_id class_id_map::get(type_id const& type) const
-    {
-        map_type::const_iterator i = m_classes.find(type);
-        if (i == m_classes.end() || i->second >= local_id_base)
-            return unknown_class;
-        return i->second;
-    }
-
-    inline class_id class_id_map::get_local(type_id const& type)
-    {
-        auto [it, inserted] = m_classes.emplace(type, 0);
-        if (inserted)
-            it->second = m_local_id++;
-        assert(m_local_id >= local_id_base);
-        return it->second;
-    }
-
-    inline void class_id_map::put(class_id id, type_id const& type)
-    {
-        assert(id < local_id_base);
-        auto [it, inserted] = m_classes.emplace(type, 0);
-        assert(inserted || it->second == id || it->second >= local_id_base);
-        it->second = id;
-    }
-
-    class class_map
+    class LUABIND_API class_map
     {
     public:
         class_rep* get(class_id id) const;
@@ -103,20 +72,6 @@ namespace luabind::detail
     private:
         luabind::vector<class_rep*> m_classes;
     };
-
-    inline class_rep* class_map::get(class_id id) const
-    {
-        if (id >= m_classes.size())
-            return 0;
-        return m_classes[id];
-    }
-
-    inline void class_map::put(class_id id, class_rep* cls)
-    {
-        if (id >= m_classes.size())
-            m_classes.resize(id + 1);
-        m_classes[id] = cls;
-    }
 
     template <class S, class T>
     struct static_cast_
@@ -137,16 +92,17 @@ namespace luabind::detail
     };
 
     // Thread safe class_id allocation.
-    LUABIND_API class_id allocate_class_id(type_id const& cls);
+    LUABIND_API class_id allocate_class_id(type_id cls);
 
     template <class T>
     struct registered_class
     {
-        static class_id const id;
+        static inline class_id const id()
+        {
+            static class_id this_id = allocate_class_id(typeid(T));
+            return this_id;
+        } 
     };
-
-    template <class T>
-    class_id const registered_class<T>::id = allocate_class_id(typeid(T));
 
     template <class T>
     struct registered_class<T const> :

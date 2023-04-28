@@ -11,6 +11,8 @@ namespace luabind::detail
     char class_map_tag;
     char cast_graph_tag;
 
+    constexpr class_id unknown_class = std::numeric_limits<class_id>::max();
+
     class_id const class_id_map::local_id_base = std::numeric_limits<class_id>::max() / 2;
 
     struct edge
@@ -167,16 +169,57 @@ namespace luabind::detail
 
     cast_graph::~cast_graph() {}
 
-    class_id allocate_class_id(type_id const& cls)
+    class_id_map::class_id_map() :
+        m_local_id(local_id_base)
+    {
+    }
+
+    class_id class_id_map::get(type_id const& type) const
+    {
+        map_type::const_iterator i = m_classes.find(type);
+        if (i == m_classes.end() || i->second >= local_id_base)
+            return unknown_class;
+        return i->second;
+    }
+
+    class_id class_id_map::get_local(type_id const& type)
+    {
+        auto [it, inserted] = m_classes.emplace(type, 0);
+        if (inserted)
+            it->second = m_local_id++;
+        assert(m_local_id >= local_id_base);
+        return it->second;
+    }
+
+    void class_id_map::put(class_id id, type_id const& type)
+    {
+        assert(id < local_id_base);
+        auto [it, inserted] = m_classes.emplace(type, 0);
+        assert(inserted || it->second == id || it->second >= local_id_base);
+        it->second = id;
+    }
+
+    class_rep* class_map::get(class_id id) const
+    {
+        if (id >= m_classes.size())
+            return 0;
+        return m_classes[id];
+    }
+
+    void class_map::put(class_id id, class_rep* cls)
+    {
+        if (id >= m_classes.size())
+            m_classes.resize(id + 1);
+        m_classes[id] = cls;
+    }
+
+    class_id allocate_class_id(type_id cls)
     {
         // use plain map here because this function is called by static initializers,
         // so luabind::allocator is not set yet
         using map_type = std::map<type_id, class_id>;
         static map_type registered;
-        static class_id id = 0;
-        auto [it, inserted] = registered.emplace(cls, id);
-        if (inserted)
-            id++;
+        auto [it, inserted] = registered.try_emplace(cls, registered.size());
         return it->second;
     }
 } // namespace luabind::detail
