@@ -191,7 +191,10 @@ namespace luabind::detail
             auto& converter = std::get<Index>(cvt);
             using decorated_type = meta::get_t<decorated_list, Index>;
             constexpr auto stackIndex = meta::get_v<stack_indices, Index>;
-            return converter.match(L, decorated_type(), stackIndex);
+            const auto this_match = converter.match(L, decorated_type(), stackIndex);
+            if (this_match < 0) // could also sum them up unconditionally
+                return no_match;
+            return this_match; 
         }
 
         template <uint32_t... Indices>
