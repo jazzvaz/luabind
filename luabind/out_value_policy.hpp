@@ -48,10 +48,10 @@ namespace luabind::detail
             }
 
             template <typename T>
-            T& get() { return *reinterpret_cast<T*>(&m_storage); }
+            T& get() { return *std::launder(reinterpret_cast<T*>(&m_storage)); }
 
             template <typename T>
-            const T& get() const { return *reinterpret_cast<T*>(&m_storage); }
+            const T& get() const { return *std::launder(reinterpret_cast<T*>(&m_storage)); }
 
             template <typename T>
             void destroy() { get<T>().~T(); }
@@ -68,9 +68,9 @@ namespace luabind::detail
                 new (&m_storage) T(std::forward<Args>(args)...);
             }
 
-            T& get() { return *reinterpret_cast<T*>(&m_storage); }
+            T& get() { return *std::launder(reinterpret_cast<T*>(&m_storage)); }
 
-            const T& get() const { return *reinterpret_cast<T*>(&m_storage); }
+            const T& get() const { return *std::launder(reinterpret_cast<T*>(&m_storage)); }
 
             void destroy() { get().~T(); }
 
